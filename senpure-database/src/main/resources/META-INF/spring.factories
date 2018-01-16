@@ -1,0 +1,9 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.senpure.base.configuration.DataSourceAutoConfiguration,\
+  com.senpure.base.configuration.IDGeneratorAutoConfiguration,\
+  com.senpure.base.configuration.SenpureAutoConfiguration
+
+org.springframework.boot.SpringApplicationRunListener=\
+   com.senpure.base.configuration.CurrentSpringApplicationRunListener2
+
+
