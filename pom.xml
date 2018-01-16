@@ -14,7 +14,6 @@
         <module>senpure-web</module>
         <module>senpure-database-generator</module>
         <module>senpure-permission</module>
-        <module>senpure-out</module>
     </modules>
     <packaging>pom</packaging>
 
