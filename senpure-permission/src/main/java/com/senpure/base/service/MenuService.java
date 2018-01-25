@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "menu")
@@ -58,20 +58,20 @@ public class MenuService extends BaseService {
         return menuMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Integer id) {
         int result = menuMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(MenuCriteria criteria) {
         return menuMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(Menu menu) {
         //TODO 注意是否有主键
         //menu.setId();
@@ -79,7 +79,7 @@ public class MenuService extends BaseService {
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<Menu> menus) {
         if (menus == null || menus.size() == 0) {
             return 0;
@@ -91,7 +91,7 @@ public class MenuService extends BaseService {
         return menuMapper.saveBatch(menus);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(MenuCriteria criteria) {
         //TODO 注意是否有主键
         //criteria.setId();
@@ -104,7 +104,7 @@ public class MenuService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#menu.id")
     public boolean update(Menu menu) {
         int updateCount = menuMapper.update(menu);
@@ -119,7 +119,7 @@ public class MenuService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(MenuCriteria criteria) {
         int updateCount = menuMapper.updateByCriteria(criteria);

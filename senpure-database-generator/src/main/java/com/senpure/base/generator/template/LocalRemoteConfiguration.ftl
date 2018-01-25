@@ -18,8 +18,7 @@ import javax.annotation.PostConstruct;
  * @version ${.now?datetime}
  */
 @Configuration
-@ConditionalOnClass({RedisTemplate.class})
-@ConditionalOnBean(CacheManager.class)
+@ConditionalOnClass({RedisTemplate.class, CacheManager.class})
 public class ${configName} extends BaseConfiguration {
 
     private String[] localNames = {<#list names as name>"${nameRule(name)}"<#if name_has_next>, </#if></#list>};

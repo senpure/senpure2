@@ -36,12 +36,17 @@ public class Model {
     private ModelField dateField;
     private List<ModelField> findModeFields = new ArrayList<>();
 
+    private Model child;
+    private ModelField childField;
 
     private boolean generatePermission=true;
 
     private boolean generateMenu=true;
 
     private int menuId=0;
+    private boolean useCriteriaStr=true;
+
+    private List<ModelField> allFields = new ArrayList<>();
 
     public void dateFieldIncr() {
         dateFieldNum++;
@@ -208,23 +213,62 @@ public class Model {
         this.dateField = dateField;
     }
 
+
+    private void checkAllFields()
+    {
+        if (allFields.size() ==0) {
+            allFields.clear();
+            if (id != null) {
+                allFields.add(id);
+            }
+            if (version != null) {
+                allFields.add(version);
+            }
+            allFields.addAll(modelFieldMap.values());
+        }
+    }
+
     public int getXmlMaxLen() {
-        List<ModelField> modelFields = new ArrayList<>(16);
-        if (id != null) {
-            modelFields.add(id);
-        }
-        if (version != null) {
-            modelFields.add(version);
-        }
-        modelFields.addAll(modelFieldMap.values());
+        checkAllFields();
         int maxLen = 0;
-        for (ModelField modelField : modelFields) {
+        for (ModelField modelField : allFields) {
             int len = modelField.getXmlLen();
             maxLen = len > maxLen ? len : maxLen;
         }
         return maxLen + 1;
     }
+    public int getColumnMaxLen()
+    {
+        checkAllFields();
+        int maxLen = 0;
+        for (ModelField modelField : allFields) {
+            int len = modelField.getColumnLen();
+            maxLen = len > maxLen ? len : maxLen;
+        }
+        return maxLen+1;
+    }
 
+    public int getNameMaxLen()
+    {
+        checkAllFields();
+        int maxLen = 0;
+        for (ModelField modelField : allFields) {
+            int len = modelField.getNameLen();
+            maxLen = len > maxLen ? len : maxLen;
+        }
+        return maxLen+1;
+    }
+
+    public int getJdbcMaxLen()
+    {
+        checkAllFields();
+        int maxLen = 0;
+        for (ModelField modelField : allFields) {
+            int len = modelField.getJdbcLen();
+            maxLen = len > maxLen ? len : maxLen;
+        }
+        return maxLen+1;
+    }
     public Map<String, ModelField> getCriteriaFieldMap() {
         return criteriaFieldMap;
     }
@@ -279,6 +323,30 @@ public class Model {
 
     public void setMenuId(int menuId) {
         this.menuId = menuId;
+    }
+
+    public Model getChild() {
+        return child;
+    }
+
+    public void setChild(Model child) {
+        this.child = child;
+    }
+
+    public ModelField getChildField() {
+        return childField;
+    }
+
+    public void setChildField(ModelField childField) {
+        this.childField = childField;
+    }
+
+    public boolean isUseCriteriaStr() {
+        return useCriteriaStr;
+    }
+
+    public void setUseCriteriaStr(boolean useCriteriaStr) {
+        this.useCriteriaStr = useCriteriaStr;
     }
 
     @Override

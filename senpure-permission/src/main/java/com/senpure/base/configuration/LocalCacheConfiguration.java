@@ -13,11 +13,10 @@ import javax.annotation.PostConstruct;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:20
  */
 @Configuration
-@ConditionalOnClass({RedisTemplate.class})
-@ConditionalOnBean(CacheManager.class)
+@ConditionalOnClass({RedisTemplate.class, CacheManager.class})
 public class LocalCacheConfiguration extends BaseConfiguration {
 
     private String[] localNames = {"rolePermission", "menu", "roleValue", "permissionMenu", "accountRole", "role", "permission", "systemValue", "accountValue", "containerPermission"};

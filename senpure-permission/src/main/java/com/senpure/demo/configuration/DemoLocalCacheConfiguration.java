@@ -13,14 +13,13 @@ import javax.annotation.PostConstruct;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:01:17
+ * @version 2018-1-25 18:24:58
  */
 @Configuration
-@ConditionalOnClass({RedisTemplate.class})
-@ConditionalOnBean(CacheManager.class)
+@ConditionalOnClass({RedisTemplate.class, CacheManager.class})
 public class DemoLocalCacheConfiguration extends BaseConfiguration {
 
-    private String[] localNames = {"student", "clazz"};
+    private String[] localNames = {"student", "notice", "clazz"};
     @Autowired
     private CacheManager cacheManager;
 

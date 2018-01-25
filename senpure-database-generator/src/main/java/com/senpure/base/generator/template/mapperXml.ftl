@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="${mapperPackage}.${name}Mapper">
     <resultMap id="${name?uncap_first}ResultMap" type="${modelPackage}.${name}">
-        <id column="${id.column}" property="${id.name}" jdbcType="${id.jdbcType}"/><#if id.hasExplain>${space(id.xmlLen,xmlMaxLen+4)}<!-- ${id.explain} --></#if>
+        <id     column="${id.column}"${space(id.columnLen,columnMaxLen)} property="${id.name}"${space(id.nameLen,nameMaxLen)} jdbcType="${id.jdbcType}"/><#if id.hasExplain>${space(id.jdbcLen,jdbcMaxLen)}<!-- ${id.explain} --></#if>
     <#if version??>
-        <result column="${version.column}" property="${version.name}" jdbcType="${version.jdbcType}"/><#if version.hasExplain>${space(version.xmlLen,xmlMaxLen)}<!-- ${version.explain} --></#if>
+        <result column="${version.column}"${space(version.columnLen,columnMaxLen)} property="${version.name}"${space(version.nameLen,nameMaxLen)} jdbcType="${version.jdbcType}"/><#if version.hasExplain>${space(version.jdbcLen,jdbcMaxLen)}<!-- ${version.explain} --></#if>
     </#if>
     <#list modelFieldMap?values as field>
-        <result column="${field.column}" property="${field.name}" jdbcType="${field.jdbcType}"/><#if field.hasExplain>${space(field.xmlLen,xmlMaxLen)}<!-- ${field.explain} --></#if>
+        <result column="${field.column}"${space(field.columnLen,columnMaxLen)} property="${field.name}"${space(field.nameLen,nameMaxLen)} jdbcType="${field.jdbcType}"/><#if field.hasExplain>${space(field.jdbcLen,jdbcMaxLen)}<!-- ${field.explain} --></#if>
     </#list>
     </resultMap>
     <sql id="${name?uncap_first}AllColumns">
@@ -40,11 +40,11 @@
                 and ${field.column} = ${r'#{'}${field.name}}
                 </#if>
             <#elseif dateField.name==field.name><#--时间比较-->
-            <if test="sdate != null">
-                and ${field.column} >= <#if field.clazzType =='Date'>${r'#{'}sdate}<#else>${r'#{'}sdate.time}</#if>
+            <if test="startDate != null">
+                and ${field.column} >= <#if field.clazzType =='Date'>${r'#{'}startDate}<#else>${r'#{'}startDate.time}</#if>
             </if>
-            <if test="edate != null">
-                and ${field.column} &lt;= <#if field.clazzType =='Date'>${r'#{'}edate}<#else>${r'#{'}edate.time}</#if>
+            <if test="endDate != null">
+                and ${field.column} &lt;= <#if field.clazzType =='Date'>${r'#{'}endDate}<#else>${r'#{'}endDate.time}</#if>
             </if>
             </#if>
         </#list>
@@ -139,11 +139,11 @@
                     ${id.column} = ${r'#{'}${id.name}}
         </#if>
         <#if dateFieldNum ==1>
-                <if test="sdate != null">
-                    and ${dateField.column} >= <#if dateField.clazzType =='Date'>${r'#{'}sdate}<#else>${r'#{'}sdate.time}</#if>
+                <if test="startDate != null">
+                    and ${dateField.column} >= <#if dateField.clazzType =='Date'>${r'#{'}startDate}<#else>${r'#{'}startDate.time}</#if>
                 </if>
-                <if test="edate != null">
-                    and ${dateField.column} &lt;= <#if dateField.clazzType =='Date'>${r'#{'}edate}<#else>${r'#{'}edate.time}</#if>
+                <if test="endDate != null">
+                    and ${dateField.column} &lt;= <#if dateField.clazzType =='Date'>${r'#{'}endDate}<#else>${r'#{'}endDate.time}</#if>
                 </if>
         </#if>
         <#if version??>
@@ -180,11 +180,11 @@
                 and ${field.column} = ${r'#{'}${field.name}}
                 </#if>
             <#elseif dateField.name==field.name><#--时间比较-->
-            <if test="sdate != null">
-               and ${field.column} >= <#if field.clazzType =='Date'>${r'#{'}sdate}<#else>${r'#{'}sdate.time}</#if>
+            <if test="startDate != null">
+               and ${field.column} >= <#if field.clazzType =='Date'>${r'#{'}startDate}<#else>${r'#{'}startDate.time}</#if>
             </if>
-            <if test="edate != null">
-                 and ${field.column} &lt;= <#if field.clazzType =='Date'>${r'#{'}edate}<#else>${r'#{'}edate.time}</#if>
+            <if test="endDate != null">
+                 and ${field.column} &lt;= <#if field.clazzType =='Date'>${r'#{'}endDate}<#else>${r'#{'}endDate.time}</#if>
             </if>
             </#if>
         </#list>
@@ -206,11 +206,11 @@
                 and ${field.column} = ${r'#{'}${field.name}}
                 </#if>
             <#elseif dateField.name==field.name><#--时间比较-->
-            <if test="sdate != null">
-                and ${field.column} >= <#if field.clazzType =='Date'>${r'#{'}sdate}<#else>${r'#{'}sdate.time}</#if>
+            <if test="startDate != null">
+                and ${field.column} >= <#if field.clazzType =='Date'>${r'#{'}startDate}<#else>${r'#{'}startDate.time}</#if>
             </if>
-            <if test="edate != null">
-                and ${field.column} &lt;= <#if field.clazzType =='Date'>${r'#{'}edate}<#else>${r'#{'}edate.time}</#if>
+            <if test="endDate != null">
+                and ${field.column} &lt;= <#if field.clazzType =='Date'>${r'#{'}endDate}<#else>${r'#{'}endDate.time}</#if>
             </if>
             </#if>
         </#list>

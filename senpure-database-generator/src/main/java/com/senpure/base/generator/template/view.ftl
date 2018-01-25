@@ -155,7 +155,13 @@ ${r'<#include "../top.ftl">'}
             ${r'<#list items as item>'}
                 <tr>
                     <td>${r'${item_index+1}'}</td>
-                    <td> ${r'${item.'}${id.name}?c}</td>
+                    <td>
+                    <#if child??>
+                     <a href="/${child.module}/${pluralize(nameRule(child.name))}?${childField.name}=${r'${item.'}${id.name}?c}">${r'${item.'}${id.name}?c}</a>
+                        <#else >
+                        ${r'${item.'}${id.name}?c}
+                    </#if>
+                    </td>
                 <#list modelFieldMap?values as field>
                     <#if field.htmlShow>
                     <td>
@@ -164,7 +170,7 @@ ${r'<#include "../top.ftl">'}
                         <#if field.clazzType=="Long">
                         ${r'${item.'}${field.name}?number_to_datetime?string(datetime_format)}
                         <#else >
-                        ${r'${item.'}${field.name}?datetime?}
+                        ${r'${item.'}${field.name}?datetime?string(datetime_format)}
                         </#if>
                     ${r'</#if>'}
                     <#else >

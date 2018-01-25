@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:01:17
+ * @version 2018-1-25 18:24:57
  */
 @Service
 @CacheConfig(cacheNames = "student")
@@ -59,27 +59,27 @@ public class StudentService extends BaseService {
         return studentMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = studentMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(StudentCriteria criteria) {
         return studentMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(Student student) {
         student.setId(idGenerator.nextId());
         int result = studentMapper.save(student);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<Student> students) {
         if (students == null || students.size() == 0) {
             return 0;
@@ -90,7 +90,7 @@ public class StudentService extends BaseService {
         return studentMapper.saveBatch(students);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(StudentCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = studentMapper.save(criteria.toStudent());
@@ -102,7 +102,7 @@ public class StudentService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#student.id")
     public boolean update(Student student) {
         int updateCount = studentMapper.update(student);
@@ -117,7 +117,7 @@ public class StudentService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(StudentCriteria criteria) {
         int updateCount = studentMapper.updateByCriteria(criteria);
@@ -181,6 +181,14 @@ public class StudentService extends BaseService {
         return students.get(0);
     }
 
+    public List<Student> findByClazzId(Long clazzId) {
+        StudentCriteria criteria = new StudentCriteria();
+        criteria.setUsePage(false);
+        criteria.setClazzId(clazzId);
+        List<Student> students = studentMapper.findByCriteria(criteria);
+        return students;
+    }
+
     public Student findByName(String name) {
         StudentCriteria criteria = new StudentCriteria();
         criteria.setUsePage(false);
@@ -196,14 +204,6 @@ public class StudentService extends BaseService {
         StudentCriteria criteria = new StudentCriteria();
         criteria.setUsePage(false);
         criteria.setNick(nick);
-        List<Student> students = studentMapper.findByCriteria(criteria);
-        return students;
-    }
-
-    public List<Student> findByClazzId(Long clazzId) {
-        StudentCriteria criteria = new StudentCriteria();
-        criteria.setUsePage(false);
-        criteria.setClazzId(clazzId);
         List<Student> students = studentMapper.findByCriteria(criteria);
         return students;
     }

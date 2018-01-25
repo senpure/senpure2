@@ -110,9 +110,9 @@ public class LoginController extends BaseController {
     }
 
 
-    public LoginedAccount cookieLogin(HttpServletRequest request) {
+    public LoginedAccount autoLogin(HttpServletRequest request) {
         CheckCookie checkCookie = readCookie(request.getCookies());
-        if (checkCookie.result) {
+        if (checkCookie.result&&checkCookie.account!=null&&checkCookie.password!=null) {
             LoginCriteria criteria = new LoginCriteria();
             criteria.setAccount(checkCookie.account);
             criteria.setPassword(checkCookie.password);

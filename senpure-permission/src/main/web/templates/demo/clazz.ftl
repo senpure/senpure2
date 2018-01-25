@@ -124,7 +124,9 @@
             <#list items as item>
                 <tr>
                     <td>${item_index+1}</td>
-                    <td> ${item.id?c}</td>
+                    <td>
+                     <a href="/demo/students?clazzId=${item.id?c}">${item.id?c}</a>
+                    </td>
                     <td>
                         ${item.age?c}
                     </td>

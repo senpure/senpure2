@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "accountRole")
@@ -58,27 +58,27 @@ public class AccountRoleService extends BaseService {
         return accountRoleMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = accountRoleMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(AccountRoleCriteria criteria) {
         return accountRoleMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(AccountRole accountRole) {
         accountRole.setId(idGenerator.nextId());
         int result = accountRoleMapper.save(accountRole);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<AccountRole> accountRoles) {
         if (accountRoles == null || accountRoles.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class AccountRoleService extends BaseService {
         return accountRoleMapper.saveBatch(accountRoles);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(AccountRoleCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = accountRoleMapper.save(criteria.toAccountRole());
@@ -101,7 +101,7 @@ public class AccountRoleService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#accountRole.id")
     public boolean update(AccountRole accountRole) {
         int updateCount = accountRoleMapper.update(accountRole);
@@ -116,7 +116,7 @@ public class AccountRoleService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(AccountRoleCriteria criteria) {
         int updateCount = accountRoleMapper.updateByCriteria(criteria);

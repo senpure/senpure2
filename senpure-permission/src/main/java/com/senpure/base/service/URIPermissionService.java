@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  * <li>update(URIPermission uriPermission):按主键清除缓存</li>
  * <li>update(URIPermissionCriteria criteria):有主键时按主键移除缓存，没有主键时清除<strong>所有</strong>URIPermission缓存 </li>
  *
- * @author senpure-generator
+ * @author senpure-generate
  * @version 2018-1-16 11:20:00
  */
 @Service
@@ -39,7 +39,7 @@ public class URIPermissionService extends BaseService {
     }
 
     private String cacheKey(String uriAndMethod) {
-        return "uriPermission->uriAndMethod:" + uriAndMethod;
+        return "uriPermission:uriAndMethod:list:" + uriAndMethod;
     }
 
     public void clearCache(Long id) {
@@ -263,8 +263,16 @@ public class URIPermissionService extends BaseService {
     public void putCacheByUriAndMethod() {
         clearCache();
         List<URIPermission> uriPermissions = uriPermissionMapper.findAll();
-        uriPermissions.forEach(uriPermission -> localCache.put(uriPermission.getUriAndMethod(), uriPermission));
-    }
+        for (URIPermission uriPermission : uriPermissions) {
+            List<URIPermission> caches = (List<URIPermission>) localCache.get(uriPermission.getUriAndMethod());
+            if (caches == null) {
+                caches = new ArrayList<>();
+                localCache.put(cacheKey(uriPermission.getUriAndMethod()), caches);
+            }
+            caches.add(uriPermission);
+        }
+
+        }
 
     public List<URIPermission> findByPermissionId(Long permissionId) {
         URIPermissionCriteria criteria = new URIPermissionCriteria();

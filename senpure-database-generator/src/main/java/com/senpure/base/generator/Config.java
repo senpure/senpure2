@@ -36,6 +36,8 @@ public class Config {
 
     private String javaCodePart="src/main/java/";
     private String viewPart="src/main/web/templates/";
+    private int menuStartId=0;
+    private boolean userCriteriaStr=true;
 
     private List<String> specificSpringLocal = new ArrayList<>();
 
@@ -119,12 +121,14 @@ public class Config {
         addMapperJavaCoverConfig(modelJavaName, cover);
         addCriteriaCoverConfig(modelJavaName, cover);
         addServiceCoverConfig(modelJavaName, cover);
+        addControllerCoverConfig(modelJavaName, cover);
     }
 
 
     public void addGenerateServerConfig(String modelJavaName, boolean generate) {
         config.put(modelJavaName + SERVICE, generate);
     }
+
 
     public boolean getGenerateService(String modelJavaName) {
         if (generateService) {
@@ -291,6 +295,22 @@ public class Config {
 
     public List<String> getSpecificSpringLocal() {
         return specificSpringLocal;
+    }
+
+    public int getMenuStartId() {
+        return menuStartId;
+    }
+
+    public void setMenuStartId(int menuStartId) {
+        this.menuStartId = menuStartId;
+    }
+
+    public boolean isUserCriteriaStr() {
+        return userCriteriaStr;
+    }
+
+    public void setUserCriteriaStr(boolean userCriteriaStr) {
+        this.userCriteriaStr = userCriteriaStr;
     }
 
     protected static class CacheConfig {

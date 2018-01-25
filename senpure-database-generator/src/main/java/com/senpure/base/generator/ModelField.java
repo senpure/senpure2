@@ -28,6 +28,8 @@ public class ModelField {
     private boolean htmlShow=true;
 
     private boolean order=false;
+    private boolean strShow=true;
+    private ModelField longDate;
 
 
 
@@ -35,6 +37,18 @@ public class ModelField {
         String str = name + column + jdbcType;
         return str.length();
 
+    }
+    public int getColumnLen()
+    {
+        return column.length();
+    }
+    public int getNameLen()
+    {
+        return name.length();
+    }
+    public int getJdbcLen()
+    {
+        return jdbcType.length();
     }
 
     public String getAccessType() {
@@ -171,6 +185,23 @@ public class ModelField {
 
     public void setOrder(boolean order) {
         this.order = order;
+    }
+
+    public boolean isStrShow() {
+
+        return strShow;
+    }
+
+    public void setStrShow(boolean strShow) {
+        this.strShow = strShow;
+    }
+
+    public ModelField getLongDate() {
+        return longDate;
+    }
+
+    public void setLongDate(ModelField longDate) {
+        this.longDate = longDate;
     }
 
     @Override

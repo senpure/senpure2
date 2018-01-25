@@ -7,10 +7,10 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class MenuCriteria extends Criteria implements Serializable {
-    private static final long serialVersionUID = 1294850172L;
+    private static final long serialVersionUID = 1493076390L;
 
     //主键
     private Integer id;
@@ -23,6 +23,7 @@ public class MenuCriteria extends Criteria implements Serializable {
     private String icon;
     private String uri;
     private String config;
+    private Integer sort;
     private Boolean databaseUpdate;
     //不登录也有的菜单
     private Boolean directView;
@@ -38,6 +39,7 @@ public class MenuCriteria extends Criteria implements Serializable {
         menu.setIcon(criteria.getIcon());
         menu.setUri(criteria.getUri());
         menu.setConfig(criteria.getConfig());
+        menu.setSort(criteria.getSort());
         menu.setDatabaseUpdate(criteria.getDatabaseUpdate());
         menu.setDirectView(criteria.getDirectView());
         menu.setI18nKey(criteria.getI18nKey());
@@ -74,6 +76,9 @@ public class MenuCriteria extends Criteria implements Serializable {
         }
         if (getConfig() != null) {
             menu.setConfig(getConfig());
+        }
+        if (getSort() != null) {
+            menu.setSort(getSort());
         }
         if (getDatabaseUpdate() != null) {
             menu.setDatabaseUpdate(getDatabaseUpdate());
@@ -121,6 +126,9 @@ public class MenuCriteria extends Criteria implements Serializable {
         }
         if (config != null) {
             sb.append("config=").append(config).append(",");
+        }
+        if (sort != null) {
+            sb.append("sort=").append(sort).append(",");
         }
         if (databaseUpdate != null) {
             sb.append("databaseUpdate=").append(databaseUpdate).append(",");
@@ -238,6 +246,17 @@ public class MenuCriteria extends Criteria implements Serializable {
             return this;
         }
         this.config = config;
+        return this;
+    }
+
+
+    public Integer getSort() {
+        return sort;
+    }
+
+
+    public MenuCriteria setSort(Integer sort) {
+        this.sort = sort;
         return this;
     }
 

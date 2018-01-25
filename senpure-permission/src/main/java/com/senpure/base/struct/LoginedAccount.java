@@ -52,8 +52,8 @@ public class LoginedAccount implements Serializable {
             normalValue.setId(id);
             normalValueMap.put(key, normalValue);
         }
-        normalValue.setValue(value);
         normalValue.setVersion(normalValue.getVersion() + 1);
+        normalValue.setValue(value);
     }
 
     public Long getId() {

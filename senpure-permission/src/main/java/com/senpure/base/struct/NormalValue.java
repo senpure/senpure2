@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by 罗中正 on 2017/12/25 0025.
  */
-public class NormalValue  implements Serializable{
+public class NormalValue implements Serializable {
 
 
     private static final long serialVersionUID = -2247476317068634168L;

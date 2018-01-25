@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -31,7 +30,6 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.lang.reflect.Method;
 import java.util.*;
 
-@Component
 @Order(value = 1)
 public class PermissionsGenerator extends SpringContextRefreshEvent {
 
@@ -94,7 +92,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void onApplicationEvent(ContextRefreshedEvent event) {
         logger.debug("准备检查代码中的权限，生成数据");
         RequestMappingHandlerMapping rm = event.getApplicationContext().getBean(RequestMappingHandlerMapping.class);
@@ -121,6 +119,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 while (true) {
                     String uri = it.next();
                     uriAndMethod.add(uri + "->" + handlerMethod.getMethod().getName());
+                    logger.info(info.getMethodsCondition().getMethods().toString());
                     sname.append(uri);
                     if (it.hasNext()) {
                         sname.append("||");
@@ -128,7 +127,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                         break;
                     }
                 }
-                String uris = sname.toString();
+
                 sname.append("_").append(suffix);
                 // logger.debug(sname);
                 Permission permission = new Permission();
@@ -157,7 +156,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 List<URIPermission> uriPermissions = new ArrayList<>();
                 for (String um : uriAndMethod) {
                     URIPermission uriPermission = new URIPermission();
-                    uriPermission.setUriAndMethod(um);
+                    //uriPermission.setUriAndMethod(um);
                     uriPermission.setPermissionId(1L);
                     uriPermissions.add(uriPermission);
 
@@ -194,7 +193,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                     for (String um : uriAndMethod) {
                         URIPermission uriPermission = new URIPermission();
                         uriPermission.setPermissionId(2L);
-                        uriPermission.setUriAndMethod(um);
+                        //uriPermission.setUriAndMethod(um);
                         if (!permission.getName().endsWith("_owner")) {
                             resourceURIPermissions.add(uriPermission);
                         }
@@ -217,7 +216,6 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 Menu menu = new Menu();
                 menu.setDatabaseUpdate(false);
                 menu.setDirectView(false);
-
                 setBaseProp(menuGenerator, menu);
                 if (menuMap.get(menu.getId()) != null) {
                     Assert.error("菜单ID重复" + menu.getId() + "," + handlerMethod.getBeanType());
@@ -372,9 +370,11 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
             menu.setI18nKey(menuGenerator.i18nKey());
         } else {
             menu.setI18nKey(Pinyin.toAccount(menu.getText())[0]);
+            menu.setI18nKey(Pinyin.toAccount(menu.getText())[0].replace(" ", ".").toLowerCase());
         }
         menu.setIcon(menuGenerator.icon());
         menu.setId(menuGenerator.id());
+        menu.setSort(menuGenerator.sort());
 
     }
 
@@ -393,29 +393,23 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 ExtPermission extPermission = method.getAnnotation(ExtPermission.class);
                 if (extPermission != null) {
                     Permission permission = new Permission();
-                    if (extPermission.uri().length() < 0) {
-                        Assert.error("ExtPermission 在参数的方法上uri 不为空");
-                    }
+
                     permission.setDatabaseUpdate(false);
-                    permission.setName(extPermission.uri());
+                   // permission.setName(extPermission.uri());
                     permission.setReadableName(permission.getName());
                     permission.setType(PermissionConstant.PERMISSION_TYPE_NORMAL);
                     if (permission.getName().endsWith("_owner")) {
                         permission.setType(PermissionConstant.PERMISSION_TYPE_OWNER);
                     }
                     String methodStr = "";
-                    if (extPermission.method() != null && extPermission.method().trim().length() > 0) {
-                        methodStr = extPermission.method();
-                    } else {
-                        methodStr = method.getName();
-                    }
-                    permission.setDescription(extPermission.uri() + "->" + methodStr);
+
+                   // permission.setDescription(extPermission.uri() + "->" + methodStr);
 
                     sort(obj.getClass().getName(), permission);
                     List<URIPermission> uriPermissionList = new ArrayList<>();
                     URIPermission uriPermission = new URIPermission();
                     uriPermission.setPermissionId(0L);
-                    uriPermission.setUriAndMethod(extPermission.uri() + "->" + methodStr);
+                   // uriPermission.setUriAndMethod(extPermission.uri() + "->" + methodStr);
                     uriPermissionList.add(uriPermission);
                     checkPermission(permissionMap, permission, uriPermissionMap, uriPermissionList);
                 }

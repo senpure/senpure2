@@ -178,19 +178,17 @@ public class EntityReader {
                 }
                 logger.debug(target.toString());
                 modelField.setClazzType(target.getId().getClazzType());
-
                 modelField.setJdbcType(target.getId().getJdbcType());
-
+                target.setChild(model);
+                target.setChildField(modelField);
+                find(model, modelField, false);
                 if (modelField.getColumn() == null) {
                     modelField.setName(StringUtil.toLowerFirstLetter(target.getName()
                             + StringUtil.toUpperFirstLetter(target.getId().getName())));
                     modelField.setColumn(nameStrategy.columnName(target.getName() + target.getId().getName()));
-
                 } else {
-
                     modelField.setName(modelField.getColumn());
                     modelField.setColumn(nameStrategy.columnName(modelField.getColumn()));
-
                 }
                 String ex = "外键," + "modelName:" + target.getName() + ",tableName:" + target.getTableName();
                 if (modelField.getExplain() == null) {
@@ -236,9 +234,12 @@ public class EntityReader {
                     ModelField temp = model.getModelFieldMap().get(dateName);
                     if (temp != null) {
                         modelField.setDate(true);
+                        modelField.setStrShow(false);
                         temp.setHtmlShow(false);
                         temp.setCriteriaEquals(false);
+                        temp.setLongDate(modelField);
                         modelField.setOrder(true);
+
                     }
                 }
             }
@@ -253,45 +254,34 @@ public class EntityReader {
             //解读出findBy的字段
             for (ModelField modelField : modelFieldCollection) {
                 if (modelField.getName().equals("account")) {
-                    modelField.setFindOne(true);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, true);
                 } else if (modelField.getName().equals("name")) {
-                    modelField.setFindOne(true);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, true);
                 } else if (modelField.getName().endsWith("Name") && !modelField.getName().startsWith("readable")) {
-                    modelField.setFindOne(false);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, false);
                 } else if (modelField.getName().equals("nick")) {
-                    modelField.setFindOne(false);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, false);
                 } else if (modelField.getName().endsWith("Nick")) {
-                    modelField.setFindOne(false);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, false);
                 } else if (modelField.getName().endsWith("Id")) {
                     if (model.getName().endsWith("Info")
                             || model.getName().endsWith("info")
                             || model.getName().endsWith("Ext")
                             || model.getName().endsWith("ext")) {
-
-                        modelField.setFindOne(true);
+                        find(model, modelField, true);
                     } else {
-                        modelField.setFindOne(false);
+                        find(model, modelField, false);
                     }
-                    model.getFindModeFields().add(modelField);
                 } else if (modelField.getName().equals("type")) {
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, false);
                 } else if (modelField.getName().endsWith("Type")) {
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, false);
                 } else if (modelField.getName().equals("key")) {
-                    modelField.setFindOne(true);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, true);
                 } else if (modelField.getName().endsWith("Key")) {
-                    modelField.setFindOne(true);
-                    model.getFindModeFields().add(modelField);
-                }
-                else if (modelField.getName().equals("uriAndMethod")) {
-                    modelField.setFindOne(false);
-                    model.getFindModeFields().add(modelField);
+                    find(model, modelField, true);
+                } else if (modelField.getName().equals("uriAndMethod")) {
+                    find(model, modelField, false);
                 }
             }
             if (model.getFindModeFields().size() == 0) {
@@ -307,6 +297,17 @@ public class EntityReader {
         }
 
 
+    }
+
+    private void find(Model model, ModelField modelField, boolean findOne) {
+        if (model.getFindModeFields().contains(modelField)) {
+            logger.info("change {} to {},{}  {}",modelField.isFindOne(),findOne,model,modelField);
+            modelField.setFindOne(findOne);
+        } else {
+            logger.info("find  {}  {}",model,modelField);
+            modelField.setFindOne(findOne);
+            model.getFindModeFields().add(modelField);
+        }
     }
 
     private void readComment() {
@@ -392,6 +393,9 @@ public class EntityReader {
                     modelField.setJdbcType("TIMESTAMP");
                     modelField.setDate(true);
                     modelField.setOrder(true);
+                } if ("DOUBLE PRECISION".equalsIgnoreCase(jdbcType)) {
+                    modelField.setJdbcType("DOUBLE");
+
                 }
                 modelField.setJavaNullable(javaNullable(modelField.getClazzType()));
                 if (column.name().length() == 0) {

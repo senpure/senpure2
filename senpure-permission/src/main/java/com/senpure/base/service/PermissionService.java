@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "permission")
@@ -58,27 +58,27 @@ public class PermissionService extends BaseService {
         return permissionMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = permissionMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(PermissionCriteria criteria) {
         return permissionMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(Permission permission) {
         permission.setId(idGenerator.nextId());
         int result = permissionMapper.save(permission);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<Permission> permissions) {
         if (permissions == null || permissions.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class PermissionService extends BaseService {
         return permissionMapper.saveBatch(permissions);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(PermissionCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = permissionMapper.save(criteria.toPermission());
@@ -101,7 +101,7 @@ public class PermissionService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#permission.id")
     public boolean update(Permission permission) {
         int updateCount = permissionMapper.update(permission);
@@ -116,7 +116,7 @@ public class PermissionService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(PermissionCriteria criteria) {
         int updateCount = permissionMapper.updateByCriteria(criteria);
@@ -195,6 +195,14 @@ public class PermissionService extends BaseService {
         PermissionCriteria criteria = new PermissionCriteria();
         criteria.setUsePage(false);
         criteria.setType(type);
+        List<Permission> permissions = permissionMapper.findByCriteria(criteria);
+        return permissions;
+    }
+
+    public List<Permission> findByVerifyName(String verifyName) {
+        PermissionCriteria criteria = new PermissionCriteria();
+        criteria.setUsePage(false);
+        criteria.setVerifyName(verifyName);
         List<Permission> permissions = permissionMapper.findByCriteria(criteria);
         return permissions;
     }

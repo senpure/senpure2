@@ -16,8 +16,11 @@ public class DemoGenerator {
 
         Config config = new Config();
         config.setAllCover(true);
-
         config.setSingleCheck(true);
-        mybatisGenerator.generator("com.senpure.demo",config);
+
+        config.setUserCriteriaStr(true);
+        config.setMenuStartId(1000);
+
+        mybatisGenerator.generate("com.senpure.demo",config);
     }
 }

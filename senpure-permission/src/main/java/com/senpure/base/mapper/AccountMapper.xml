@@ -4,37 +4,37 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.AccountMapper">
     <resultMap id="accountResultMap" type="com.senpure.base.model.Account">
-        <id column="id" property="id" jdbcType="BIGINT"/>                                          <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>                           <!-- 乐观锁，版本控制 -->
-        <result column="account" property="account" jdbcType="VARCHAR"/>
-        <result column="password" property="password" jdbcType="VARCHAR"/>
-        <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
-        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
-        <result column="ip" property="ip" jdbcType="VARCHAR"/>                                     <!-- 当前ip -->
-        <result column="ip_number" property="ipNumber" jdbcType="BIGINT"/>                         <!-- 数字IP，只存一个最接近真实IP的数据 -->
-        <result column="source" property="source" jdbcType="VARCHAR"/>                             <!-- 当前来源，火狐，360，手机等 -->
-        <result column="ban_str" property="banStr" jdbcType="VARCHAR"/>                            <!-- 账号禁止登录的说明 -->
-        <result column="ban_expiry_time" property="banExpiryTime" jdbcType="BIGINT"/>
-        <result column="ban_expiry_date" property="banExpiryDate" jdbcType="TIMESTAMP"/>
-        <result column="login_time" property="loginTime" jdbcType="BIGINT"/>                       <!-- 本次登录时间 -->
-        <result column="login_date" property="loginDate" jdbcType="TIMESTAMP"/>                    <!-- 本次登录时间 -->
-        <result column="login_type" property="loginType" jdbcType="VARCHAR"/>
-        <result column="online" property="online" jdbcType="BIT"/>
-        <result column="account_state" property="accountState" jdbcType="VARCHAR"/>
-        <result column="client" property="client" jdbcType="VARCHAR"/>
-        <result column="client_version" property="clientVersion" jdbcType="VARCHAR"/>
-        <result column="client_version_number" property="clientVersionNumber" jdbcType="INTEGER"/>
-        <result column="last_login_time" property="lastLoginTime" jdbcType="BIGINT"/>
-        <result column="last_login_date" property="lastLoginDate" jdbcType="TIMESTAMP"/>
-        <result column="last_logout_time" property="lastLogoutTime" jdbcType="BIGINT"/>
-        <result column="last_logout_date" property="lastLogoutDate" jdbcType="TIMESTAMP"/>
-        <result column="last_login_type" property="lastLoginType" jdbcType="VARCHAR"/>
-        <result column="last_logout_type" property="lastLogoutType" jdbcType="VARCHAR"/>
-        <result column="last_login_ip" property="lastLoginIp" jdbcType="VARCHAR"/>
-        <result column="last_login_ip_number" property="lastLoginIpNumber" jdbcType="BIGINT"/>
-        <result column="last_login_source" property="lastLoginSource" jdbcType="VARCHAR"/>
-        <result column="container_id" property="containerId" jdbcType="INTEGER"/>                  <!-- 外键,modelName:Container,tableName:senpure_container -->
+        <id     column="id"                     property="id"                   jdbcType="BIGINT"/>    <!-- 主键 -->
+        <result column="version"                property="version"              jdbcType="INTEGER"/>   <!-- 乐观锁，版本控制 -->
+        <result column="account"                property="account"              jdbcType="VARCHAR"/>
+        <result column="password"               property="password"             jdbcType="VARCHAR"/>
+        <result column="name"                   property="name"                 jdbcType="VARCHAR"/>
+        <result column="create_time"            property="createTime"           jdbcType="BIGINT"/>
+        <result column="create_date"            property="createDate"           jdbcType="TIMESTAMP"/>
+        <result column="ip"                     property="ip"                   jdbcType="VARCHAR"/>   <!-- 当前ip -->
+        <result column="ip_number"              property="ipNumber"             jdbcType="BIGINT"/>    <!-- 数字IP，只存一个最接近真实IP的数据 -->
+        <result column="source"                 property="source"               jdbcType="VARCHAR"/>   <!-- 当前来源，火狐，360，手机等 -->
+        <result column="ban_str"                property="banStr"               jdbcType="VARCHAR"/>   <!-- 账号禁止登录的说明 -->
+        <result column="ban_expiry_time"        property="banExpiryTime"        jdbcType="BIGINT"/>
+        <result column="ban_expiry_date"        property="banExpiryDate"        jdbcType="TIMESTAMP"/>
+        <result column="login_time"             property="loginTime"            jdbcType="BIGINT"/>    <!-- 本次登录时间 -->
+        <result column="login_date"             property="loginDate"            jdbcType="TIMESTAMP"/> <!-- 本次登录时间 -->
+        <result column="login_type"             property="loginType"            jdbcType="VARCHAR"/>
+        <result column="online"                 property="online"               jdbcType="BIT"/>
+        <result column="account_state"          property="accountState"         jdbcType="VARCHAR"/>
+        <result column="client"                 property="client"               jdbcType="VARCHAR"/>
+        <result column="client_version"         property="clientVersion"        jdbcType="VARCHAR"/>
+        <result column="client_version_number"  property="clientVersionNumber"  jdbcType="INTEGER"/>
+        <result column="last_login_time"        property="lastLoginTime"        jdbcType="BIGINT"/>
+        <result column="last_login_date"        property="lastLoginDate"        jdbcType="TIMESTAMP"/>
+        <result column="last_logout_time"       property="lastLogoutTime"       jdbcType="BIGINT"/>
+        <result column="last_logout_date"       property="lastLogoutDate"       jdbcType="TIMESTAMP"/>
+        <result column="last_login_type"        property="lastLoginType"        jdbcType="VARCHAR"/>
+        <result column="last_logout_type"       property="lastLogoutType"       jdbcType="VARCHAR"/>
+        <result column="last_login_ip"          property="lastLoginIp"          jdbcType="VARCHAR"/>
+        <result column="last_login_ip_number"   property="lastLoginIpNumber"    jdbcType="BIGINT"/>
+        <result column="last_login_source"      property="lastLoginSource"      jdbcType="VARCHAR"/>
+        <result column="container_id"           property="containerId"          jdbcType="INTEGER"/>   <!-- 外键,modelName:Container,tableName:senpure_container -->
     </resultMap>
     <sql id="accountAllColumns">
         id,version,account,password,name,create_time,create_date,ip,ip_number,source,ban_str,ban_expiry_time,ban_expiry_date,login_time,login_date,login_type,online,account_state,client,client_version,client_version_number,last_login_time,last_login_date,last_logout_time,last_logout_date,last_login_type,last_logout_type,last_login_ip,last_login_ip_number,last_login_source,container_id
@@ -111,11 +111,11 @@
             <if test="lastLogoutTime != null">
                 and last_logout_time = #{lastLogoutTime}
             </if>
-            <if test="sdate != null">
-                and last_logout_date >= #{sdate}
+            <if test="startDate != null">
+                and last_logout_date >= #{startDate}
             </if>
-            <if test="edate != null">
-                and last_logout_date &lt;= #{edate}
+            <if test="endDate != null">
+                and last_logout_date &lt;= #{endDate}
             </if>
             <if test="lastLoginType != null">
                 and last_login_type = #{lastLoginType}
@@ -466,11 +466,11 @@
             <if test="lastLogoutTime != null">
                 and last_logout_time = #{lastLogoutTime}
             </if>
-            <if test="sdate != null">
-               and last_logout_date >= #{sdate}
+            <if test="startDate != null">
+               and last_logout_date >= #{startDate}
             </if>
-            <if test="edate != null">
-                 and last_logout_date &lt;= #{edate}
+            <if test="endDate != null">
+                 and last_logout_date &lt;= #{endDate}
             </if>
             <if test="lastLoginType != null">
                 and last_login_type = #{lastLoginType}
@@ -552,11 +552,11 @@
             <if test="lastLogoutTime != null">
                 and last_logout_time = #{lastLogoutTime}
             </if>
-            <if test="sdate != null">
-                and last_logout_date >= #{sdate}
+            <if test="startDate != null">
+                and last_logout_date >= #{startDate}
             </if>
-            <if test="edate != null">
-                and last_logout_date &lt;= #{edate}
+            <if test="endDate != null">
+                and last_logout_date &lt;= #{endDate}
             </if>
             <if test="lastLoginType != null">
                 and last_login_type = #{lastLoginType}

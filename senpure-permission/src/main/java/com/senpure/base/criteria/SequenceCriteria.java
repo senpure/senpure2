@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class SequenceCriteria extends Criteria implements Serializable {
     private static final long serialVersionUID = 945199211L;
@@ -18,6 +18,8 @@ public class SequenceCriteria extends Criteria implements Serializable {
     private Integer version;
     //标识
     private String type;
+    //table [senpure_sequence][column = type] order
+    private String typeOrder;
     //前缀
     private String prefix;
     //后缀
@@ -142,6 +144,15 @@ public class SequenceCriteria extends Criteria implements Serializable {
     }
 
     /**
+     * get table [senpure_sequence][column = type] order
+     *
+     * @return
+     */
+    public String getTypeOrder() {
+        return typeOrder;
+    }
+
+    /**
      * set 标识
      *
      * @return
@@ -151,6 +162,17 @@ public class SequenceCriteria extends Criteria implements Serializable {
             return this;
         }
         this.type = type;
+        return this;
+    }
+
+    /**
+     * set table [senpure_sequence][column = type] order DESC||ASC
+     *
+     * @return
+     */
+    public SequenceCriteria setTypeOrder(String typeOrder) {
+        this.typeOrder = typeOrder;
+        putSort("type", typeOrder);
         return this;
     }
 

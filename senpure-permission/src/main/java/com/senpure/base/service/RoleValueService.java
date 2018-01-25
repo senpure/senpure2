@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "roleValue")
@@ -58,27 +58,27 @@ public class RoleValueService extends BaseService {
         return roleValueMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = roleValueMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(RoleValueCriteria criteria) {
         return roleValueMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(RoleValue roleValue) {
         roleValue.setId(idGenerator.nextId());
         int result = roleValueMapper.save(roleValue);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<RoleValue> roleValues) {
         if (roleValues == null || roleValues.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class RoleValueService extends BaseService {
         return roleValueMapper.saveBatch(roleValues);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(RoleValueCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = roleValueMapper.save(criteria.toRoleValue());
@@ -101,7 +101,7 @@ public class RoleValueService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#roleValue.id")
     public boolean update(RoleValue roleValue) {
         int updateCount = roleValueMapper.update(roleValue);
@@ -116,7 +116,7 @@ public class RoleValueService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(RoleValueCriteria criteria) {
         int updateCount = roleValueMapper.updateByCriteria(criteria);
@@ -180,6 +180,14 @@ public class RoleValueService extends BaseService {
         return roleValues.get(0);
     }
 
+    public List<RoleValue> findByRoleId(Long roleId) {
+        RoleValueCriteria criteria = new RoleValueCriteria();
+        criteria.setUsePage(false);
+        criteria.setRoleId(roleId);
+        List<RoleValue> roleValues = roleValueMapper.findByCriteria(criteria);
+        return roleValues;
+    }
+
     public RoleValue findByKey(String key) {
         RoleValueCriteria criteria = new RoleValueCriteria();
         criteria.setUsePage(false);
@@ -189,14 +197,6 @@ public class RoleValueService extends BaseService {
             return null;
         }
         return roleValues.get(0);
-    }
-
-    public List<RoleValue> findByRoleId(Long roleId) {
-        RoleValueCriteria criteria = new RoleValueCriteria();
-        criteria.setUsePage(false);
-        criteria.setRoleId(roleId);
-        List<RoleValue> roleValues = roleValueMapper.findByCriteria(criteria);
-        return roleValues;
     }
 
 }

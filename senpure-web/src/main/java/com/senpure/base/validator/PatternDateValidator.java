@@ -16,15 +16,17 @@ import java.util.Date;
 /**
  * Created by 罗中正 on 2017/5/15.
  */
-public class PatterbDateValidator implements ConstraintValidator<DynamicDate, PatternDate> {
-    private Logger logger = LoggerFactory.getLogger(PatterbDateValidator.class);
+public class PatternDateValidator implements ConstraintValidator<DynamicDate, PatternDate> {
+    private static Logger logger = LoggerFactory.getLogger(PatternDateValidator.class);
     @Override
     public void initialize(DynamicDate dynamicDate) {
-
-
     }
     @Override
     public boolean isValid(PatternDate patternDate, ConstraintValidatorContext constraintValidatorContext) {
+        return valid(patternDate);
+    }
+    public  static  boolean valid(PatternDate patternDate)
+    {
         if (StringUtil.isExistTrim(patternDate.getDateStr())) {
             String pattern=patternDate.getPattern() == null
                     ? DateFormatUtil.DFP_Y2D : patternDate.getPattern();

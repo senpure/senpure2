@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class Permission implements Serializable {
-    private static final long serialVersionUID = 1561639894L;
+    private static final long serialVersionUID = 534669811L;
 
     //主键
     private Long id;
@@ -21,6 +21,10 @@ public class Permission implements Serializable {
     private Boolean databaseUpdate;
     //NORMAL 正常 ，OWNER 检查所有者，IGNORE 可以忽略(正常放行)
     private String type;
+    //'1,2' type为OWNER 配合verifyName使用
+    private String offset;
+    //'containerResource',roleResource' type为OWNER 配合offset使用
+    private String verifyName;
     private String description;
     //排序
     private Integer sort;
@@ -120,6 +124,44 @@ public class Permission implements Serializable {
         return this;
     }
 
+    /**
+     * get '1,2' type为OWNER 配合verifyName使用
+     *
+     * @return
+     */
+    public String getOffset() {
+        return offset;
+    }
+
+    /**
+     * set '1,2' type为OWNER 配合verifyName使用
+     *
+     * @return
+     */
+    public Permission setOffset(String offset) {
+        this.offset = offset;
+        return this;
+    }
+
+    /**
+     * get 'containerResource',roleResource' type为OWNER 配合offset使用
+     *
+     * @return
+     */
+    public String getVerifyName() {
+        return verifyName;
+    }
+
+    /**
+     * set 'containerResource',roleResource' type为OWNER 配合offset使用
+     *
+     * @return
+     */
+    public Permission setVerifyName(String verifyName) {
+        this.verifyName = verifyName;
+        return this;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -177,6 +219,8 @@ public class Permission implements Serializable {
                 + ",readableName=" + readableName
                 + ",databaseUpdate=" + databaseUpdate
                 + ",type=" + type
+                + ",offset=" + offset
+                + ",verifyName=" + verifyName
                 + ",description=" + description
                 + ",sort=" + sort
                 + "}";

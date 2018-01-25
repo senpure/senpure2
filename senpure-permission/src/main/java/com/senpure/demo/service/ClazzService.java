@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:01:17
+ * @version 2018-1-25 18:24:57
  */
 @Service
 @CacheConfig(cacheNames = "clazz")
@@ -59,27 +59,27 @@ public class ClazzService extends BaseService {
         return clazzMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = clazzMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(ClazzCriteria criteria) {
         return clazzMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(Clazz clazz) {
         clazz.setId(idGenerator.nextId());
         int result = clazzMapper.save(clazz);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<Clazz> clazzs) {
         if (clazzs == null || clazzs.size() == 0) {
             return 0;
@@ -90,7 +90,7 @@ public class ClazzService extends BaseService {
         return clazzMapper.saveBatch(clazzs);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(ClazzCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = clazzMapper.save(criteria.toClazz());
@@ -102,7 +102,7 @@ public class ClazzService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#clazz.id")
     public boolean update(Clazz clazz) {
         int updateCount = clazzMapper.update(clazz);
@@ -117,7 +117,7 @@ public class ClazzService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(ClazzCriteria criteria) {
         int updateCount = clazzMapper.updateByCriteria(criteria);

@@ -321,7 +321,7 @@ $(function () {
             var html = '&nbsp;<span class="glyphicon glyphicon-triangle-top  text-muted"></span>';
             $e.append(html);
         } else if (currentOrder == SENPURE.ORDER_DESC) {
-            var html = '&nbsp;<span class="glyphicon glyphicon-triangle-  text-muted "></span>';
+            var html = '&nbsp;<span class="glyphicon glyphicon-triangle-bottom  text-muted "></span>';
             $e.append(html);
         }
         else {

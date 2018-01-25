@@ -1,5 +1,7 @@
 package com.senpure.base.annotation;
 
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import java.lang.annotation.*;
 
 /**
@@ -10,20 +12,18 @@ import java.lang.annotation.*;
 @Documented
 @Inherited
 public @interface ExtPermission {
-
-    String uri() default "";
-    String method() default "";
     /**
-     * 可读的名字
-     *
+     * uri
      * @return
      */
-    String value() default "";
+    String[] value() default {};
     /**
      * 唯一标识
      *
      * @return
      */
     String name() default "";
+    String readableName() default "";
+    RequestMethod[] method() default {RequestMethod.GET};
 
 }

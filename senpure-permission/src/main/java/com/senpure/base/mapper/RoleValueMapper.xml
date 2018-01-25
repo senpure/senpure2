@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.RoleValueMapper">
     <resultMap id="roleValueResultMap" type="com.senpure.base.model.RoleValue">
-        <id column="id" property="id" jdbcType="BIGINT"/>                        <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>         <!-- 乐观锁，版本控制 -->
-        <result column="role_key" property="key" jdbcType="VARCHAR"/>
-        <result column="role_value" property="value" jdbcType="VARCHAR"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
-        <result column="role_id" property="roleId" jdbcType="BIGINT"/>           <!-- 外键,modelName:Role,tableName:senpure_role -->
+        <id     column="id"           property="id"           jdbcType="BIGINT"/>  <!-- 主键 -->
+        <result column="version"      property="version"      jdbcType="INTEGER"/> <!-- 乐观锁，版本控制 -->
+        <result column="role_key"     property="key"          jdbcType="VARCHAR"/>
+        <result column="role_value"   property="value"        jdbcType="VARCHAR"/>
+        <result column="description"  property="description"  jdbcType="VARCHAR"/>
+        <result column="role_id"      property="roleId"       jdbcType="BIGINT"/>  <!-- 外键,modelName:Role,tableName:senpure_role -->
     </resultMap>
     <sql id="roleValueAllColumns">
         id,version,role_key,role_value,description,role_id

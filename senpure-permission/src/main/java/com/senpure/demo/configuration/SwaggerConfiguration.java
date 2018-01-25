@@ -1,11 +1,13 @@
 package com.senpure.demo.configuration;
 
+import com.google.common.base.Predicate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.ClassUtils;
+import springfox.documentation.RequestHandler;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.ParameterBuilder;
 import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.schema.ModelRef;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Parameter;
@@ -30,10 +32,13 @@ public class SwaggerConfiguration {
         List<Parameter> pars = new ArrayList<Parameter>();
         tokenPar.name("x-requested-with").description("ajax").modelRef(new ModelRef("string")).parameterType("header").defaultValue("XMLHttpRequest").required(true).build();
         pars.add(tokenPar.build());
+
         return new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.senpure.demo"))
+
+                //.apis(RequestHandlerSelectors.basePackage("com.senpure"))
+                .apis(notPackage("com.senpure.base"))
                 .paths(PathSelectors.any())
                 .build().globalOperationParameters(pars);
     }
@@ -47,5 +52,12 @@ public class SwaggerConfiguration {
                 .build();
     }
 
+    public static Predicate<RequestHandler> notPackage(final String basePackage) {
+        return new Predicate<RequestHandler>() {
+            public boolean apply(RequestHandler input) {
+               return   !ClassUtils.getPackageName(input.declaringClass()).startsWith(basePackage);
 
+                  }
+        };
+    }
 }

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 /**
- * @author senpure-generator
+ * @author senpure-generate
  * @version 2017-10-19 16:54:47
  */
 @Service

@@ -38,8 +38,8 @@ public class ResourceVerifyContainerService extends ResourceVerifySupportService
             return false;
         }
         Account account = accountService.find(accountId);
-        logger.debug("账号所在容器id" + account.getContainerId());
-        if (container.getParentId() == account.getContainerId()) {
+        logger.debug("账号所在容器id " + account.getContainerId());
+        if (container.getParentId().intValue() == account.getContainerId()) {
             return true;
         }
         logger.debug("待检测的容器结构" + container.getContainerStructure());

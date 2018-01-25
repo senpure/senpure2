@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * @author senpure-generator
+ * @author senpure-generate
  * @version 2017-12-22 16:02:19
  */
 @Service

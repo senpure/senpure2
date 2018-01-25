@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:20
  */
 public class AccountValueCriteria extends Criteria implements Serializable {
     private static final long serialVersionUID = 846733638L;

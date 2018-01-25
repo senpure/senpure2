@@ -30,7 +30,10 @@ public class Permission extends LongAndVersionEntity {
     @Column(nullable = false, length = 12)
     @Explain("NORMAL 正常 ，OWNER 检查所有者，IGNORE 可以忽略(正常放行)")
     private String type;
-
+    @Explain("'1,2' type为OWNER 配合verifyName使用")
+    private String offset;
+    @Explain("'containerResource',roleResource' type为OWNER 配合offset使用")
+    private String verifyName;
     @Column( length = 500)
     private String description;
     @Explain("排序")
@@ -83,5 +86,21 @@ public class Permission extends LongAndVersionEntity {
 
     public void setSort(Integer sort) {
         this.sort = sort;
+    }
+
+    public String getOffset() {
+        return offset;
+    }
+
+    public void setOffset(String offset) {
+        this.offset = offset;
+    }
+
+    public String getVerifyName() {
+        return verifyName;
+    }
+
+    public void setVerifyName(String verifyName) {
+        this.verifyName = verifyName;
     }
 }

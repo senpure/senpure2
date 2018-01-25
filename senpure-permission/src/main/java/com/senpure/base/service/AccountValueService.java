@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:20
  */
 @Service
 @CacheConfig(cacheNames = "accountValue")
@@ -58,27 +58,27 @@ public class AccountValueService extends BaseService {
         return accountValueMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = accountValueMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(AccountValueCriteria criteria) {
         return accountValueMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(AccountValue accountValue) {
         accountValue.setId(idGenerator.nextId());
         int result = accountValueMapper.save(accountValue);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<AccountValue> accountValues) {
         if (accountValues == null || accountValues.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class AccountValueService extends BaseService {
         return accountValueMapper.saveBatch(accountValues);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(AccountValueCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = accountValueMapper.save(criteria.toAccountValue());
@@ -101,7 +101,7 @@ public class AccountValueService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#accountValue.id")
     public boolean update(AccountValue accountValue) {
         int updateCount = accountValueMapper.update(accountValue);
@@ -116,7 +116,7 @@ public class AccountValueService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(AccountValueCriteria criteria) {
         int updateCount = accountValueMapper.updateByCriteria(criteria);
@@ -180,6 +180,14 @@ public class AccountValueService extends BaseService {
         return accountValues.get(0);
     }
 
+    public List<AccountValue> findByAccountId(Long accountId) {
+        AccountValueCriteria criteria = new AccountValueCriteria();
+        criteria.setUsePage(false);
+        criteria.setAccountId(accountId);
+        List<AccountValue> accountValues = accountValueMapper.findByCriteria(criteria);
+        return accountValues;
+    }
+
     public AccountValue findByKey(String key) {
         AccountValueCriteria criteria = new AccountValueCriteria();
         criteria.setUsePage(false);
@@ -189,14 +197,6 @@ public class AccountValueService extends BaseService {
             return null;
         }
         return accountValues.get(0);
-    }
-
-    public List<AccountValue> findByAccountId(Long accountId) {
-        AccountValueCriteria criteria = new AccountValueCriteria();
-        criteria.setUsePage(false);
-        criteria.setAccountId(accountId);
-        List<AccountValue> accountValues = accountValueMapper.findByCriteria(criteria);
-        return accountValues;
     }
 
 }

@@ -1,9 +1,7 @@
 package com.senpure.base.criterion;
 
 
-import com.senpure.base.struct.PatternDate;
 import com.senpure.base.util.DateFormatUtil;
-import com.senpure.base.validator.DynamicDate;
 
 import javax.validation.constraints.AssertTrue;
 import java.io.Serializable;
@@ -22,72 +20,38 @@ public class Criteria implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String startDate, endDate;
-
     private int page = 1;
     private int pageSize = 15;
     //前端必须分页
-    @AssertTrue(message = "{input.error}")
-    private boolean usePage = true;
-
-    protected Map<String, String> order = new LinkedHashMap<>();
-    @DynamicDate
-    private PatternDate startTime = new PatternDate(), endTime = new PatternDate();
-    private String datePattern = "yyyy-MM-dd HH:mm:ss";
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        if (startDate != null && startDate.trim().length() == 0) {
-            return;
-        }
-        this.startDate = startDate;
-        startTime.setDateStr(startDate);
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        if (endDate != null && endDate.trim().length() == 0) {
-            return;
-        }
-        this.endDate = endDate;
-        endTime.setDateStr(endDate);
-    }
-
-
-    public Date getSdate() {
-        return startTime.getDate();
-    }
-
-    public Date getEdate() {
-        return endTime.getDate();
-    }
-
-
-    public String getDatePattern() {
-        return datePattern;
-    }
-
-    public void setDatePattern(String datePattern) {
-        this.datePattern = datePattern;
-        startTime.setPattern(datePattern);
-        endTime.setPattern(datePattern);
-    }
+    @AssertTrue
+    private  boolean usePage = true;
+    private Date startDate;
+    private Date endDate;
+    private String datePattern;
+    private  Map<String, String> order = new LinkedHashMap<>(8);
 
     public int getPage() {
         return page;
     }
-
     public void setPage(int page) {
         if (page < 1) {
             page = 1;
         }
         this.page = page;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 
     public boolean isUsePage() {
@@ -112,6 +76,12 @@ public class Criteria implements Serializable {
         this.pageSize = pageSize;
     }
 
+
+    public Map<String, String> getOrder() {
+        //防止前端注入
+        return new LinkedHashMap<>(order);
+    }
+
     public Integer getFirstResult() {
         return page * pageSize - pageSize;
     }
@@ -120,18 +90,12 @@ public class Criteria implements Serializable {
         return pageSize;
     }
 
-
     public boolean isHasOrder() {
         return order.size() > 0;
     }
 
-    /**
-     * copy 保证前端无法注入
-     *
-     * @return copy order
-     */
-    public Map<String, String> getOrder() {
-        return new LinkedHashMap<>(order);
+    public void setDatePattern(String datePattern) {
+        this.datePattern = datePattern;
     }
 
     protected void putSort(String name, String sort) {
@@ -145,53 +109,52 @@ public class Criteria implements Serializable {
     public boolean isHasDate() {
         return true;
     }
-
     public boolean isCanCache() {
         if (!isHasDate()) {
             return true;
         }
         //必须保证时间在当前之前，之后会不断的加入新的内容，数据不一致
-        Date date = getEdate();
+        Date date = getEndDate();
         if (date == null) {
             return false;
         }
         return date.getTime() < System.currentTimeMillis();
     }
-
     protected void beforeStr(StringBuilder sb) {
         sb.append("Criteria{");
     }
-
     public String getCacheKey() {
         StringBuilder sb = new StringBuilder();
         beforeStr(sb);
-        dateCache(sb);
+        dateStr(sb);
         afterStr(sb);
         return sb.toString();
     }
 
     protected void dateStr(StringBuilder sb) {
         if (getStartDate() != null) {
-            sb.append("startDate=").append(getStartDate()).append(",");
+            sb.append("startDate=").append(DateFormatUtil.
+                    getDateFormat(datePattern).
+                    format(getStartDate())).append(",");
         }
         if (getEndDate() != null) {
-            sb.append("endDate=").append(getEndDate()).append(",");
+            sb.append("endDate=").append(DateFormatUtil.
+                    getDateFormat(datePattern).
+                    format(getEndDate())).append(",");
         }
     }
-
     protected void dateCache(StringBuilder sb) {
-        if (getSdate() != null) {
+        if (getStartDate() != null) {
             sb.append("startDate=").append(DateFormatUtil.
                     getDateFormat(DateFormatUtil.DFP_Y2MS).
-                    format(getSdate())).append(",");
+                    format(getStartDate())).append(",");
         }
-        if (getEdate() != null) {
+        if (getEndDate() != null) {
             sb.append("endDate=").append(DateFormatUtil.
                     getDateFormat(DateFormatUtil.DFP_Y2MS).
-                    format(getEdate())).append(",");
+                    format(getEndDate())).append(",");
         }
     }
-
     protected void afterStr(StringBuilder sb) {
         if (order.size() > 0) {
             Iterator<Map.Entry<String, String>> iterator = order.entrySet().iterator();
@@ -220,4 +183,5 @@ public class Criteria implements Serializable {
         afterStr(sb);
         return sb.toString();
     }
+
 }

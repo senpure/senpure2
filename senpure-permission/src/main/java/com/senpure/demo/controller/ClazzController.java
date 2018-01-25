@@ -2,6 +2,7 @@ package com.senpure.demo.controller;
 
 import com.senpure.base.result.ResultMap;
 import com.senpure.base.spring.BaseController;
+import com.senpure.demo.criteria.ClazzCriteriaStr;
 import com.senpure.demo.criteria.ClazzCriteria;
 import com.senpure.demo.service.ClazzService;
 import com.senpure.demo.model.Clazz;
@@ -22,11 +23,11 @@ import javax.validation.Valid;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:01:17
+ * @version 2018-1-25 18:24:58
  */
 @Controller
 @RequestMapping("/demo")
-@MenuGenerator(id = 1100, text = "Clazz")
+@MenuGenerator(id = 1200, text = "Clazz")
 public class ClazzController extends BaseController {
 
     @Autowired
@@ -35,12 +36,14 @@ public class ClazzController extends BaseController {
 
     @RequestMapping(value = {"/clazzs", "/clazzs/{page}"}, method = {RequestMethod.GET, RequestMethod.POST})
     @PermissionVerify(name = "/demo/clazz_read", value = "clazzs_read")
-    @MenuGenerator(id = 1101, text = "Clazz Detail")
-    public ModelAndView readClazzs(HttpServletRequest request, @ModelAttribute("criteria") @Valid ClazzCriteria criteria, BindingResult result) {
+    @MenuGenerator(id = 1201, text = "Clazz Detail")
+
+    public ModelAndView readClazzs(HttpServletRequest request, @ModelAttribute("criteria") @Valid ClazzCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result, view);
         }
+        ClazzCriteria criteria = criteriaStr.toClazzCriteria();
         logger.debug("查询条件:{}", criteria);
         ResultMap resultMap = clazzService.findPage(criteria);
         return result(request, view, resultMap);
@@ -70,11 +73,12 @@ public class ClazzController extends BaseController {
     @RequestMapping(value = "/clazz", method = RequestMethod.POST)
     @PermissionVerify(value = "clazz_create")
     @ResponseBody
-    public ResultMap createClazz(HttpServletRequest request, @ModelAttribute("criteria") @Valid ClazzCriteria criteria, BindingResult result) {
+    public ResultMap createClazz(HttpServletRequest request, @ModelAttribute("criteria") @Valid ClazzCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
         }
+        ClazzCriteria criteria = criteriaStr.toClazzCriteria();
         logger.debug("创建Clazz:{}", criteria);
         if (clazzService.save(criteria)) {
             return wrapMessage(request, ResultMap.success().put("id", criteria.getId()));
@@ -86,7 +90,7 @@ public class ClazzController extends BaseController {
     @RequestMapping(value = "/clazz/{id}", method = RequestMethod.PUT)
     @PermissionVerify(value = "clazz_update")
     @ResponseBody
-    public ResultMap updateClazz(HttpServletRequest request, @PathVariable String id, @ModelAttribute("criteria") @Valid ClazzCriteria criteria, BindingResult result) {
+    public ResultMap updateClazz(HttpServletRequest request, @PathVariable String id, @ModelAttribute("criteria") @Valid ClazzCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
@@ -98,10 +102,14 @@ public class ClazzController extends BaseController {
             logger.error("输入转换失败", e);
             return wrapMessage(request, ResultMap.notExist(), id);
         }
+        ClazzCriteria criteria = criteriaStr.toClazzCriteria();
         criteria.setId(numberId);
         logger.debug("修改Clazz:{}", criteria);
         if (criteria.getVersion() == null) {
             Clazz clazz = clazzService.find(criteria.getId());
+            if (clazz == null) {
+                return wrapMessage(request, ResultMap.notExist(), id);
+            }
             criteria.effective(clazz);
             if (clazzService.update(clazz)) {
                 return wrapMessage(request, ResultMap.success());

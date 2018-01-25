@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Mapper
 public interface SequenceMapper {

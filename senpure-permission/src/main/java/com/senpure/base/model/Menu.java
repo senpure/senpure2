@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class Menu implements Serializable {
-    private static final long serialVersionUID = 1294850172L;
+    private static final long serialVersionUID = 1493076390L;
 
     //主键
     private Integer id;
@@ -18,6 +18,7 @@ public class Menu implements Serializable {
     private String icon;
     private String uri;
     private String config;
+    private Integer sort;
     private Boolean databaseUpdate;
     //不登录也有的菜单
     private Boolean directView;
@@ -90,6 +91,16 @@ public class Menu implements Serializable {
 
     public Menu setConfig(String config) {
         this.config = config;
+        return this;
+    }
+
+    public Integer getSort() {
+        return sort;
+    }
+
+
+    public Menu setSort(Integer sort) {
+        this.sort = sort;
         return this;
     }
 
@@ -171,6 +182,7 @@ public class Menu implements Serializable {
                 + ",icon=" + icon
                 + ",uri=" + uri
                 + ",config=" + config
+                + ",sort=" + sort
                 + ",databaseUpdate=" + databaseUpdate
                 + ",directView=" + directView
                 + ",i18nKey=" + i18nKey

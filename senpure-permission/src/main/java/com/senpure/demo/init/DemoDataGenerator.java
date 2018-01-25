@@ -7,8 +7,10 @@ import com.senpure.base.spring.SpringContextRefreshEvent;
 import com.senpure.base.util.RandomUtil;
 import com.senpure.base.util.TimeCalculator;
 import com.senpure.demo.model.Clazz;
+import com.senpure.demo.model.Notice;
 import com.senpure.demo.model.Student;
 import com.senpure.demo.service.ClazzService;
+import com.senpure.demo.service.NoticeService;
 import com.senpure.demo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -30,6 +32,10 @@ public class DemoDataGenerator extends SpringContextRefreshEvent {
     private StudentService studentService;
 
     @Autowired
+    private NoticeService noticeService;
+
+
+    @Autowired
     private SystemValueService systemValueService;
 
     private String[] nicks = {"齐天大圣", "狗蛋", "华阳乔布斯",
@@ -39,7 +45,7 @@ public class DemoDataGenerator extends SpringContextRefreshEvent {
 
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
 
@@ -88,6 +94,42 @@ public class DemoDataGenerator extends SpringContextRefreshEvent {
             }
 
 
+        }
+        createNotice();
+    }
+
+    private void createNotice() {
+        SystemValue systemValue = systemValueService.findByKey("demo.student.notice.create");
+        if (systemValue == null || !"true".equals(systemValue.getValue())) {
+
+            Date date = new Date();
+            TimeCalculator.getAddDay(date, -500);
+            TimeCalculator.toDayBegin(date);
+            Date use = date;
+            List<Notice> notices = new ArrayList<>(512);
+            for (int i = 0; i < 500; i++) {
+                if (i % 100 == 0) {
+                    use = TimeCalculator.getAddDay(use, 100);
+                }
+                Notice notice = new Notice();
+                notice.setMsg("msg_" + i);
+                notice.setSendDate(use);
+                notices.add(notice);
+            }
+            noticeService.save(notices);
+
+        }
+
+        if (systemValue == null) {
+            systemValue = new SystemValue();
+            systemValue.setKey("demo.student.notice.create");
+            systemValue.setValue("true");
+            systemValue.setDescription("标记是否创建了demo下的notice数据");
+            systemValue.setType(PermissionConstant.VALUE_TYPE_SYSTEM);
+            systemValueService.save(systemValue);
+        } else {
+            systemValue.setValue("true");
+            systemValueService.update(systemValue);
         }
     }
 }

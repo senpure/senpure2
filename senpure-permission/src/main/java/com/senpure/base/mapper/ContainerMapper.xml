@@ -4,16 +4,16 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.ContainerMapper">
     <resultMap id="containerResultMap" type="com.senpure.base.model.Container">
-        <id column="id" property="id" jdbcType="INTEGER"/>                                      <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>                        <!-- 乐观锁，版本控制 -->
-        <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
-        <result column="level" property="level" jdbcType="INTEGER"/>
-        <result column="relation" property="relation" jdbcType="BIGINT"/>
-        <result column="create_time" property="createTime" jdbcType="BIGINT"/>
-        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
-        <result column="container_structure" property="containerStructure" jdbcType="VARCHAR"/> <!-- 所属容器层次结构,主要是为了查询,多有用like查询 -1-2-3-12- -->
-        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>                     <!-- 父容器ID(外键,modelName:Container,tableName:senpure_container) -->
+        <id     column="id"                   property="id"                  jdbcType="INTEGER"/>   <!-- 主键 -->
+        <result column="version"              property="version"             jdbcType="INTEGER"/>   <!-- 乐观锁，版本控制 -->
+        <result column="name"                 property="name"                jdbcType="VARCHAR"/>
+        <result column="description"          property="description"         jdbcType="VARCHAR"/>
+        <result column="level"                property="level"               jdbcType="INTEGER"/>
+        <result column="relation"             property="relation"            jdbcType="BIGINT"/>
+        <result column="create_time"          property="createTime"          jdbcType="BIGINT"/>
+        <result column="create_date"          property="createDate"          jdbcType="TIMESTAMP"/>
+        <result column="container_structure"  property="containerStructure"  jdbcType="VARCHAR"/>   <!-- 所属容器层次结构,主要是为了查询,多有用like查询 -1-2-3-12- -->
+        <result column="parent_id"            property="parentId"            jdbcType="INTEGER"/>   <!-- 父容器ID(外键,modelName:Container,tableName:senpure_container) -->
     </resultMap>
     <sql id="containerAllColumns">
         id,version,name,description,level,relation,create_time,create_date,container_structure,parent_id
@@ -48,11 +48,11 @@
             <if test="relation != null">
                 and relation = #{relation}
             </if>
-            <if test="sdate != null">
-                and create_time >= #{sdate.time}
+            <if test="startDate != null">
+                and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and create_time &lt;= #{endDate.time}
             </if>
             <if test="containerStructure != null">
                 and container_structure = #{containerStructure}
@@ -169,11 +169,11 @@
                 <if test="id != null">
                     id = #{id}
                  </if>
-                <if test="sdate != null">
-                    and create_time >= #{sdate.time}
+                <if test="startDate != null">
+                    and create_time >= #{startDate.time}
                 </if>
-                <if test="edate != null">
-                    and create_time &lt;= #{edate.time}
+                <if test="endDate != null">
+                    and create_time &lt;= #{endDate.time}
                 </if>
                 <if test="version != null">
                     and version =  #{version}
@@ -208,11 +208,11 @@
             <if test="relation != null">
                 and relation = #{relation}
             </if>
-            <if test="sdate != null">
-               and create_time >= #{sdate.time}
+            <if test="startDate != null">
+               and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                 and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                 and create_time &lt;= #{endDate.time}
             </if>
             <if test="containerStructure != null">
                 and container_structure = #{containerStructure}
@@ -240,11 +240,11 @@
             <if test="relation != null">
                 and relation = #{relation}
             </if>
-            <if test="sdate != null">
-                and create_time >= #{sdate.time}
+            <if test="startDate != null">
+                and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and create_time &lt;= #{endDate.time}
             </if>
             <if test="containerStructure != null">
                 and container_structure = #{containerStructure}

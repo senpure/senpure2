@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class SystemValueCriteria extends Criteria implements Serializable {
     private static final long serialVersionUID = 748356364L;
@@ -17,6 +17,8 @@ public class SystemValueCriteria extends Criteria implements Serializable {
     //乐观锁，版本控制
     private Integer version;
     private String type;
+    //table [senpure_system_value][column = type] order
+    private String typeOrder;
     private String key;
     //table [senpure_system_value][column = system_key] order
     private String keyOrder;
@@ -116,12 +118,32 @@ public class SystemValueCriteria extends Criteria implements Serializable {
         return type;
     }
 
+    /**
+     * get table [senpure_system_value][column = type] order
+     *
+     * @return
+     */
+    public String getTypeOrder() {
+        return typeOrder;
+    }
+
 
     public SystemValueCriteria setType(String type) {
         if (type != null && type.trim().length() == 0) {
             return this;
         }
         this.type = type;
+        return this;
+    }
+
+    /**
+     * set table [senpure_system_value][column = type] order DESC||ASC
+     *
+     * @return
+     */
+    public SystemValueCriteria setTypeOrder(String typeOrder) {
+        this.typeOrder = typeOrder;
+        putSort("type", typeOrder);
         return this;
     }
 

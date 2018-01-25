@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "rolePermission")
@@ -58,27 +58,27 @@ public class RolePermissionService extends BaseService {
         return rolePermissionMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = rolePermissionMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(RolePermissionCriteria criteria) {
         return rolePermissionMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(RolePermission rolePermission) {
         rolePermission.setId(idGenerator.nextId());
         int result = rolePermissionMapper.save(rolePermission);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<RolePermission> rolePermissions) {
         if (rolePermissions == null || rolePermissions.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class RolePermissionService extends BaseService {
         return rolePermissionMapper.saveBatch(rolePermissions);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(RolePermissionCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = rolePermissionMapper.save(criteria.toRolePermission());
@@ -101,7 +101,7 @@ public class RolePermissionService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#rolePermission.id")
     public boolean update(RolePermission rolePermission) {
         int updateCount = rolePermissionMapper.update(rolePermission);
@@ -116,7 +116,7 @@ public class RolePermissionService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(RolePermissionCriteria criteria) {
         int updateCount = rolePermissionMapper.updateByCriteria(criteria);

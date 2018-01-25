@@ -7,10 +7,10 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class URIPermissionCriteria extends Criteria implements Serializable {
-    private static final long serialVersionUID = 274982358L;
+    private static final long serialVersionUID = 1046435846L;
 
     //主键
     private Long id;
@@ -19,6 +19,8 @@ public class URIPermissionCriteria extends Criteria implements Serializable {
     private String uriAndMethod;
     //table [senpure_uri_permission][column = uri_and_method] order
     private String uriAndMethodOrder;
+    //是否从数据库更新过
+    private Boolean databaseUpdate;
     //外键,modelName:Permission,tableName:senpure_permission
     private Long permissionId;
     //table [senpure_uri_permission][column = permission_id] order
@@ -27,6 +29,7 @@ public class URIPermissionCriteria extends Criteria implements Serializable {
     public static URIPermission toURIPermission(URIPermissionCriteria criteria, URIPermission uriPermission) {
         uriPermission.setId(criteria.getId());
         uriPermission.setUriAndMethod(criteria.getUriAndMethod());
+        uriPermission.setDatabaseUpdate(criteria.getDatabaseUpdate());
         uriPermission.setPermissionId(criteria.getPermissionId());
         uriPermission.setVersion(criteria.getVersion());
         return uriPermission;
@@ -48,6 +51,9 @@ public class URIPermissionCriteria extends Criteria implements Serializable {
         }
         if (getUriAndMethod() != null) {
             uriPermission.setUriAndMethod(getUriAndMethod());
+        }
+        if (getDatabaseUpdate() != null) {
+            uriPermission.setDatabaseUpdate(getDatabaseUpdate());
         }
         if (getPermissionId() != null) {
             uriPermission.setPermissionId(getPermissionId());
@@ -74,6 +80,9 @@ public class URIPermissionCriteria extends Criteria implements Serializable {
         }
         if (uriAndMethod != null) {
             sb.append("uriAndMethod=").append(uriAndMethod).append(",");
+        }
+        if (databaseUpdate != null) {
+            sb.append("databaseUpdate=").append(databaseUpdate).append(",");
         }
         if (permissionId != null) {
             sb.append("permissionId=").append(permissionId).append(",");
@@ -129,6 +138,26 @@ public class URIPermissionCriteria extends Criteria implements Serializable {
     public URIPermissionCriteria setUriAndMethodOrder(String uriAndMethodOrder) {
         this.uriAndMethodOrder = uriAndMethodOrder;
         putSort("uri_and_method", uriAndMethodOrder);
+        return this;
+    }
+
+
+    /**
+     * get 是否从数据库更新过
+     *
+     * @return
+     */
+    public Boolean getDatabaseUpdate() {
+        return databaseUpdate;
+    }
+
+    /**
+     * set 是否从数据库更新过
+     *
+     * @return
+     */
+    public URIPermissionCriteria setDatabaseUpdate(Boolean databaseUpdate) {
+        this.databaseUpdate = databaseUpdate;
         return this;
     }
 

@@ -32,7 +32,7 @@ public class PermissionCodeGenerator {
         // config.addCoverConfig("URIPermission",true);
         // config.addMapperXmlCoverConfig("Container",true);
         // config.setDefaultCache(true, true, false, false);
-        mybatisGenerator.generator("com.senpure.base", config);
+        mybatisGenerator.generate("com.senpure.base", config);
 
 
     }

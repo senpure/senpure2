@@ -9,7 +9,7 @@ import java.lang.annotation.*;
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = PatterbDateValidator.class)
+@Constraint(validatedBy = PatternDateValidator.class)
 @Documented
 public @interface DynamicDate {
     String message() default "{time.format.error}";

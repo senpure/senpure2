@@ -5,7 +5,6 @@ import com.senpure.base.WebConstant;
 import com.senpure.base.result.Result;
 import com.senpure.base.result.ResultHelper;
 import com.senpure.base.result.ResultMap;
-import com.senpure.base.struct.KeyValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,40 +101,32 @@ public class BaseController {
     }
 
     protected ResultMap incorrect(HttpServletRequest request, BindingResult result) {
+        Locale locale=localeResolver.resolveLocale(request);
         List<ObjectError> es = result.getAllErrors();
-        List<ObjectError> adds = new ArrayList<>();
         Map<String, String> validators = new HashMap<>();
-
         StringBuilder sb = new StringBuilder();
         //FieldError
-        Map<Integer, MessageSourceResolvable> replaces = new HashMap<>();
-        //for (int i = 0, l = es.size(), t = l - 1; i < l; i++) {
         for (ObjectError e : es) {
-
             Object[] args = e.getArguments();
             MessageSourceResolvable sr = (MessageSourceResolvable) args[0];
             String[] codes = sr.getCodes();
-            KeyValue<String, String> keyValue = new KeyValue();
             String key = codes[codes.length - 1];
-            //logger.debug("key = {} ", key);
-            if (key.equals("startTime") || key.equals("endTime")) {
-                key = key.replace("Time", "Date");
-                //codes[codes.length - 1] = key;
+            if (key.endsWith("Valid")) {
+                key = key.replace("Valid", "");
             }
-            validators.put(key, e.getDefaultMessage());
-            logger.debug(e.toString());
+            if (e.getDefaultMessage().contains("NumberFormatException")) {
+                validators.put(key, ResultHelper.getMessage(Result.INPUT_NUMBER,locale));
+            } else {
+                validators.put(key, e.getDefaultMessage());
+            }
             sb.append(e.getDefaultMessage());
             sb.append("\n");
-
         }
         logger.debug(sb.toString());
         ResultMap rm = ResultMap.result(Result.FORMAT_INCORRECT);
         rm.put(ResultMap.VALIDATOR_KEY, validators);
-        for (ObjectError o : adds) {
-            result.addError(o);
-        }
-        logger.debug("validators {} ", validators);
-        ResultHelper.wrapMessage(rm, localeResolver.resolveLocale(request));
+        logger.warn("validators {} ", validators);
+        ResultHelper.wrapMessage(rm, locale);
         return rm;
     }
 
@@ -149,8 +140,9 @@ public class BaseController {
         ResultHelper.wrapMessage(resultMap, localeResolver.resolveLocale(request));
         return resultMap;
     }
-    protected ResultMap wrapMessage(HttpServletRequest request, ResultMap resultMap, Object ...args) {
-        ResultHelper.wrapMessage(resultMap, localeResolver.resolveLocale(request),args);
+
+    protected ResultMap wrapMessage(HttpServletRequest request, ResultMap resultMap, Object... args) {
+        ResultHelper.wrapMessage(resultMap, localeResolver.resolveLocale(request), args);
         return resultMap;
     }
 }

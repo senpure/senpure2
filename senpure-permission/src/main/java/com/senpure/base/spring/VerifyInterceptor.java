@@ -21,6 +21,7 @@ import com.senpure.base.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.HandlerMapping;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -63,7 +64,7 @@ public class VerifyInterceptor extends InterceptorSupport {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // logger.debug("handler is {}", handler);
+
         LoginedAccount account = Http.getSubject(request, LoginedAccount.class);
         if (account != null) {
             Account lastAccount = authorizeService.findAccount(account.getId());
@@ -85,18 +86,19 @@ public class VerifyInterceptor extends InterceptorSupport {
         HandlerMethod method = null;
         if (handler instanceof HandlerMethod) {
             method = (HandlerMethod) handler;
+
         }
         if (method != null) {
             List<Permission> needPermissions = new ArrayList<>();
-            String mapingInfoUri = getMapingInfoUri(request);
+            String mappingInfoUri = getBestMatchingPattern(request);
             //  List<URIPermission> uriPermissions = uriPermissionService.loadURIPermissions(mapingInfoUri + "->" + method.getMethod().getName());
-            List<URIPermission> uriPermissions = uriPermissionService.findByUriAndMethod(mapingInfoUri + "->" + method.getMethod().getName());
+            List<URIPermission> uriPermissions = uriPermissionService.findByUriAndMethodOnlyCache(request.getMethod() + "->" + mappingInfoUri);
             if (uriPermissions.size() == 0) {
                 logger.debug("{} > {}", request.getRequestURI(), "不需要任何权限检查");
                 return true;
             } else if (account == null) {
                 logger.debug("{} > {}", request.getRequestURI(), "没有登陆或者登陆超时");
-                account = loginController.cookieLogin(request);
+                account = loginController.autoLogin(request);
                 if (account == null) {
                     ResultMap result = ResultMap.result(Result.ACCOUNT_NOT_LOGIN_OR_SESSION_TIMEOUT);
                     RequestDispatcher dispatcher = request.getRequestDispatcher(loginURI);
@@ -134,14 +136,14 @@ public class VerifyInterceptor extends InterceptorSupport {
                             String resourceId = null;
                             String uri = request.getRequestURI();
                             int offset = r.offset();
-                            int first = StringUtil.indexOf(mapingInfoUri, "{", offset);
+                            int first = StringUtil.indexOf(mappingInfoUri, "{", offset);
                             if (first < 0) {
                                 continue;
                             }
                             int formIndex = -1;
                             int count = 0;
                             while (true) {
-                                formIndex = mapingInfoUri.indexOf("/", formIndex + 1);
+                                formIndex = mappingInfoUri.indexOf("/", formIndex + 1);
                                 if (formIndex > first || formIndex < 0) {
                                     break;
                                 } else {
@@ -243,7 +245,11 @@ public class VerifyInterceptor extends InterceptorSupport {
         }
     }
 
-    private String getMapingInfoUri(HttpServletRequest request) {
+    private String getBestMatchingPattern(HttpServletRequest request) {
+        return request.getParameter(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+    }
+
+    private String getMappingInfoUri(HttpServletRequest request) {
         Map<RequestMappingInfo, HandlerMethod> map = handlerMapping.getHandlerMethods();
         Iterator<Map.Entry<RequestMappingInfo, HandlerMethod>> iterator = map.entrySet().iterator();
         RequestMappingInfo temp = null;

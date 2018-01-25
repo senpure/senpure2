@@ -43,6 +43,10 @@ public class Result {
     @Message(message = "令牌过期请重新获取")
     public static final int TOKEN_TIMEOUT = 108;
 
+
+    @Message(message = "请输入数字")
+    public static final int INPUT_NUMBER = 1000;
+
     @Message(message = "[{0}]:目标不存在")
     public static  final int  TARGET_NOT_EXIST=404;
 

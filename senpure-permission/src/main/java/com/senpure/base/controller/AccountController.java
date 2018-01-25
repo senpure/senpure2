@@ -90,18 +90,20 @@ public class AccountController extends BaseController {
         if (normalValue != null && !thisValue.equals(normalValue.getValue())) {
             if (normalValue.isNormal()) {
                 AccountValue accountValue = new AccountValue();
+                accountValue.setKey(key);
                 accountValue.setValue(thisValue);
                 accountValue.setId(normalValue.getId());
+                accountValue.setAccountId(account.getId());
                 accountValue.setVersion(normalValue.getVersion());
                 accountValueService.update(accountValue);
-                normalValue.setVersion(normalValue.getVersion() + 1);
+                account.setConfig(key,thisValue);
+
             }
-            normalValue.setValue(thisValue);
+
         }
         ResultMap resultMap = accountService.findPage(criteria);
         return view(request, view, resultMap);
     }
-
 
 
     @RequestMapping(value = "container/{containerId}/account", method = RequestMethod.GET)
@@ -111,12 +113,11 @@ public class AccountController extends BaseController {
     }
 
 
-
     @PermissionVerify(name = "/container/{containerId}/account_create_owner", value = "创建账号")
     @RequestMapping(value = "/container/{containerId}/account", method = RequestMethod.POST)
     @ResourceVerify(value = ResourceVerifyContainerService.VERIFY_NAME)
     public ModelAndView createDefaultAccount(HttpServletRequest request,
-                                      @Valid @ModelAttribute("criteria") AccountCriteria criteria, BindingResult validResult) {
+                                             @Valid @ModelAttribute("criteria") AccountCriteria criteria, BindingResult validResult) {
         if (validResult.hasErrors()) {
             return formatIncorrect(request, validResult, "/authorize/accountCreate");
         }
@@ -132,8 +133,7 @@ public class AccountController extends BaseController {
     }
 
 
-
-    @PermissionVerify(value = "查看账号角色",name = "/authorize/account/{accountId}/roles_read_owner")
+    @PermissionVerify(value = "查看账号角色", name = "/authorize/account/{accountId}/roles_read_owner")
     @RequestMapping(value = {"/account/{accountId}/roles"})
     @ResourceVerify(ResourceVerifyAccountService.VERIFY_NAME)
     public ModelAndView accountHasRole(HttpServletRequest request,
@@ -141,10 +141,10 @@ public class AccountController extends BaseController {
         return view(request, "authorize/accountRole", authorizeService.hasRole(accountId));
     }
 
-    @PermissionVerify(value = "修改账号角色",name = "/authorize/account/{accountId}/role/{roleId}_update_owner")
+    @PermissionVerify(value = "修改账号角色", name = "/authorize/account/{accountId}/role/{roleId}_update_owner")
     @RequestMapping(value = "/account/{accountId}/role/{roleId}", method = RequestMethod.POST)
     @ResourceVerify(ResourceVerifyAccountService.VERIFY_NAME)
-    @ResourceVerify(value = ResourceVerifyRoleService.VERIFY_NAME,offset = 2)
+    @ResourceVerify(value = ResourceVerifyRoleService.VERIFY_NAME, offset = 2)
     public ModelAndView updateAccountRole(HttpServletRequest request,
                                           @PathVariable long accountId, @PathVariable long roleId, boolean award) {
 

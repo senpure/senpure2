@@ -8,7 +8,7 @@ import java.util.Date;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class AccountCriteria extends Criteria implements Serializable {
     private static final long serialVersionUID = 1379989838L;
@@ -47,6 +47,8 @@ public class AccountCriteria extends Criteria implements Serializable {
     //本次登录时间
     private Date loginDate;
     private String loginType;
+    //table [senpure_account][column = login_type] order
+    private String loginTypeOrder;
     private Boolean online;
     private String accountState;
     private String client;
@@ -61,7 +63,11 @@ public class AccountCriteria extends Criteria implements Serializable {
     private String lastLogoutTimeOrder;
     private Date lastLogoutDate;
     private String lastLoginType;
+    //table [senpure_account][column = last_login_type] order
+    private String lastLoginTypeOrder;
     private String lastLogoutType;
+    //table [senpure_account][column = last_logout_type] order
+    private String lastLogoutTypeOrder;
     private String lastLoginIp;
     private Long lastLoginIpNumber;
     private String lastLoginSource;
@@ -648,12 +654,32 @@ public class AccountCriteria extends Criteria implements Serializable {
         return loginType;
     }
 
+    /**
+     * get table [senpure_account][column = login_type] order
+     *
+     * @return
+     */
+    public String getLoginTypeOrder() {
+        return loginTypeOrder;
+    }
+
 
     public AccountCriteria setLoginType(String loginType) {
         if (loginType != null && loginType.trim().length() == 0) {
             return this;
         }
         this.loginType = loginType;
+        return this;
+    }
+
+    /**
+     * set table [senpure_account][column = login_type] order DESC||ASC
+     *
+     * @return
+     */
+    public AccountCriteria setLoginTypeOrder(String loginTypeOrder) {
+        this.loginTypeOrder = loginTypeOrder;
+        putSort("login_type", loginTypeOrder);
         return this;
     }
 
@@ -810,6 +836,15 @@ public class AccountCriteria extends Criteria implements Serializable {
         return lastLoginType;
     }
 
+    /**
+     * get table [senpure_account][column = last_login_type] order
+     *
+     * @return
+     */
+    public String getLastLoginTypeOrder() {
+        return lastLoginTypeOrder;
+    }
+
 
     public AccountCriteria setLastLoginType(String lastLoginType) {
         if (lastLoginType != null && lastLoginType.trim().length() == 0) {
@@ -819,9 +854,29 @@ public class AccountCriteria extends Criteria implements Serializable {
         return this;
     }
 
+    /**
+     * set table [senpure_account][column = last_login_type] order DESC||ASC
+     *
+     * @return
+     */
+    public AccountCriteria setLastLoginTypeOrder(String lastLoginTypeOrder) {
+        this.lastLoginTypeOrder = lastLoginTypeOrder;
+        putSort("last_login_type", lastLoginTypeOrder);
+        return this;
+    }
+
 
     public String getLastLogoutType() {
         return lastLogoutType;
+    }
+
+    /**
+     * get table [senpure_account][column = last_logout_type] order
+     *
+     * @return
+     */
+    public String getLastLogoutTypeOrder() {
+        return lastLogoutTypeOrder;
     }
 
 
@@ -830,6 +885,17 @@ public class AccountCriteria extends Criteria implements Serializable {
             return this;
         }
         this.lastLogoutType = lastLogoutType;
+        return this;
+    }
+
+    /**
+     * set table [senpure_account][column = last_logout_type] order DESC||ASC
+     *
+     * @return
+     */
+    public AccountCriteria setLastLogoutTypeOrder(String lastLogoutTypeOrder) {
+        this.lastLogoutTypeOrder = lastLogoutTypeOrder;
+        putSort("last_logout_type", lastLogoutTypeOrder);
         return this;
     }
 

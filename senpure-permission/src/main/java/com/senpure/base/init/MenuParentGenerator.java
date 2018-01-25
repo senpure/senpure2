@@ -32,7 +32,7 @@ public class MenuParentGenerator extends SpringContextRefreshEvent {
                 if (menuGenerator.i18nKey().length() > 0) {
                     menu.setI18nKey(menuGenerator.i18nKey());
                 } else {
-                    menu.setI18nKey(Pinyin.toAccount(menu.getText())[0]);
+                    menu.setI18nKey(Pinyin.toAccount(menu.getText())[0].replace(" ",".").toLowerCase());
                 }
                 if (menuGenerator.description().length() > 0) {
                     menu.setDescription(menuGenerator.description());
@@ -42,6 +42,7 @@ public class MenuParentGenerator extends SpringContextRefreshEvent {
                 }
                 menu.setIcon(menuGenerator.icon());
                 menu.setId(menuGenerator.id());
+                menu.setSort(menuGenerator.sort());
                 PermissionsGenerator.checkAndPutMenu(menu);
             }
 

@@ -2,6 +2,7 @@ package com.senpure.base.entity;
 
 
 import com.senpure.base.PermissionConstant;
+import com.senpure.base.annotation.Explain;
 
 import javax.persistence.*;
 
@@ -14,6 +15,8 @@ public class URIPermission extends LongAndVersionEntity{
 
     @Column
     private String uriAndMethod;
+    @Explain("是否从数据库更新过")
+    private Boolean databaseUpdate = false;
 
    // @JoinColumn(name = "permissionName" ,referencedColumnName = "name")
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -36,4 +39,11 @@ public class URIPermission extends LongAndVersionEntity{
         this.permission = permission;
     }
 
+    public Boolean getDatabaseUpdate() {
+        return databaseUpdate;
+    }
+
+    public void setDatabaseUpdate(Boolean databaseUpdate) {
+        this.databaseUpdate = databaseUpdate;
+    }
 }

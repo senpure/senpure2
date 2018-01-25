@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.demo.mapper.ClazzMapper">
     <resultMap id="clazzResultMap" type="com.senpure.demo.model.Clazz">
-        <id column="id" property="id" jdbcType="BIGINT"/>                         <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>          <!-- 乐观锁，版本控制 -->
-        <result column="age" property="age" jdbcType="INTEGER"/>                  <!-- 年级，如三年级 -->
-        <result column="num" property="num" jdbcType="INTEGER"/>                  <!-- 几班，如二班 -->
-        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/> <!-- 创建时间 -->
-        <result column="create_time" property="createTime" jdbcType="BIGINT"/>    <!-- 创建时间，时间戳 -->
+        <id     column="id"           property="id"          jdbcType="BIGINT"/>    <!-- 主键 -->
+        <result column="version"      property="version"     jdbcType="INTEGER"/>   <!-- 乐观锁，版本控制 -->
+        <result column="age"          property="age"         jdbcType="INTEGER"/>   <!-- 年级，如三年级 -->
+        <result column="num"          property="num"         jdbcType="INTEGER"/>   <!-- 几班，如二班 -->
+        <result column="create_date"  property="createDate"  jdbcType="TIMESTAMP"/> <!-- 创建时间 -->
+        <result column="create_time"  property="createTime"  jdbcType="BIGINT"/>    <!-- 创建时间，时间戳 -->
     </resultMap>
     <sql id="clazzAllColumns">
         id,version,age,num,create_date,create_time
@@ -35,11 +35,11 @@
             <if test="num != null">
                 and num = #{num}
             </if>
-            <if test="sdate != null">
-                and create_time >= #{sdate.time}
+            <if test="startDate != null">
+                and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and create_time &lt;= #{endDate.time}
             </if>
         </where>
     </delete>
@@ -125,11 +125,11 @@
                 <if test="id != null">
                     id = #{id}
                  </if>
-                <if test="sdate != null">
-                    and create_time >= #{sdate.time}
+                <if test="startDate != null">
+                    and create_time >= #{startDate.time}
                 </if>
-                <if test="edate != null">
-                    and create_time &lt;= #{edate.time}
+                <if test="endDate != null">
+                    and create_time &lt;= #{endDate.time}
                 </if>
                 <if test="version != null">
                     and version =  #{version}
@@ -155,11 +155,11 @@
             <if test="num != null">
                 and num = #{num}
             </if>
-            <if test="sdate != null">
-               and create_time >= #{sdate.time}
+            <if test="startDate != null">
+               and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                 and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                 and create_time &lt;= #{endDate.time}
             </if>
         </where>
     </select>
@@ -175,11 +175,11 @@
             <if test="num != null">
                 and num = #{num}
             </if>
-            <if test="sdate != null">
-                and create_time >= #{sdate.time}
+            <if test="startDate != null">
+                and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and create_time &lt;= #{endDate.time}
             </if>
         </where>
         <if test="hasOrder">

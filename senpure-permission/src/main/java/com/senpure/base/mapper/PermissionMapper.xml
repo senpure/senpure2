@@ -4,17 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.PermissionMapper">
     <resultMap id="permissionResultMap" type="com.senpure.base.model.Permission">
-        <id column="id" property="id" jdbcType="BIGINT"/>                           <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>            <!-- 乐观锁，版本控制 -->
-        <result column="name" property="name" jdbcType="VARCHAR"/>                  <!-- 字符串唯一标识 -->
-        <result column="readable_name" property="readableName" jdbcType="VARCHAR"/> <!-- 权限名 -->
-        <result column="database_update" property="databaseUpdate" jdbcType="BIT"/> <!-- 是否从数据库更新过 -->
-        <result column="type" property="type" jdbcType="VARCHAR"/>                  <!-- NORMAL 正常 ，OWNER 检查所有者，IGNORE 可以忽略(正常放行) -->
-        <result column="description" property="description" jdbcType="VARCHAR"/>
-        <result column="sort" property="sort" jdbcType="INTEGER"/>                  <!-- 排序 -->
+        <id     column="id"               property="id"              jdbcType="BIGINT"/>  <!-- 主键 -->
+        <result column="version"          property="version"         jdbcType="INTEGER"/> <!-- 乐观锁，版本控制 -->
+        <result column="name"             property="name"            jdbcType="VARCHAR"/> <!-- 字符串唯一标识 -->
+        <result column="readable_name"    property="readableName"    jdbcType="VARCHAR"/> <!-- 权限名 -->
+        <result column="database_update"  property="databaseUpdate"  jdbcType="BIT"/>     <!-- 是否从数据库更新过 -->
+        <result column="type"             property="type"            jdbcType="VARCHAR"/> <!-- NORMAL 正常 ，OWNER 检查所有者，IGNORE 可以忽略(正常放行) -->
+        <result column="offset"           property="offset"          jdbcType="VARCHAR"/> <!-- '1,2' type为OWNER 配合verifyName使用 -->
+        <result column="verify_name"      property="verifyName"      jdbcType="VARCHAR"/> <!-- 'containerResource',roleResource' type为OWNER 配合offset使用 -->
+        <result column="description"      property="description"     jdbcType="VARCHAR"/>
+        <result column="sort"             property="sort"            jdbcType="INTEGER"/> <!-- 排序 -->
     </resultMap>
     <sql id="permissionAllColumns">
-        id,version,name,readable_name,database_update,type,description,sort
+        id,version,name,readable_name,database_update,type,offset,verify_name,description,sort
     </sql>
 
     <!--主键查找-->
@@ -43,6 +45,12 @@
             <if test="type != null">
                 and type = #{type}
             </if>
+            <if test="offset != null">
+                and offset = #{offset}
+            </if>
+            <if test="verifyName != null">
+                and verify_name = #{verifyName}
+            </if>
             <if test="description != null">
                 and description = #{description}
             </if>
@@ -55,7 +63,7 @@
     <!-- 取对象的值，直接插入数据库(包括空值),version字段(版本控制)，被初始化为1-->
     <insert id="save" parameterType="com.senpure.base.model.Permission" >
         insert into senpure_permission (<include refid="permissionAllColumns"/>)
-        values (#{id},1,#{name},#{readableName},#{databaseUpdate},#{type},#{description},#{sort})
+        values (#{id},1,#{name},#{readableName},#{databaseUpdate},#{type},#{offset},#{verifyName},#{description},#{sort})
     </insert>
 
     <!-- 取对象的值，直接插入数据库(包括空值),version字段(版本控制)，被初始化为1-->
@@ -63,7 +71,7 @@
         insert into senpure_permission (<include refid="permissionAllColumns"/>)
         values
         <foreach collection="list" item="item" index="index" separator="," >
-            (#{item.id},1,#{item.name},#{item.readableName},#{item.databaseUpdate},#{item.type},#{item.description},#{item.sort})
+            (#{item.id},1,#{item.name},#{item.readableName},#{item.databaseUpdate},#{item.type},#{item.offset},#{item.verifyName},#{item.description},#{item.sort})
         </foreach>
     </insert>
 
@@ -85,6 +93,12 @@
             <if test="type != null">
                 type = #{type},
             </if>
+            <if test="offset != null">
+                offset = #{offset},
+            </if>
+            <if test="verifyName != null">
+                verify_name = #{verifyName},
+            </if>
             <if test="description != null">
                 description = #{description},
             </if>
@@ -105,6 +119,8 @@
             readable_name = #{readableName},
             database_update = #{databaseUpdate},
             type = #{type},
+            offset = #{offset},
+            verify_name = #{verifyName},
             description = #{description},
             sort = #{sort},
         </set>
@@ -135,6 +151,12 @@
                 </if>
                 <if test="type != null">
                     type = #{type},
+                </if>
+                <if test="offset != null">
+                    offset = #{offset},
+                </if>
+                <if test="verifyName != null">
+                    verify_name = #{verifyName},
                 </if>
                 <if test="description != null">
                     description = #{description},
@@ -177,6 +199,12 @@
             <if test="type != null">
                 and type = #{type}
             </if>
+            <if test="offset != null">
+                and offset = #{offset}
+            </if>
+            <if test="verifyName != null">
+                and verify_name = #{verifyName}
+            </if>
             <if test="description != null">
                 and description = #{description}
             </if>
@@ -202,6 +230,12 @@
             </if>
             <if test="type != null">
                 and type = #{type}
+            </if>
+            <if test="offset != null">
+                and offset = #{offset}
+            </if>
+            <if test="verifyName != null">
+                and verify_name = #{verifyName}
             </if>
             <if test="description != null">
                 and description = #{description}

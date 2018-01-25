@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class RoleValue implements Serializable {
     private static final long serialVersionUID = 1099570973L;

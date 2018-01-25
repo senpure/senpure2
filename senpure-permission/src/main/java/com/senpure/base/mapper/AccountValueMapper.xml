@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.AccountValueMapper">
     <resultMap id="accountValueResultMap" type="com.senpure.base.model.AccountValue">
-        <id column="id" property="id" jdbcType="BIGINT"/>                        <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>         <!-- 乐观锁，版本控制 -->
-        <result column="account_key" property="key" jdbcType="VARCHAR"/>
-        <result column="account_value" property="value" jdbcType="VARCHAR"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
-        <result column="account_id" property="accountId" jdbcType="BIGINT"/>     <!-- 外键,modelName:Account,tableName:senpure_account -->
+        <id     column="id"             property="id"           jdbcType="BIGINT"/>  <!-- 主键 -->
+        <result column="version"        property="version"      jdbcType="INTEGER"/> <!-- 乐观锁，版本控制 -->
+        <result column="account_key"    property="key"          jdbcType="VARCHAR"/>
+        <result column="account_value"  property="value"        jdbcType="VARCHAR"/>
+        <result column="description"    property="description"  jdbcType="VARCHAR"/>
+        <result column="account_id"     property="accountId"    jdbcType="BIGINT"/>  <!-- 外键,modelName:Account,tableName:senpure_account -->
     </resultMap>
     <sql id="accountValueAllColumns">
         id,version,account_key,account_value,description,account_id

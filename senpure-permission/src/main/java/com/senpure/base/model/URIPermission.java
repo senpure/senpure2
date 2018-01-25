@@ -4,16 +4,18 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class URIPermission implements Serializable {
-    private static final long serialVersionUID = 274982358L;
+    private static final long serialVersionUID = 1046435846L;
 
     //主键
     private Long id;
     //乐观锁，版本控制
     private Integer version;
     private String uriAndMethod;
+    //是否从数据库更新过
+    private Boolean databaseUpdate;
     //外键,modelName:Permission,tableName:senpure_permission
     private Long permissionId;
 
@@ -43,6 +45,25 @@ public class URIPermission implements Serializable {
 
     public URIPermission setUriAndMethod(String uriAndMethod) {
         this.uriAndMethod = uriAndMethod;
+        return this;
+    }
+
+    /**
+     * get 是否从数据库更新过
+     *
+     * @return
+     */
+    public Boolean getDatabaseUpdate() {
+        return databaseUpdate;
+    }
+
+    /**
+     * set 是否从数据库更新过
+     *
+     * @return
+     */
+    public URIPermission setDatabaseUpdate(Boolean databaseUpdate) {
+        this.databaseUpdate = databaseUpdate;
         return this;
     }
 
@@ -90,6 +111,7 @@ public class URIPermission implements Serializable {
                 + "id=" + id
                 + ",version=" + version
                 + ",uriAndMethod=" + uriAndMethod
+                + ",databaseUpdate=" + databaseUpdate
                 + ",permissionId=" + permissionId
                 + "}";
     }

@@ -6,10 +6,12 @@ import com.senpure.base.spring.VerifyInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMapping;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 /**
  * Created by Administrator on 2017/1/20.
@@ -25,9 +27,9 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
     private MultipleInterceptor multipleInterceptor;
     @Autowired
     private VerifyInterceptor verifyInterceptor;
-
-
-
+    @Autowired
+    EndpointHandlerMapping endpointHandlerMapping;
+    RequestMappingHandlerMapping requestMappingHandlerMapping;
     @Bean
     public URLInfoInterceptor getUrlInfoInterceptor() {
         return new URLInfoInterceptor();
@@ -45,6 +47,7 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
         return new VerifyInterceptor();
     }
 
+
     public InterceptorConfiguration() {
         super();
     }
@@ -57,10 +60,11 @@ public class InterceptorConfiguration extends WebMvcConfigurerAdapter {
         logger.debug("注册拦截器");
         // urlInfoInterceptor=getUrlInfoInterceptor();
         registry.addInterceptor(urlInfoInterceptor);
-        registry.addInterceptor(verifyInterceptor).excludePathPatterns("/authorize/login*", "/authorize/exit");
-        registry.addInterceptor(multipleInterceptor).excludePathPatterns("/resources/**");
-        logger.debug(urlInfoInterceptor.toString());
-        super.addInterceptors(registry);
+      //  registry.addInterceptor(verifyInterceptor).excludePathPatterns("/authorize/login*", "/authorize/exit");
+       // registry.addInterceptor(multipleInterceptor).excludePathPatterns("/resources/**");
+        registry.addInterceptor(multipleInterceptor);
+
+
 
     }
 }

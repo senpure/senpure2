@@ -15,7 +15,7 @@ public class SystemValue extends LongAndVersionEntity{
     private static final long serialVersionUID = 1068563978298321852L;
     @Column(length = 32,nullable = false)
     private String type;
-    @Column(name = "systemKey",length = 24,nullable = false)
+    @Column(name = "systemKey",length = 32,nullable = false)
     private String key;
     @Column(name = "systemValue",length = 128,nullable = false)
     private String value;

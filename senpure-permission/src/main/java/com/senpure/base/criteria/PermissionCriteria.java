@@ -7,10 +7,10 @@ import java.io.Serializable;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class PermissionCriteria extends Criteria implements Serializable {
-    private static final long serialVersionUID = 1561639894L;
+    private static final long serialVersionUID = 534669811L;
 
     //主键
     private Long id;
@@ -26,6 +26,14 @@ public class PermissionCriteria extends Criteria implements Serializable {
     private Boolean databaseUpdate;
     //NORMAL 正常 ，OWNER 检查所有者，IGNORE 可以忽略(正常放行)
     private String type;
+    //table [senpure_permission][column = type] order
+    private String typeOrder;
+    //'1,2' type为OWNER 配合verifyName使用
+    private String offset;
+    //'containerResource',roleResource' type为OWNER 配合offset使用
+    private String verifyName;
+    //table [senpure_permission][column = verify_name] order
+    private String verifyNameOrder;
     private String description;
     //排序
     private Integer sort;
@@ -36,6 +44,8 @@ public class PermissionCriteria extends Criteria implements Serializable {
         permission.setReadableName(criteria.getReadableName());
         permission.setDatabaseUpdate(criteria.getDatabaseUpdate());
         permission.setType(criteria.getType());
+        permission.setOffset(criteria.getOffset());
+        permission.setVerifyName(criteria.getVerifyName());
         permission.setDescription(criteria.getDescription());
         permission.setSort(criteria.getSort());
         permission.setVersion(criteria.getVersion());
@@ -67,6 +77,12 @@ public class PermissionCriteria extends Criteria implements Serializable {
         }
         if (getType() != null) {
             permission.setType(getType());
+        }
+        if (getOffset() != null) {
+            permission.setOffset(getOffset());
+        }
+        if (getVerifyName() != null) {
+            permission.setVerifyName(getVerifyName());
         }
         if (getDescription() != null) {
             permission.setDescription(getDescription());
@@ -105,6 +121,12 @@ public class PermissionCriteria extends Criteria implements Serializable {
         }
         if (type != null) {
             sb.append("type=").append(type).append(",");
+        }
+        if (offset != null) {
+            sb.append("offset=").append(offset).append(",");
+        }
+        if (verifyName != null) {
+            sb.append("verifyName=").append(verifyName).append(",");
         }
         if (description != null) {
             sb.append("description=").append(description).append(",");
@@ -229,6 +251,15 @@ public class PermissionCriteria extends Criteria implements Serializable {
     }
 
     /**
+     * get table [senpure_permission][column = type] order
+     *
+     * @return
+     */
+    public String getTypeOrder() {
+        return typeOrder;
+    }
+
+    /**
      * set NORMAL 正常 ，OWNER 检查所有者，IGNORE 可以忽略(正常放行)
      *
      * @return
@@ -238,6 +269,83 @@ public class PermissionCriteria extends Criteria implements Serializable {
             return this;
         }
         this.type = type;
+        return this;
+    }
+
+    /**
+     * set table [senpure_permission][column = type] order DESC||ASC
+     *
+     * @return
+     */
+    public PermissionCriteria setTypeOrder(String typeOrder) {
+        this.typeOrder = typeOrder;
+        putSort("type", typeOrder);
+        return this;
+    }
+
+
+    /**
+     * get '1,2' type为OWNER 配合verifyName使用
+     *
+     * @return
+     */
+    public String getOffset() {
+        return offset;
+    }
+
+    /**
+     * set '1,2' type为OWNER 配合verifyName使用
+     *
+     * @return
+     */
+    public PermissionCriteria setOffset(String offset) {
+        if (offset != null && offset.trim().length() == 0) {
+            return this;
+        }
+        this.offset = offset;
+        return this;
+    }
+
+
+    /**
+     * get 'containerResource',roleResource' type为OWNER 配合offset使用
+     *
+     * @return
+     */
+    public String getVerifyName() {
+        return verifyName;
+    }
+
+    /**
+     * get table [senpure_permission][column = verify_name] order
+     *
+     * @return
+     */
+    public String getVerifyNameOrder() {
+        return verifyNameOrder;
+    }
+
+    /**
+     * set 'containerResource',roleResource' type为OWNER 配合offset使用
+     *
+     * @return
+     */
+    public PermissionCriteria setVerifyName(String verifyName) {
+        if (verifyName != null && verifyName.trim().length() == 0) {
+            return this;
+        }
+        this.verifyName = verifyName;
+        return this;
+    }
+
+    /**
+     * set table [senpure_permission][column = verify_name] order DESC||ASC
+     *
+     * @return
+     */
+    public PermissionCriteria setVerifyNameOrder(String verifyNameOrder) {
+        this.verifyNameOrder = verifyNameOrder;
+        putSort("verify_name", verifyNameOrder);
         return this;
     }
 

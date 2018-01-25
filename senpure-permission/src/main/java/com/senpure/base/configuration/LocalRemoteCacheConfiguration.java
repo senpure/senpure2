@@ -25,7 +25,7 @@ import java.util.Map;
 
 @Configuration
 @EnableConfigurationProperties(CacheProperties.class)
-@ConditionalOnClass({RedisTemplate.class})
+@ConditionalOnClass({RedisTemplate.class, CacheManager.class})
 public class LocalRemoteCacheConfiguration {
     @Autowired
     private CacheProperties cacheProperties;
@@ -42,13 +42,9 @@ public class LocalRemoteCacheConfiguration {
         if (!cacheNames.isEmpty()) {
             cacheManager.setCacheNames(cacheNames);
         }
-
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-
-
         // redisTemplate.setValueSerializer(new JDK(getClass().getClassLoader()));
-       redisTemplate.setValueSerializer(new FastJsonRedisSerializer());
+        redisTemplate.setValueSerializer(new FastJsonRedisSerializer());
         logger.debug("redisTemplate key {} ", redisTemplate.getKeySerializer());
         Map<String, Long> expires = new HashMap<>(16);
         expires.put("", 0L);
@@ -102,7 +98,7 @@ public class LocalRemoteCacheConfiguration {
 
         @Override
         public Object deserialize(byte[] bytes) {
-           // System.out.println("get bytes len " + bytes.length);
+            // System.out.println("get bytes len " + bytes.length);
             return super.deserialize(bytes);
         }
 

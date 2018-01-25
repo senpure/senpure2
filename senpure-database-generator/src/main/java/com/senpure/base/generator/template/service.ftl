@@ -39,18 +39,18 @@ public class ${name}Service extends BaseService {
         return ${nameRule(name)}Mapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(${id.clazzType} ${id.name}) {
         int result = ${nameRule(name)}Mapper.delete(${id.name});
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int delete(${name?cap_first}Criteria criteria) {
         return ${nameRule(name)}Mapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(${name?cap_first} ${nameRule(name)}) {
 <#if !id.databaseId >
     <#if id.clazzType =="Long" || id.clazzType =="long">
@@ -64,7 +64,7 @@ public class ${name}Service extends BaseService {
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<${name?cap_first}> ${pluralize(nameRule(name))}) {
         if (${pluralize(nameRule(name))} == null || ${pluralize(nameRule(name))}.size() == 0) {
             return 0;
@@ -84,7 +84,7 @@ public class ${name}Service extends BaseService {
         return ${nameRule(name)}Mapper.saveBatch(${pluralize(nameRule(name))});
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(${name?cap_first}Criteria criteria) {
 <#if !id.databaseId >
     <#if id.clazzType =="Long" || id.clazzType =="long">
@@ -104,7 +104,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(${name?cap_first} ${nameRule(name)}) {
         int updateCount = ${nameRule(name)}Mapper.update(${nameRule(name)});
         if (updateCount == 0) {
@@ -118,7 +118,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int update(${name?cap_first}Criteria criteria) {
         int updateCount = ${nameRule(name)}Mapper.updateByCriteria(criteria);
         if (updateCount == 0 && criteria.get${version.name?cap_first}() != null
@@ -128,7 +128,7 @@ public class ${name}Service extends BaseService {
         return updateCount;
     }
 <#else >
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(${name?cap_first} ${nameRule(name)}) {
         int updateCount = ${nameRule(name)}Mapper.update(${nameRule(name)});
         if (updateCount == 0) {

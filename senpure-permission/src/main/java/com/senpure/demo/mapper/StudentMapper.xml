@@ -4,17 +4,17 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.demo.mapper.StudentMapper">
     <resultMap id="studentResultMap" type="com.senpure.demo.model.Student">
-        <id column="id" property="id" jdbcType="BIGINT"/>                         <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>          <!-- 乐观锁，版本控制 -->
-        <result column="name" property="name" jdbcType="VARCHAR"/>
-        <result column="nick" property="nick" jdbcType="VARCHAR"/>                <!-- 自己取得外号，如齐天大圣，狗蛋 -->
-        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/> <!-- 创建时间 -->
-        <result column="create_time" property="createTime" jdbcType="BIGINT"/>    <!-- 创建时间，时间戳 -->
-        <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
-        <result column="age" property="age" jdbcType="INTEGER"/>
-        <result column="num" property="num" jdbcType="INTEGER"/>                  <!-- 学号 -->
-        <result column="good" property="good" jdbcType="BIT"/>
-        <result column="clazz_id" property="clazzId" jdbcType="BIGINT"/>          <!-- 所属班级(外键,modelName:Clazz,tableName:demo_class) -->
+        <id     column="id"            property="id"           jdbcType="BIGINT"/>    <!-- 主键 -->
+        <result column="version"       property="version"      jdbcType="INTEGER"/>   <!-- 乐观锁，版本控制 -->
+        <result column="name"          property="name"         jdbcType="VARCHAR"/>
+        <result column="nick"          property="nick"         jdbcType="VARCHAR"/>   <!-- 自己取得外号，如齐天大圣，狗蛋 -->
+        <result column="create_date"   property="createDate"   jdbcType="TIMESTAMP"/> <!-- 创建时间 -->
+        <result column="create_time"   property="createTime"   jdbcType="BIGINT"/>    <!-- 创建时间，时间戳 -->
+        <result column="phone_number"  property="phoneNumber"  jdbcType="VARCHAR"/>
+        <result column="age"           property="age"          jdbcType="INTEGER"/>
+        <result column="num"           property="num"          jdbcType="INTEGER"/>   <!-- 学号 -->
+        <result column="good"          property="good"         jdbcType="BIT"/>
+        <result column="clazz_id"      property="clazzId"      jdbcType="BIGINT"/>    <!-- 所属班级(外键,modelName:Clazz,tableName:demo_class) -->
     </resultMap>
     <sql id="studentAllColumns">
         id,version,name,nick,create_date,create_time,phone_number,age,num,good,clazz_id
@@ -43,11 +43,11 @@
             <if test="nick != null">
                 and nick = #{nick}
             </if>
-            <if test="sdate != null">
-                and create_time >= #{sdate.time}
+            <if test="startDate != null">
+                and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and create_time &lt;= #{endDate.time}
             </if>
             <if test="phoneNumber != null">
                 and phone_number = #{phoneNumber}
@@ -180,11 +180,11 @@
                 <if test="id != null">
                     id = #{id}
                  </if>
-                <if test="sdate != null">
-                    and create_time >= #{sdate.time}
+                <if test="startDate != null">
+                    and create_time >= #{startDate.time}
                 </if>
-                <if test="edate != null">
-                    and create_time &lt;= #{edate.time}
+                <if test="endDate != null">
+                    and create_time &lt;= #{endDate.time}
                 </if>
                 <if test="version != null">
                     and version =  #{version}
@@ -213,11 +213,11 @@
             <if test="nick != null">
                 and nick = #{nick}
             </if>
-            <if test="sdate != null">
-               and create_time >= #{sdate.time}
+            <if test="startDate != null">
+               and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                 and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                 and create_time &lt;= #{endDate.time}
             </if>
             <if test="phoneNumber != null">
                 and phone_number = #{phoneNumber}
@@ -248,11 +248,11 @@
             <if test="nick != null">
                 and nick = #{nick}
             </if>
-            <if test="sdate != null">
-                and create_time >= #{sdate.time}
+            <if test="startDate != null">
+                and create_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and create_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and create_time &lt;= #{endDate.time}
             </if>
             <if test="phoneNumber != null">
                 and phone_number = #{phoneNumber}

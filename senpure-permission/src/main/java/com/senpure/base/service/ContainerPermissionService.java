@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:20
  */
 @Service
 @CacheConfig(cacheNames = "containerPermission")
@@ -58,27 +58,27 @@ public class ContainerPermissionService extends BaseService {
         return containerPermissionMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = containerPermissionMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(ContainerPermissionCriteria criteria) {
         return containerPermissionMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(ContainerPermission containerPermission) {
         containerPermission.setId(idGenerator.nextId());
         int result = containerPermissionMapper.save(containerPermission);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<ContainerPermission> containerPermissions) {
         if (containerPermissions == null || containerPermissions.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class ContainerPermissionService extends BaseService {
         return containerPermissionMapper.saveBatch(containerPermissions);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(ContainerPermissionCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = containerPermissionMapper.save(criteria.toContainerPermission());
@@ -101,7 +101,7 @@ public class ContainerPermissionService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#containerPermission.id")
     public boolean update(ContainerPermission containerPermission) {
         int updateCount = containerPermissionMapper.update(containerPermission);
@@ -116,7 +116,7 @@ public class ContainerPermissionService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(ContainerPermissionCriteria criteria) {
         int updateCount = containerPermissionMapper.updateByCriteria(criteria);

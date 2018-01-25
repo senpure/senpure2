@@ -98,7 +98,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)(rollbackFor = Exception.class)
     public boolean delete(${id.clazzType} ${id.name}) {
         localCache.remove(cacheKey(${id.name}));
         int result = ${nameRule(name)}Mapper.delete(${id.name});
@@ -110,7 +110,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int delete(${name?cap_first}Criteria criteria) {
         int result = ${nameRule(name)}Mapper.deleteByCriteria(criteria);
         if (result > 0) {
@@ -119,7 +119,7 @@ public class ${name}Service extends BaseService {
         return result;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(${name?cap_first} ${nameRule(name)}) {
 <#if !id.databaseId >
     <#if id.clazzType =="Long" || id.clazzType =="long">
@@ -133,7 +133,7 @@ public class ${name}Service extends BaseService {
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<${name?cap_first}> ${pluralize(nameRule(name))}) {
         if (${pluralize(nameRule(name))} == null || ${pluralize(nameRule(name))}.size() == 0) {
             return 0;
@@ -154,7 +154,7 @@ public class ${name}Service extends BaseService {
         return size;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(${name?cap_first}Criteria criteria) {
 <#if !id.databaseId >
     <#if id.clazzType =="Long" || id.clazzType =="long">
@@ -175,7 +175,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(${name?cap_first} ${nameRule(name)}) {
         localCache.remove(cacheKey(${nameRule(name)}.get${id.name?cap_first}()));
         int updateCount = ${nameRule(name)}Mapper.update(${nameRule(name)});
@@ -191,7 +191,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int update(${name?cap_first}Criteria criteria) {
         if (criteria.get${id.name?cap_first}() != null) {
             localCache.remove(cacheKey(criteria.get${id.name?cap_first}()));
@@ -212,7 +212,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean update(${name?cap_first} ${nameRule(name)}) {
         localCache.remove(cacheKey(${nameRule(name)}.get${id.name?cap_first}()));
         int updateCount = ${nameRule(name)}Mapper.update(${nameRule(name)});

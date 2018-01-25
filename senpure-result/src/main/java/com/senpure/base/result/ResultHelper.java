@@ -53,6 +53,15 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
         }
 
     }
+    public static String getMessage(String key, Locale locale) {
+        try {
+            return ResourceBundle.getBundle(BASE_NAME, locale).getString(key);
+        } catch (MissingResourceException e) {
+
+            return "Message[" + key + "]";
+        }
+
+    }
 
     public static String getMessage(int code, Locale locale, Object... args) {
 

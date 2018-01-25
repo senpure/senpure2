@@ -4,12 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.ContainerPermissionMapper">
     <resultMap id="containerPermissionResultMap" type="com.senpure.base.model.ContainerPermission">
-        <id column="id" property="id" jdbcType="BIGINT"/>                          <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>           <!-- 乐观锁，版本控制 -->
-        <result column="expiry_time" property="expiryTime" jdbcType="BIGINT"/>
-        <result column="expiry_date" property="expiryDate" jdbcType="TIMESTAMP"/>
-        <result column="container_id" property="containerId" jdbcType="INTEGER"/>  <!-- 外键,modelName:Container,tableName:senpure_container -->
-        <result column="permission_id" property="permissionId" jdbcType="BIGINT"/> <!-- 外键,modelName:Permission,tableName:senpure_permission -->
+        <id     column="id"             property="id"            jdbcType="BIGINT"/>    <!-- 主键 -->
+        <result column="version"        property="version"       jdbcType="INTEGER"/>   <!-- 乐观锁，版本控制 -->
+        <result column="expiry_time"    property="expiryTime"    jdbcType="BIGINT"/>
+        <result column="expiry_date"    property="expiryDate"    jdbcType="TIMESTAMP"/>
+        <result column="container_id"   property="containerId"   jdbcType="INTEGER"/>   <!-- 外键,modelName:Container,tableName:senpure_container -->
+        <result column="permission_id"  property="permissionId"  jdbcType="BIGINT"/>    <!-- 外键,modelName:Permission,tableName:senpure_permission -->
     </resultMap>
     <sql id="containerPermissionAllColumns">
         id,version,expiry_time,expiry_date,container_id,permission_id
@@ -35,11 +35,11 @@
             <if test="permissionId != null">
                 and permission_id = #{permissionId}
             </if>
-            <if test="sdate != null">
-                and expiry_time >= #{sdate.time}
+            <if test="startDate != null">
+                and expiry_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and expiry_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and expiry_time &lt;= #{endDate.time}
             </if>
         </where>
     </delete>
@@ -125,11 +125,11 @@
                 <if test="id != null">
                     id = #{id}
                  </if>
-                <if test="sdate != null">
-                    and expiry_time >= #{sdate.time}
+                <if test="startDate != null">
+                    and expiry_time >= #{startDate.time}
                 </if>
-                <if test="edate != null">
-                    and expiry_time &lt;= #{edate.time}
+                <if test="endDate != null">
+                    and expiry_time &lt;= #{endDate.time}
                 </if>
                 <if test="version != null">
                     and version =  #{version}
@@ -155,11 +155,11 @@
             <if test="permissionId != null">
                 and permission_id = #{permissionId}
             </if>
-            <if test="sdate != null">
-               and expiry_time >= #{sdate.time}
+            <if test="startDate != null">
+               and expiry_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                 and expiry_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                 and expiry_time &lt;= #{endDate.time}
             </if>
         </where>
     </select>
@@ -175,11 +175,11 @@
             <if test="permissionId != null">
                 and permission_id = #{permissionId}
             </if>
-            <if test="sdate != null">
-                and expiry_time >= #{sdate.time}
+            <if test="startDate != null">
+                and expiry_time >= #{startDate.time}
             </if>
-            <if test="edate != null">
-                and expiry_time &lt;= #{edate.time}
+            <if test="endDate != null">
+                and expiry_time &lt;= #{endDate.time}
             </if>
         </where>
         <if test="hasOrder">

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "role")
@@ -58,27 +58,27 @@ public class RoleService extends BaseService {
         return roleMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = roleMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(RoleCriteria criteria) {
         return roleMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(Role role) {
         role.setId(idGenerator.nextId());
         int result = roleMapper.save(role);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<Role> roles) {
         if (roles == null || roles.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class RoleService extends BaseService {
         return roleMapper.saveBatch(roles);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(RoleCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = roleMapper.save(criteria.toRole());
@@ -101,7 +101,7 @@ public class RoleService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#role.id")
     public boolean update(Role role) {
         int updateCount = roleMapper.update(role);
@@ -116,7 +116,7 @@ public class RoleService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(RoleCriteria criteria) {
         int updateCount = roleMapper.updateByCriteria(criteria);
@@ -180,6 +180,14 @@ public class RoleService extends BaseService {
         return roles.get(0);
     }
 
+    public List<Role> findByContainerId(Integer containerId) {
+        RoleCriteria criteria = new RoleCriteria();
+        criteria.setUsePage(false);
+        criteria.setContainerId(containerId);
+        List<Role> roles = roleMapper.findByCriteria(criteria);
+        return roles;
+    }
+
     public Role findByName(String name) {
         RoleCriteria criteria = new RoleCriteria();
         criteria.setUsePage(false);
@@ -189,14 +197,6 @@ public class RoleService extends BaseService {
             return null;
         }
         return roles.get(0);
-    }
-
-    public List<Role> findByContainerId(Integer containerId) {
-        RoleCriteria criteria = new RoleCriteria();
-        criteria.setUsePage(false);
-        criteria.setContainerId(containerId);
-        List<Role> roles = roleMapper.findByCriteria(criteria);
-        return roles;
     }
 
 }

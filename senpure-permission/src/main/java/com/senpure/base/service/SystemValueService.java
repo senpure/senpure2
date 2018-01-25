@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "systemValue")
@@ -58,27 +58,27 @@ public class SystemValueService extends BaseService {
         return systemValueMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = systemValueMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(SystemValueCriteria criteria) {
         return systemValueMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(SystemValue systemValue) {
         systemValue.setId(idGenerator.nextId());
         int result = systemValueMapper.save(systemValue);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<SystemValue> systemValues) {
         if (systemValues == null || systemValues.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class SystemValueService extends BaseService {
         return systemValueMapper.saveBatch(systemValues);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(SystemValueCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = systemValueMapper.save(criteria.toSystemValue());
@@ -101,7 +101,7 @@ public class SystemValueService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#systemValue.id")
     public boolean update(SystemValue systemValue) {
         int updateCount = systemValueMapper.update(systemValue);
@@ -116,7 +116,7 @@ public class SystemValueService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(SystemValueCriteria criteria) {
         int updateCount = systemValueMapper.updateByCriteria(criteria);

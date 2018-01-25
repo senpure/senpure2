@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 @Service
 @CacheConfig(cacheNames = "permissionMenu")
@@ -58,27 +58,27 @@ public class PermissionMenuService extends BaseService {
         return permissionMenuMapper.findAll();
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
         int result = permissionMenuMapper.delete(id);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int delete(PermissionMenuCriteria criteria) {
         return permissionMenuMapper.deleteByCriteria(criteria);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(PermissionMenu permissionMenu) {
         permissionMenu.setId(idGenerator.nextId());
         int result = permissionMenuMapper.save(permissionMenu);
         return result == 1;
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public int save(List<PermissionMenu> permissionMenus) {
         if (permissionMenus == null || permissionMenus.size() == 0) {
             return 0;
@@ -89,7 +89,7 @@ public class PermissionMenuService extends BaseService {
         return permissionMenuMapper.saveBatch(permissionMenus);
     }
 
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public boolean save(PermissionMenuCriteria criteria) {
         criteria.setId(idGenerator.nextId());
         int result = permissionMenuMapper.save(criteria.toPermissionMenu());
@@ -101,7 +101,7 @@ public class PermissionMenuService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#permissionMenu.id")
     public boolean update(PermissionMenu permissionMenu) {
         int updateCount = permissionMenuMapper.update(permissionMenu);
@@ -116,7 +116,7 @@ public class PermissionMenuService extends BaseService {
      *
      * @return
      */
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
     public int update(PermissionMenuCriteria criteria) {
         int updateCount = permissionMenuMapper.updateByCriteria(criteria);

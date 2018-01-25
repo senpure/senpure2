@@ -44,6 +44,8 @@ public class AuthorizeService extends BaseService {
     private ContainerService containerService;
     @Autowired
     private RoleService roleService;
+
+    private List<Runnable> initWorks = new ArrayList<>();
     private List<Menu> directMenus = new ArrayList<>();
 
     public List<Menu> getDirectMenus() {
@@ -147,6 +149,7 @@ public class AuthorizeService extends BaseService {
             menu.setId(m.getId());
             menu.setText(m.getText());
             menu.setUri(m.getUri());
+            menu.setSort(m.getSort());
             viewMenus.put(menuId, menu);
             if (m.getParentId() == null) {
                 menu.setParentId(0);
@@ -226,13 +229,12 @@ public class AuthorizeService extends BaseService {
                         logger.info("{},在数据库中存在，并且产生了修改，以数据库中的数据为准不做修改\ncode{}\ndatabase{}",
                                 beforePermission.getName(), permission, beforePermission);
                     } else {
-                        beforePermission.setDescription(permission.getDescription());
-                        beforePermission.setReadableName(permission.getReadableName());
-                        beforePermission.setType(permission.getType());
-                        beforePermission.setSort(permission.getSort());
+                        permission.setId(beforePermission.getId());
+                        permission.setVersion(beforePermission.getVersion());
                         logger.debug("{},更新{}", permission.getName(), permission);
-                        updatePermissions.add(beforePermission);
+                        updatePermissions.add(permission);
                     }
+                    //更新permission条件下检查uriPermission是否需要save
                     List<URIPermission> uriPermissions = uriPermissionMap.get(permission.getName());
                     for (URIPermission uriPermission : uriPermissions) {
                         boolean saveUri = true;
@@ -240,7 +242,10 @@ public class AuthorizeService extends BaseService {
                         for (URIPermission beforeURIPermission : beforeURIPermissions) {
                             if (beforeURIPermission.getPermissionId().longValue() == beforePermission.getId()) {
                                 saveUri = false;
-                                break;
+
+                            }
+                            else {
+
                             }
                         }
                         if (saveUri) {
@@ -250,7 +255,6 @@ public class AuthorizeService extends BaseService {
                     }
                     break;
                 }
-
             }
             if (save) {
                 savePermissions.add(permission);
@@ -324,12 +328,11 @@ public class AuthorizeService extends BaseService {
     private void deleteDirtyUri(Map<String, List<URIPermission>> uriPermissionMap) {
         AtomicReference<List<URIPermission>> uriPermissions = new AtomicReference<>(new ArrayList<>());
         uriPermissionMap.forEach((key, uris) -> uriPermissions.get().addAll(uris));
-
         List<URIPermission> beforeUris = uriPermissionService.findAll();
         for (URIPermission before : beforeUris) {
             boolean dirty = true;
             for (URIPermission uriPermission : uriPermissions.get()) {
-                if (uriPermission.getUriAndMethod().equals(before.getUriAndMethod())) {
+                if (before.getDatabaseUpdate() || uriPermission.getUriAndMethod().equals(before.getUriAndMethod())) {
                     dirty = false;
                     break;
                 }
@@ -343,7 +346,7 @@ public class AuthorizeService extends BaseService {
 
     public void syncMenu(Collection<Menu> menus) {
         List<Menu> beforeMenus = menuService.findAll();
-        deleteDirtyMenu(menus,beforeMenus );
+        deleteDirtyMenu(menus, beforeMenus);
 
         List<Menu> updateMenus = new ArrayList<>(56);
         List<Menu> saveMenus = new ArrayList<>(56);
@@ -377,20 +380,19 @@ public class AuthorizeService extends BaseService {
     }
 
     public void syncMenuPermission(Collection<PermissionMenu> permissionMenus) {
-        List<PermissionMenu> beforePermisisonMenus = permissionMenuService.findAll();
+        List<PermissionMenu> beforePermissionMenus = permissionMenuService.findAll();
         List<PermissionMenu> savePermissionMenus = new ArrayList<>(56);
         List<PermissionMenu> updatePermissionMenus = new ArrayList<>(56);
         for (PermissionMenu permissionMenu : permissionMenus) {
             boolean save = true;
-            for (PermissionMenu beforePermissionMenu : beforePermisisonMenus) {
-                if (beforePermissionMenu.getMenuId().intValue() == permissionMenu.getMenuId()
-                        && beforePermissionMenu.getPermissionName().equals(permissionMenu.getPermissionName())) {
+            for (PermissionMenu beforePermissionMenu : beforePermissionMenus) {
+                if (beforePermissionMenu.getMenuId().intValue() == permissionMenu.getMenuId()) {
                     save = false;
                     if (!beforePermissionMenu.getDataBaseUpdate()) {
-                        beforePermissionMenu.setMenuId(permissionMenu.getMenuId());
-                        beforePermissionMenu.setPermissionName(permissionMenu.getPermissionName());
-                        logger.debug("更新{}", beforePermissionMenu);
-                        updatePermissionMenus.add(beforePermissionMenu);
+                        permissionMenu.setId(beforePermissionMenu.getId());
+                        permissionMenu.setVersion(beforePermissionMenu.getVersion());
+                        logger.debug("更新{}", permissionMenu);
+                        updatePermissionMenus.add(permissionMenu);
                     }
                     break;
                 }
@@ -411,24 +413,24 @@ public class AuthorizeService extends BaseService {
 
     }
 
-    private void deleteDirtyMenu(Collection<Menu> menus,List<Menu> beforeMenus) {
+    private void deleteDirtyMenu(Collection<Menu> menus, List<Menu> beforeMenus) {
 
         for (Menu beforeMenu : beforeMenus) {
             if (beforeMenu.getDatabaseUpdate()) {
                 continue;
             }
-            boolean dirty=true;
+            boolean dirty = true;
             for (Menu menu : menus) {
                 if (menu.getId().intValue() == beforeMenu.getId().intValue()) {
-                    dirty=false;
+                    dirty = false;
                     break;
                 }
             }
             if (dirty) {
                 logger.info("删除脏数据 {}", beforeMenu);
-                PermissionMenuCriteria criteria=new PermissionMenuCriteria();
+                PermissionMenuCriteria criteria = new PermissionMenuCriteria();
                 criteria.setMenuId(beforeMenu.getId());
-                int result= permissionMenuService.delete(criteria);
+                int result = permissionMenuService.delete(criteria);
                 logger.info("删除 PermissionMenu {} 条", result);
                 menuService.delete(beforeMenu.getId());
             }
@@ -436,10 +438,17 @@ public class AuthorizeService extends BaseService {
 
     }
 
-    public void loadStatic()
-    {
+    public void loadStatic() {
         uriPermissionService.putCacheByUriAndMethod();
+        for (Runnable runnable : initWorks) {
+            runnable.run();
+        }
     }
+    public void addInitWork(Runnable work)
+    {
+        initWorks.add(work);
+    }
+
     public boolean createContainer(ContainerCriteria criteria, long accountId, int parentId) {
         Container container = criteria.toContainer();
         Date date = new Date();

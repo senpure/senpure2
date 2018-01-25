@@ -4,20 +4,21 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.senpure.base.mapper.MenuMapper">
     <resultMap id="menuResultMap" type="com.senpure.base.model.Menu">
-        <id column="id" property="id" jdbcType="INTEGER"/>                          <!-- 主键 -->
-        <result column="version" property="version" jdbcType="INTEGER"/>            <!-- 乐观锁，版本控制 -->
-        <result column="parent_id" property="parentId" jdbcType="INTEGER"/>
-        <result column="text" property="text" jdbcType="VARCHAR"/>
-        <result column="icon" property="icon" jdbcType="VARCHAR"/>
-        <result column="uri" property="uri" jdbcType="VARCHAR"/>
-        <result column="config" property="config" jdbcType="VARCHAR"/>
-        <result column="database_update" property="databaseUpdate" jdbcType="BIT"/>
-        <result column="direct_view" property="directView" jdbcType="BIT"/>         <!-- 不登录也有的菜单 -->
-        <result column="i18n_key" property="i18nKey" jdbcType="VARCHAR"/>
-        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <id     column="id"               property="id"              jdbcType="INTEGER"/> <!-- 主键 -->
+        <result column="version"          property="version"         jdbcType="INTEGER"/> <!-- 乐观锁，版本控制 -->
+        <result column="parent_id"        property="parentId"        jdbcType="INTEGER"/>
+        <result column="text"             property="text"            jdbcType="VARCHAR"/>
+        <result column="icon"             property="icon"            jdbcType="VARCHAR"/>
+        <result column="uri"              property="uri"             jdbcType="VARCHAR"/>
+        <result column="config"           property="config"          jdbcType="VARCHAR"/>
+        <result column="sort"             property="sort"            jdbcType="INTEGER"/>
+        <result column="database_update"  property="databaseUpdate"  jdbcType="BIT"/>
+        <result column="direct_view"      property="directView"      jdbcType="BIT"/>     <!-- 不登录也有的菜单 -->
+        <result column="i18n_key"         property="i18nKey"         jdbcType="VARCHAR"/>
+        <result column="description"      property="description"     jdbcType="VARCHAR"/>
     </resultMap>
     <sql id="menuAllColumns">
-        id,version,parent_id,text,icon,uri,config,database_update,direct_view,i18n_key,description
+        id,version,parent_id,text,icon,uri,config,sort,database_update,direct_view,i18n_key,description
     </sql>
 
     <!--主键查找-->
@@ -49,6 +50,9 @@
             <if test="config != null">
                 and config = #{config}
             </if>
+            <if test="sort != null">
+                and sort = #{sort}
+            </if>
             <if test="databaseUpdate != null">
                 and database_update = #{databaseUpdate}
             </if>
@@ -67,7 +71,7 @@
     <!-- 取对象的值，直接插入数据库(包括空值),version字段(版本控制)，被初始化为1-->
     <insert id="save" parameterType="com.senpure.base.model.Menu" >
         insert into senpure_menu (<include refid="menuAllColumns"/>)
-        values (#{id},1,#{parentId},#{text},#{icon},#{uri},#{config},#{databaseUpdate},#{directView},#{i18nKey},#{description})
+        values (#{id},1,#{parentId},#{text},#{icon},#{uri},#{config},#{sort},#{databaseUpdate},#{directView},#{i18nKey},#{description})
     </insert>
 
     <!-- 取对象的值，直接插入数据库(包括空值),version字段(版本控制)，被初始化为1-->
@@ -75,7 +79,7 @@
         insert into senpure_menu (<include refid="menuAllColumns"/>)
         values
         <foreach collection="list" item="item" index="index" separator="," >
-            (#{item.id},1,#{item.parentId},#{item.text},#{item.icon},#{item.uri},#{item.config},#{item.databaseUpdate},#{item.directView},#{item.i18nKey},#{item.description})
+            (#{item.id},1,#{item.parentId},#{item.text},#{item.icon},#{item.uri},#{item.config},#{item.sort},#{item.databaseUpdate},#{item.directView},#{item.i18nKey},#{item.description})
         </foreach>
     </insert>
 
@@ -99,6 +103,9 @@
             </if>
             <if test="config != null">
                 config = #{config},
+            </if>
+            <if test="sort != null">
+                sort = #{sort},
             </if>
             <if test="databaseUpdate != null">
                 database_update = #{databaseUpdate},
@@ -127,6 +134,7 @@
             icon = #{icon},
             uri = #{uri},
             config = #{config},
+            sort = #{sort},
             database_update = #{databaseUpdate},
             direct_view = #{directView},
             i18n_key = #{i18nKey},
@@ -162,6 +170,9 @@
                 </if>
                 <if test="config != null">
                     config = #{config},
+                </if>
+                <if test="sort != null">
+                    sort = #{sort},
                 </if>
                 <if test="databaseUpdate != null">
                     database_update = #{databaseUpdate},
@@ -213,6 +224,9 @@
             <if test="config != null">
                 and config = #{config}
             </if>
+            <if test="sort != null">
+                and sort = #{sort}
+            </if>
             <if test="databaseUpdate != null">
                 and database_update = #{databaseUpdate}
             </if>
@@ -247,6 +261,9 @@
             </if>
             <if test="config != null">
                 and config = #{config}
+            </if>
+            <if test="sort != null">
+                and sort = #{sort}
             </if>
             <if test="databaseUpdate != null">
                 and database_update = #{databaseUpdate}

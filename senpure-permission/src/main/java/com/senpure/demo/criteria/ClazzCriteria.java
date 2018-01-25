@@ -10,7 +10,7 @@ import java.util.Date;
  * 班级信息
  *
  * @author senpure-generator
- * @version 2018-1-16 16:01:17
+ * @version 2018-1-25 18:24:57
  */
 public class ClazzCriteria extends Criteria implements Serializable {
     private static final long serialVersionUID = 1416951444L;

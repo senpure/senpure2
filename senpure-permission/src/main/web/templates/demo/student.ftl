@@ -39,6 +39,24 @@
                     </div>
                 </div><!--form-group end  -->
                 <div class="form-group margin-top-10">
+                    <label class="control-label " for="clazzId">
+                    clazzId&nbsp;&nbsp;
+                    </label>
+                    <div class="input-group ">
+						<span class="input-group-addon "> <span
+                                class="glyphicon glyphicon-th"></span>
+						</span>
+                        <input name="clazzId"
+                               class="form-control" id="clazzId"
+                               placeholder="clazzId"
+                               value="${criteria.clazzId!}"
+                        />
+                    </div>
+                    <div class="input-error text-danger">
+                    <@spring.valid  "clazzId"/>
+                    </div>
+                </div><!--form-group end  -->
+                <div class="form-group margin-top-10">
                     <label class="control-label " for="name">
                     name&nbsp;&nbsp;&nbsp;&nbsp;
                     </label>
@@ -72,24 +90,6 @@
                     </div>
                     <div class="input-error text-danger">
                     <@spring.valid  "nick"/>
-                    </div>
-                </div><!--form-group end  -->
-                <div class="form-group margin-top-10">
-                    <label class="control-label " for="clazzId">
-                    clazzId&nbsp;&nbsp;
-                    </label>
-                    <div class="input-group ">
-						<span class="input-group-addon "> <span
-                                class="glyphicon glyphicon-th"></span>
-						</span>
-                        <input name="clazzId"
-                               class="form-control" id="clazzId"
-                               placeholder="clazzId"
-                               value="${criteria.clazzId!}"
-                        />
-                    </div>
-                    <div class="input-error text-danger">
-                    <@spring.valid  "clazzId"/>
                     </div>
                 </div><!--form-group end  -->
                 <br>
@@ -209,7 +209,9 @@
             <#list items as item>
                 <tr>
                     <td>${item_index+1}</td>
-                    <td> ${item.id?c}</td>
+                    <td>
+                        ${item.id?c}
+                    </td>
                     <td>
                         ${item.name!}
                     </td>

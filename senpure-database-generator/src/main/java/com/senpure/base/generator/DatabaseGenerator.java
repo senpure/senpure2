@@ -42,11 +42,11 @@ public class DatabaseGenerator {
         }
     }
 
-    public void generator(String part) {
-        generator(part, new Config());
+    public void generate(String part) {
+        generate(part, new Config());
     }
 
-    public void generator(String part, Config config) {
+    public void generate(String part, Config config) {
         prepLog();
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
@@ -65,6 +65,7 @@ public class DatabaseGenerator {
         Template mapperJavaTemplate = null;
         Template mapperXmlTemplate = null;
         Template criteriaTemplate = null;
+        Template criteriaStrTemplate = null;
         Template serviceTemplate = null;
         Template serviceLocalCacheTemplate = null;
         Template serviceSpringCacheTemplate = null;
@@ -82,6 +83,9 @@ public class DatabaseGenerator {
                     "utf-8");
             criteriaTemplate = cfg.getTemplate(
                     "com/senpure/base/generator/template/criteria.ftl",
+                    "utf-8");
+            criteriaStrTemplate = cfg.getTemplate(
+                    "com/senpure/base/generator/template/criteriaStr.ftl",
                     "utf-8");
             if (config.isGenerateService()) {
                 serviceTemplate = cfg.getTemplate(
@@ -107,6 +111,7 @@ public class DatabaseGenerator {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        logger.info("classRootPath:{}", AppEvn.getClassRootPath());
         File file = new File(AppEvn.getClassRootPath());
         File javaPart = new File(file.getParentFile().getParentFile(),
                 config.getJavaCodePart() + part.replace(".", "/"));
@@ -115,7 +120,10 @@ public class DatabaseGenerator {
         EntityReader reader = new EntityReader(config);
         Map<String, Model> modelMap = reader.read(part + ".entity");
         Collection<Model> models = modelMap.values();
-        int menuId = 1000;
+        int menuId = config.getMenuStartId();
+        if (menuId == 0) {
+            menuId = module.hashCode() / 100 * 100;
+        }
         for (Model model : models) {
             // System.out.println(model.getName());
             model.setModelPackage(part + ".model");
@@ -127,6 +135,7 @@ public class DatabaseGenerator {
             model.setMenuId(menuId);
             model.setGenerateMenu(config.isGenerateMenu());
             model.setGeneratePermission(config.isGeneratePermission());
+            model.setUseCriteriaStr(config.isUserCriteriaStr());
             menuId += 100;
             if (model.getId() == null) {
                 Assert.error(model.getName() + "没有主键");
@@ -143,9 +152,14 @@ public class DatabaseGenerator {
                 File xmlFile = new File(javaPart, "mapper/" + model.getName() + "Mapper.xml");
                 generateFile(mapperXmlTemplate, model, xmlFile, config.getMapperXmlCover(model.getName()));
             }
+
             if (criteriaTemplate != null) {
                 File criteriaFile = new File(javaPart, "criteria/" + model.getName() + "Criteria.java");
                 generateFile(criteriaTemplate, model, criteriaFile, config.getCriteriaCover(model.getName()));
+            }
+            if (criteriaStrTemplate != null&&model.isUseCriteriaStr()) {
+                File criteriaFile = new File(javaPart, "criteria/" + model.getName() + "CriteriaStr.java");
+                generateFile(criteriaStrTemplate, model, criteriaFile, config.getCriteriaCover(model.getName()));
             }
             if (serviceTemplate != null) {
 
@@ -305,6 +319,6 @@ public class DatabaseGenerator {
         Config config = new Config();
         config.addCoverConfig("Player", true);
         config.setAllCover(true);
-        mybatisGenerator.generator("com.senpure.base.test", config);
+        mybatisGenerator.generate("com.senpure.base.test", config);
     }
 }

@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:02:36
+ * @version 2018-1-25 18:24:19
  */
 public class Role implements Serializable {
     private static final long serialVersionUID = 1021021432L;

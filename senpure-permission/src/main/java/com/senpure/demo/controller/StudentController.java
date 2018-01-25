@@ -2,6 +2,7 @@ package com.senpure.demo.controller;
 
 import com.senpure.base.result.ResultMap;
 import com.senpure.base.spring.BaseController;
+import com.senpure.demo.criteria.StudentCriteriaStr;
 import com.senpure.demo.criteria.StudentCriteria;
 import com.senpure.demo.service.StudentService;
 import com.senpure.demo.model.Student;
@@ -22,7 +23,7 @@ import javax.validation.Valid;
 
 /**
  * @author senpure-generator
- * @version 2018-1-16 16:01:17
+ * @version 2018-1-25 18:24:57
  */
 @Controller
 @RequestMapping("/demo")
@@ -36,11 +37,13 @@ public class StudentController extends BaseController {
     @RequestMapping(value = {"/students", "/students/{page}"}, method = {RequestMethod.GET, RequestMethod.POST})
     @PermissionVerify(name = "/demo/student_read", value = "students_read")
     @MenuGenerator(id = 1001, text = "Student Detail")
-    public ModelAndView readStudents(HttpServletRequest request, @ModelAttribute("criteria") @Valid StudentCriteria criteria, BindingResult result) {
+
+    public ModelAndView readStudents(HttpServletRequest request, @ModelAttribute("criteria") @Valid StudentCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result, view);
         }
+        StudentCriteria criteria = criteriaStr.toStudentCriteria();
         logger.debug("查询条件:{}", criteria);
         ResultMap resultMap = studentService.findPage(criteria);
         return result(request, view, resultMap);
@@ -70,11 +73,12 @@ public class StudentController extends BaseController {
     @RequestMapping(value = "/student", method = RequestMethod.POST)
     @PermissionVerify(value = "student_create")
     @ResponseBody
-    public ResultMap createStudent(HttpServletRequest request, @ModelAttribute("criteria") @Valid StudentCriteria criteria, BindingResult result) {
+    public ResultMap createStudent(HttpServletRequest request, @ModelAttribute("criteria") @Valid StudentCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
         }
+        StudentCriteria criteria = criteriaStr.toStudentCriteria();
         logger.debug("创建Student:{}", criteria);
         if (studentService.save(criteria)) {
             return wrapMessage(request, ResultMap.success().put("id", criteria.getId()));
@@ -86,7 +90,7 @@ public class StudentController extends BaseController {
     @RequestMapping(value = "/student/{id}", method = RequestMethod.PUT)
     @PermissionVerify(value = "student_update")
     @ResponseBody
-    public ResultMap updateStudent(HttpServletRequest request, @PathVariable String id, @ModelAttribute("criteria") @Valid StudentCriteria criteria, BindingResult result) {
+    public ResultMap updateStudent(HttpServletRequest request, @PathVariable String id, @ModelAttribute("criteria") @Valid StudentCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
@@ -98,10 +102,14 @@ public class StudentController extends BaseController {
             logger.error("输入转换失败", e);
             return wrapMessage(request, ResultMap.notExist(), id);
         }
+        StudentCriteria criteria = criteriaStr.toStudentCriteria();
         criteria.setId(numberId);
         logger.debug("修改Student:{}", criteria);
         if (criteria.getVersion() == null) {
             Student student = studentService.find(criteria.getId());
+            if (student == null) {
+                return wrapMessage(request, ResultMap.notExist(), id);
+            }
             criteria.effective(student);
             if (studentService.update(student)) {
                 return wrapMessage(request, ResultMap.success());

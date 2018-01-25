@@ -2,6 +2,9 @@ package ${controllerPackage};
 
 import com.senpure.base.result.ResultMap;
 import com.senpure.base.spring.BaseController;
+<#if useCriteriaStr>
+import ${criteriaPackage}.${name}CriteriaStr;
+</#if>
 import ${criteriaPackage}.${name}Criteria;
 import ${servicePackage}.${name}Service;
 import ${modelPackage}.${name};
@@ -14,8 +17,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-<#if generatePermission>import com.senpure.base.annotation.PermissionVerify;</#if>
-<#if generateMenu>import com.senpure.base.menu.MenuGenerator;</#if>
+<#if generatePermission>
+import com.senpure.base.annotation.PermissionVerify;
+</#if>
+<#if generateMenu>
+import com.senpure.base.menu.MenuGenerator;
+</#if>
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -42,11 +49,22 @@ public class ${name}Controller extends BaseController {
 <#if generateMenu>
     @MenuGenerator(id = ${(menuId+1)?c}, text = "${name} Detail")
 </#if>
-    public ModelAndView read${pluralize(nameRule(name))?cap_first}(HttpServletRequest request, @ModelAttribute("criteria") @Valid ${name}Criteria criteria, BindingResult result) {
+
+<#if useCriteriaStr>
+    <#assign criteriaClazz>${name}CriteriaStr</#assign>
+    <#assign criteriaName>criteriaStr</#assign>
+<#else >
+    <#assign criteriaClazz>${name}Criteria</#assign>
+    <#assign criteriaName>criteria</#assign>
+</#if>
+    public ModelAndView read${pluralize(nameRule(name))?cap_first}(HttpServletRequest request, @ModelAttribute("criteria") @Valid ${criteriaClazz} ${criteriaName}, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result, view);
         }
+<#if useCriteriaStr>
+        ${name}Criteria criteria = ${criteriaName}.to${name}Criteria();
+</#if>
         logger.debug("查询条件:{}", criteria);
         ResultMap resultMap = ${nameRule(name)}Service.findPage(criteria);
         return result(request, view, resultMap);
@@ -82,11 +100,14 @@ public class ${name}Controller extends BaseController {
     @PermissionVerify(value = "${nameRule(name)}_create")
     </#if>
     @ResponseBody
-    public ResultMap create${name}(HttpServletRequest request, @ModelAttribute("criteria") @Valid ${name}Criteria criteria, BindingResult result) {
+    public ResultMap create${name}(HttpServletRequest request, @ModelAttribute("criteria") @Valid ${criteriaClazz} ${criteriaName}, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
         }
+<#if useCriteriaStr>
+        ${name}Criteria criteria = ${criteriaName}.to${name}Criteria();
+</#if>
         logger.debug("创建${name}:{}", criteria);
         if (${nameRule(name)}Service.save(criteria)) {
             return wrapMessage(request, ResultMap.success().put("${id.name}", criteria.get${id.name?cap_first}()));
@@ -100,7 +121,7 @@ public class ${name}Controller extends BaseController {
     @PermissionVerify(value = "${nameRule(name)}_update")
     </#if>
     @ResponseBody
-    public ResultMap update${name}(HttpServletRequest request, @PathVariable String ${id.name}, @ModelAttribute("criteria") @Valid ${name}Criteria criteria, BindingResult result) {
+    public ResultMap update${name}(HttpServletRequest request, @PathVariable String ${id.name}, @ModelAttribute("criteria") @Valid ${criteriaClazz} ${criteriaName}, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
@@ -114,6 +135,9 @@ public class ${name}Controller extends BaseController {
             return wrapMessage(request, ResultMap.notExist(), id);
         }
     </#if>
+        <#if useCriteriaStr>
+        ${name}Criteria criteria = ${criteriaName}.to${name}Criteria();
+        </#if>
         criteria.set${id.name?cap_first}(<#if id.clazzType !="String">number${id.name?cap_first}<#else>${id.name}</#if>);
         logger.debug("修改${name}:{}", criteria);
     <#if version??>
@@ -123,6 +147,9 @@ public class ${name}Controller extends BaseController {
         if (criteria.get${version.name?cap_first}() == 0) {
         </#if>
             ${name} ${nameRule(name)} = ${nameRule(name)}Service.find(criteria.get${id.name?cap_first}());
+            if (${nameRule(name)} == null) {
+                return wrapMessage(request, ResultMap.notExist(), id);
+            }
             criteria.effective(${nameRule(name)});
             if (${nameRule(name)}Service.update(${nameRule(name)})) {
                 return wrapMessage(request, ResultMap.success());

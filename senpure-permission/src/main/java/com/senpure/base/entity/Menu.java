@@ -24,11 +24,20 @@ public class Menu  extends VersionEntity implements Serializable{
     private String icon;
     private String uri;
     private String config;
+    private Integer sort;
     private Boolean databaseUpdate = false;
     @Explain("不登录也有的菜单")
     private Boolean directView=false;
     private String i18nKey;
     private String description;
+
+    public Integer getSort() {
+        return sort;
+    }
+
+    public void setSort(Integer sort) {
+        this.sort = sort;
+    }
 
     public Integer getId() {
         return id;
