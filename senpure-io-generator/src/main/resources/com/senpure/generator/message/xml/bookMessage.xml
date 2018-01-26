@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages package="com.senpure.book" id="100">
+    <bean name="Author" explain="作者">
+        <field type="String" name="name" explain="作者名"></field>
+        <field type="int" name="age" explain="年龄"></field>
+    </bean>
+    <bean name="Book" explain="书本">
+        <field type="String" name="name" explain="书本名"></field>
+        <field type="int" name="price" explain="书本单价"></field>
+        <field type="Author" name="author" explain="作者"></field>
+    </bean>
+    <message id="101" type="CS" name="Book" explain="请求书本信息" >
+        <field type="String" name="name" explain="书本名"></field>
+    </message>
+    <message id="102" type="SC" name="Books" explain="返回书本信息" >
+        <field type="int" name="total" explain="总数"></field>
+        <list type="Book" name="books" explain="书本信息"></list>
+    </message>
+</messages>

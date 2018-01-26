@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="854.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senpure.generator.view.MainController">
+   <children>
+      <SplitPane prefHeight="107.0" prefWidth="768.0">
+         <items>
+            <GridPane prefHeight="78.0" prefWidth="777.0">
+               <children>
+                  <Label prefHeight="15.0" prefWidth="124.0" text="java服务器代码根路径" GridPane.columnIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#chooseJavaServerCodeRootPath" prefHeight="23.0" prefWidth="106.0" text="选择路径" GridPane.columnIndex="3">
+                     <GridPane.margin>
+                        <Insets left="25.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <TextField fx:id="javaServerCodeRootPath" editable="false" prefHeight="35.0" prefWidth="413.0" promptText="请选择Java服务器代码根路径" GridPane.columnIndex="2" />
+                  <Label prefHeight="15.0" prefWidth="124.0" text="lua代码根路径" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <TextField fx:id="luaCodeRootPath" editable="false" prefHeight="35.0" prefWidth="413.0" promptText="请选择lua代码根路径" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                  <Button mnemonicParsing="false" onAction="#chooseLuaCodeRootPath" prefHeight="23.0" prefWidth="106.0" text="选择路径" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <GridPane.margin>
+                        <Insets left="25.0" />
+                     </GridPane.margin>
+                  </Button>
+                  <Label prefHeight="15.0" prefWidth="124.0" text="java ai 代码根路径" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="javaAICodeRootPath" editable="false" prefHeight="35.0" prefWidth="413.0" promptText="请选择Java ai 代码根路径" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <Button mnemonicParsing="false" onAction="#chooseJavaAICodeRootPath" prefHeight="23.0" prefWidth="106.0" text="选择路径" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets left="25.0" />
+                     </GridPane.margin>
+                  </Button>
+               </children>
+               <columnConstraints>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.0" minWidth="10.0" prefWidth="30.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="352.0" minWidth="6.0" prefWidth="157.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="578.0" minWidth="10.0" prefWidth="412.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="578.0" minWidth="10.0" prefWidth="157.0" />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+               </rowConstraints>
+            </GridPane>
+         </items>
+         <padding>
+            <Insets bottom="15.0" />
+         </padding>
+      </SplitPane>
+      <SplitPane dividerPositions="0.7888111888111888" prefHeight="175.0" prefWidth="768.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="158.0" prefWidth="601.0">
+               <children>
+                  <TableView fx:id="messageView" layoutX="84.0" layoutY="14.0" prefHeight="276.0" prefWidth="540.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="tableName" prefWidth="162.0" text="文件名" />
+                      <TableColumn fx:id="tablePath" prefWidth="339.0" text="路径" />
+                    </columns>
+                  </TableView>
+               </children></AnchorPane>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="183.0" prefWidth="134.0">
+               <children>
+                  <Button fx:id="buttonAddMessage" layoutX="28.0" layoutY="7.0" mnemonicParsing="false" onAction="#addMessageFile" prefHeight="30.0" prefWidth="104.0" text="增加文件" />
+                  <Button fx:id="buttonAddMessageFolder" layoutX="28.0" layoutY="45.0" mnemonicParsing="false" onAction="#addMessageFolder" prefHeight="30.0" prefWidth="104.0" text="增加文件夹" />
+                  <Button fx:id="buttonRemoveMessage" layoutX="28.0" layoutY="84.0" mnemonicParsing="false" onAction="#removeMessage" prefHeight="30.0" prefWidth="104.0" text="移除所选文件" />
+                  <Button layoutX="28.0" layoutY="125.0" mnemonicParsing="false" onAction="#messagePreview" prefHeight="28.0" prefWidth="104.0" text="message预览" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <SplitPane dividerPositions="0.7892307692307692" prefHeight="208.0" prefWidth="768.0">
+        <items>
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="151.0" prefWidth="512.0">
+               <children>
+                  <TableView fx:id="messageCodeView" layoutX="80.0" layoutY="-30.0" onMouseClicked="#messageCodeViewClick" prefHeight="158.0" prefWidth="322.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn fx:id="tableMessageName" prefWidth="169.0" text="message" />
+                        <TableColumn fx:id="tableMessageType" prefWidth="75.0" text="类型" />
+                      <TableColumn fx:id="tableMessageCheckBok" minWidth="4.0" prefWidth="58.0" text="生成" />
+                    </columns>
+                  </TableView>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="151.0" prefWidth="131.0">
+               <children>
+                  <Button layoutX="27.0" layoutY="7.0" mnemonicParsing="false" onAction="#chooseMessageSS" prefHeight="30.0" prefWidth="104.0" text="选择SS" />
+                  <Button layoutX="27.0" layoutY="44.0" mnemonicParsing="false" onAction="#chooseMessageSC" prefHeight="30.0" prefWidth="104.0" text="选择SC" />
+                  <Button layoutX="27.0" layoutY="80.0" mnemonicParsing="false" onAction="#chooseMessageCS" prefHeight="30.0" prefWidth="104.0" text="选择CS" />
+                  <Button layoutX="26.0" layoutY="157.0" mnemonicParsing="false" onAction="#chooseMessageAll" prefHeight="30.0" prefWidth="104.0" text="选择/清空" />
+                  <Button layoutX="27.0" layoutY="117.0" mnemonicParsing="false" onAction="#chooseMessageNA" prefHeight="30.0" prefWidth="104.0" text="选择NA" />
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+      <SplitPane dividerPositions="0.7889182058047494" prefHeight="96.0" prefWidth="768.0">
+         <items>
+            <Pane prefHeight="135.0" prefWidth="595.0">
+               <children>
+                  <Label layoutX="398.0" layoutY="11.0" prefHeight="30.0" prefWidth="81.0" text="handler模板" />
+                  <ChoiceBox fx:id="javaHandler" layoutX="394.0" layoutY="45.0" prefHeight="23.0" prefWidth="181.0" />
+                  <Label layoutX="28.0" layoutY="18.0" text="Java配置" />
+                  <Label layoutX="97.0" layoutY="18.0" text="bean模板" />
+                  <Label layoutX="97.0" layoutY="47.0" prefHeight="15.0" prefWidth="81.0" text="message模板" />
+                  <Separator layoutX="88.0" layoutY="13.0" orientation="VERTICAL" prefHeight="63.0" prefWidth="2.0" />
+                  <Separator layoutX="384.0" layoutY="13.0" orientation="VERTICAL" prefHeight="63.0" prefWidth="14.0" />
+                  <CheckBox fx:id="javaBeanCheckBox" layoutX="334.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="生成" />
+                  <CheckBox fx:id="javaMessageCheckBox" layoutX="334.0" layoutY="48.0" mnemonicParsing="false" selected="true" text="生成" />
+                  <CheckBox fx:id="javaHandlerCheckBox" layoutX="479.0" layoutY="19.0" mnemonicParsing="false" selected="true" text="生成" />
+                  <ChoiceBox fx:id="javaBean" layoutX="178.0" layoutY="15.0" prefHeight="23.0" prefWidth="147.0" />
+                  <ChoiceBox fx:id="javaMessage" layoutX="178.0" layoutY="44.0" prefHeight="23.0" prefWidth="147.0" />
+                  <CheckBox fx:id="javaHandlerCoverCheckBox" layoutX="530.0" layoutY="19.0" mnemonicParsing="false" selected="true" text="覆盖" />
+               </children>
+            </Pane>
+            <Pane prefHeight="176.0" prefWidth="89.0">
+               <children>
+                  <Button layoutX="27.0" layoutY="49.0" mnemonicParsing="false" onAction="#javaServerCodeGenerate" prefHeight="23.0" prefWidth="104.0" text="生成java" />
+                  <Button layoutX="28.0" layoutY="14.0" mnemonicParsing="false" onAction="#javaAICodeGenerate" prefHeight="23.0" prefWidth="104.0" text="生成 ai" />
+               </children>
+            </Pane>
+         </items>
+         <VBox.margin>
+            <Insets bottom="5.0" top="5.0" />
+         </VBox.margin>
+      </SplitPane>
+      <SplitPane dividerPositions="0.7889182058047494" prefHeight="101.0" prefWidth="768.0">
+         <items>
+            <Pane prefHeight="135.0" prefWidth="595.0">
+               <children>
+                  <Label layoutX="362.0" layoutY="11.0" prefHeight="30.0" prefWidth="81.0" text="handler模板" />
+                  <ChoiceBox fx:id="luaHandler" layoutX="362.0" layoutY="51.0" prefHeight="23.0" prefWidth="215.0" />
+                  <Label layoutX="28.0" layoutY="18.0" text="lua配置" />
+                  <Label layoutX="104.0" layoutY="18.0" prefHeight="15.0" prefWidth="114.0" text="bean/message模板" />
+                  <Separator layoutX="88.0" layoutY="13.0" orientation="VERTICAL" prefHeight="63.0" prefWidth="2.0" />
+                  <CheckBox fx:id="luaMessageCheckBox" layoutX="229.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="生成" />
+                  <CheckBox fx:id="luaHandlerCheckBox" layoutX="450.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="生成" />
+                  <ChoiceBox fx:id="luaMessage" layoutX="104.0" layoutY="51.0" prefHeight="23.0" prefWidth="170.0" />
+                  <CheckBox fx:id="luaHandlerCoverCheckBox" layoutX="523.0" layoutY="18.0" mnemonicParsing="false" selected="true" text="覆盖" />
+               </children>
+            </Pane>
+            <Pane prefHeight="176.0" prefWidth="89.0">
+               <children>
+                  <Button layoutX="27.0" layoutY="49.0" mnemonicParsing="false" onAction="#luaCodeGenerate" prefHeight="23.0" prefWidth="104.0" text="生成lua" />
+                  <Button layoutX="27.0" layoutY="14.0" mnemonicParsing="false" onAction="#clearLog" prefHeight="23.0" prefWidth="104.0" text="清空日志" />
+               </children>
+            </Pane>
+         </items>
+      </SplitPane>
+      <TextArea fx:id="textAreaLog" prefHeight="234.0" prefWidth="768.0" />
+   </children>
+</VBox>

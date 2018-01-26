@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages package="com.senpure.school" id="101">
+
+    <message id="2" type="SS" name="SchoolBook" >
+        <field type="int" name="total" explain="总数"></field>
+        <list type="com.senpure.book.bean.Book" name="books" explain="书本信息"></list>
+        <field type="com.senpure.book.bean.Book" name="book" explain="书本信息------hahah"></field>
+    </message>
+    <message id="1" type="SS" name="SchoolBook2" >
+        <field type="int" name="total" explain="总数"></field>
+        <list type="com.senpure.book.bean.Book" name="books" explain="书本信息"></list>
+        <field type="com.senpure.book.bean.Book" name="book" explain="书本信息------hahah"></field>
+    </message>
+</messages>
