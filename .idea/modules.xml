@@ -6,6 +6,10 @@
       <module fileurl="file://$PROJECT_DIR$/senpure-base/senpure-base.iml" filepath="$PROJECT_DIR$/senpure-base/senpure-base.iml" />
       <module fileurl="file://$PROJECT_DIR$/senpure-database/senpure-database.iml" filepath="$PROJECT_DIR$/senpure-database/senpure-database.iml" />
       <module fileurl="file://$PROJECT_DIR$/senpure-database-generator/senpure-database-generator.iml" filepath="$PROJECT_DIR$/senpure-database-generator/senpure-database-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/senpure-del/senpure-del.iml" filepath="$PROJECT_DIR$/senpure-del/senpure-del.iml" />
+      <module fileurl="file://$PROJECT_DIR$/senpure-io/senpure-io.iml" filepath="$PROJECT_DIR$/senpure-io/senpure-io.iml" />
+      <module fileurl="file://$PROJECT_DIR$/senpure-io-generator/senpure-io-generator.iml" filepath="$PROJECT_DIR$/senpure-io-generator/senpure-io-generator.iml" />
+      <module fileurl="file://$PROJECT_DIR$/senpure-jre/senpure-jre.iml" filepath="$PROJECT_DIR$/senpure-jre/senpure-jre.iml" />
       <module fileurl="file://$PROJECT_DIR$/senpure-permission/senpure-permission.iml" filepath="$PROJECT_DIR$/senpure-permission/senpure-permission.iml" />
       <module fileurl="file://$PROJECT_DIR$/senpure-result/senpure-result.iml" filepath="$PROJECT_DIR$/senpure-result/senpure-result.iml" />
       <module fileurl="file://$PROJECT_DIR$/senpure-web/senpure-web.iml" filepath="$PROJECT_DIR$/senpure-web/senpure-web.iml" />

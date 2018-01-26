@@ -14,6 +14,10 @@
         <module>senpure-web</module>
         <module>senpure-database-generator</module>
         <module>senpure-permission</module>
+        <module>senpure-io</module>
+        <module>senpure-io-generator</module>
+        <module>senpure-jre</module>
+        <module>senpure-del</module>
     </modules>
     <packaging>pom</packaging>
 

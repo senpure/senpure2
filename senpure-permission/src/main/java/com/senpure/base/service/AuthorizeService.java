@@ -242,10 +242,7 @@ public class AuthorizeService extends BaseService {
                         for (URIPermission beforeURIPermission : beforeURIPermissions) {
                             if (beforeURIPermission.getPermissionId().longValue() == beforePermission.getId()) {
                                 saveUri = false;
-
-                            }
-                            else {
-
+                                uriPermission.setPermissionId(beforePermission.getId());
                             }
                         }
                         if (saveUri) {
@@ -330,9 +327,12 @@ public class AuthorizeService extends BaseService {
         uriPermissionMap.forEach((key, uris) -> uriPermissions.get().addAll(uris));
         List<URIPermission> beforeUris = uriPermissionService.findAll();
         for (URIPermission before : beforeUris) {
+            if (before.getDatabaseUpdate()) {
+                continue;
+            }
             boolean dirty = true;
             for (URIPermission uriPermission : uriPermissions.get()) {
-                if (before.getDatabaseUpdate() || uriPermission.getUriAndMethod().equals(before.getUriAndMethod())) {
+                if (uriPermission.getPermissionId().longValue()==before.getPermissionId()&&uriPermission.getUriAndMethod().equals(before.getUriAndMethod())) {
                     dirty = false;
                     break;
                 }
@@ -444,8 +444,8 @@ public class AuthorizeService extends BaseService {
             runnable.run();
         }
     }
-    public void addInitWork(Runnable work)
-    {
+
+    public void addInitWork(Runnable work) {
         initWorks.add(work);
     }
 
