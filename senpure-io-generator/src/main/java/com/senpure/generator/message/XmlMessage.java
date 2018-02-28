@@ -11,10 +11,12 @@ public class XmlMessage {
   //  private Set<String> imports=new HashSet<>();
     private String pack;
     private String id;
+    private  String model;
     private List<Bean> beans=new ArrayList<>();
     private int beanNameMaxLen;
     private int messageNameMaxLen;
     private int nameMaxLen;
+    private String luaNamespace;
     private List<Message> messages = new ArrayList<>();
 
     public String getPack() {
@@ -71,5 +73,21 @@ public class XmlMessage {
 
     public void setNameMaxLen(int nameMaxLen) {
         this.nameMaxLen = nameMaxLen;
+    }
+
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    public String getLuaNamespace() {
+        return luaNamespace;
+    }
+
+    public void setLuaNamespace(String luaNamespace) {
+        this.luaNamespace = luaNamespace;
     }
 }

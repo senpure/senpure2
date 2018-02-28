@@ -34,14 +34,15 @@ public class XmlReader {
             e.printStackTrace();
         }
         XmlMessage xmlMessage = new XmlMessage();
-
         Element root = document.getRootElement();
         String pack = root.attributeValue("package");
         xmlMessage.setPack(pack);
+        String model = root.attributeValue("model");
+        model=model==null?"MSG":model;
+        xmlMessage.setModel(model);
         String id = root.attributeValue("id");
         xmlMessage.setId(id);
         List<Element> beanElemets = root.elements("bean");
-
         for (Element element : beanElemets) {
             Bean bean = new Bean();
             bean.setPack(pack);

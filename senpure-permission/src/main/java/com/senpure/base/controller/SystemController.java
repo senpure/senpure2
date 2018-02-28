@@ -25,7 +25,7 @@ import javax.validation.Valid;
  */
 @Controller
 @RequestMapping("/authorize")
-@MenuGenerator(id = 10000, text = "系统设置",icon = "glyphicon glyphicon-cog faa-wrench",sort = Integer.MAX_VALUE)
+@MenuGenerator(id = 2000000000, text = "系统设置",icon = "glyphicon glyphicon-cog faa-wrench",sort = Integer.MAX_VALUE)
 public class SystemController extends BaseController {
 
 
@@ -34,7 +34,7 @@ public class SystemController extends BaseController {
 
     @RequestMapping(value = {"/account/password", "/account/{accountId}/password"}, method = RequestMethod.GET)
     @PermissionVerify(value = "进入修改密码界面", name = "authorize/account/password_read")
-    @MenuGenerator(id = 10001, text = "修改密码",icon = "glyphicon glyphicon-lock faa-float",sort = Integer.MAX_VALUE)
+    @MenuGenerator(id = 2000000001, text = "修改密码",icon = "glyphicon glyphicon-lock faa-float",sort = Integer.MAX_VALUE)
     public ModelAndView updatePasswordPage(HttpServletRequest request, Model model, @PathVariable(required = false) Long accountId) {
 
         if (accountId == null) {
@@ -59,7 +59,7 @@ public class SystemController extends BaseController {
     }
     @RequestMapping(value = {"/help"})
     @PermissionVerify(value = "使用帮助", verify = false)
-    @MenuGenerator(id = 10002, text = "使用帮助",icon = "glyphicon glyphicon-thumbs-up faa-float")
+    @MenuGenerator(id = 2000000002, text = "使用帮助",icon = "glyphicon glyphicon-thumbs-up faa-float")
     public ModelAndView help(HttpServletRequest request, Model model, @PathVariable(required = false) Long accountId) {
 
         if (accountId == null) {

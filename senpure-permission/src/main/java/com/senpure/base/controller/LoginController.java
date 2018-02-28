@@ -32,7 +32,7 @@ public class LoginController extends BaseController {
     @Autowired
     private AuthorizeService authorizeService;
     //String view="helloWorld";
-    String view = "authorize/login";
+    String view = "/authorize/login";
 
     @RequestMapping(value = {"authorize/login", ""})
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute("criteria") LoginCriteria criteria, BindingResult result) {

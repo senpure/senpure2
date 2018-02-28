@@ -54,6 +54,8 @@ public class MessageUtil {
         XmlMessage m = new XmlMessage();
         m.setId(xmlMessage.getId());
         m.setPack(xmlMessage.getPack());
+        m.setModel(xmlMessage.getModel());
+        m.setLuaNamespace(xmlMessage.getLuaNamespace());
         for (Bean bean : xmlMessage.getBeans()) {
             Bean b = new Bean();
             copyBean(bean, b);

@@ -39,6 +39,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     private String loginURI = "/authorize/loginView";
+    private String loginAction = "/authorize/login";
     @Autowired
     private URIPermissionService uriPermissionService;
     @Autowired
@@ -60,18 +61,17 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
         initPatterns();
     }
 
-    public void initPatterns()
-    {
+    public void initPatterns() {
         List<URIPermission> uriPermissions = uriPermissionService.findAll();
         Map<Long, Set<String>> map = new HashMap<>(128);
         for (URIPermission uriPermission : uriPermissions) {
-           Set<String> patterns = map.get(uriPermission.getPermissionId());
+            Set<String> patterns = map.get(uriPermission.getPermissionId());
             if (patterns == null) {
                 patterns = new HashSet<>();
                 map.put(uriPermission.getPermissionId(), patterns);
             }
-            String uri=uriPermission.getUriAndMethod();
-           int index= StringUtil.indexOf(uriPermission.getUriAndMethod(), "[", 1, true);
+            String uri = uriPermission.getUriAndMethod();
+            int index = StringUtil.indexOf(uriPermission.getUriAndMethod(), "[", 1, true);
             if (index > 0) {
                 uri = uri.substring(0, index);
             }
@@ -84,10 +84,11 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
             patternsRequestConditions.add(patternsRequestCondition);
         });
         for (PatternsRequestCondition patternsRequestCondition : patternsRequestConditions) {
-            logger.info("verify patterns {}",patternsRequestCondition);
+            logger.info("verify patterns {}", patternsRequestCondition);
         }
 
     }
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
@@ -96,11 +97,11 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
             Account lastAccount = authorizeService.findAccount(account.getId());
             boolean login = account.getLoginTime() < lastAccount.getLoginTime();
             //  && !account.getLoginIP().equals(accountVo.getIp());
-            if (login) {
+            if (login&&!request.getRequestURI().equals(loginAction)) {
                 RequestDispatcher dispatcher = request.getRequestDispatcher(loginURI);
                 ResultMap result = ResultMap.result(Result.ACCOUNT_OTHER_LOGIN);
                 ResultHelper.wrapMessage(result, localeResolver.resolveLocale(request), lastAccount.getIp() == null ? "UNKNOWN" : lastAccount.getIp());
-                logger.info("由于在其他地方登陆，该次请求中断,跳转登陆界面");
+                logger.info("由于在其他地方登陆，该次请求中断,跳转登陆界面{}",request.getRequestURI());
                 logger.debug(result.toString());
                 afterLogin(request, result, false);
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -108,18 +109,22 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                 return;
             }
         }
-        PatternsRequestCondition match = null;
+        //PatternsRequestCondition match = null;
+        List<String> matches = null;
+        logger.trace("匹配{}", request.getRequestURI());
         for (PatternsRequestCondition patterns : patternsRequestConditions) {
-            match = patterns.getMatchingCondition(request);
-            if (match != null) {
+            matches = patterns.getMatchingPatterns(request.getRequestURI());
+            if (matches.size() > 0) {
+                logger.trace("{}  {}",  matches, request.getRequestURI());
                 break;
             }
         }
-        if (match != null) {
-            String bestMatch = match.getPatterns().iterator().next();
+        if (matches.size() > 0) {
+            //String bestMatch = match.getPatterns().iterator().next();
+            String bestMatch = matches.get(0);
             List<URIPermission> uriPermissions = uriPermissionService.findByUriAndMethodOnlyCache(bestMatch + "[" + request.getMethod() + "]");
             if (uriPermissions.size() == 0) {
-                logger.debug("{} > {}", request.getRequestURI(), "不需要任何权限检查");
+                logger.debug("{}:{} > {} {}",request.getMethod(), request.getRequestURI(), "不需要任何权限检查", bestMatch);
             } else {
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -129,7 +134,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                     if (account == null) {
                         ResultMap result = ResultMap.result(Result.ACCOUNT_NOT_LOGIN_OR_SESSION_TIMEOUT);
                         RequestDispatcher dispatcher = request.getRequestDispatcher(loginURI);
-                         ResultHelper.wrapMessage(result, localeResolver.resolveLocale(request));
+                        ResultHelper.wrapMessage(result, localeResolver.resolveLocale(request));
                         afterLogin(request, result, false);
                         dispatcher.forward(request, response);
                         return;
@@ -155,7 +160,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                         pass = hasPermission(account, permission.getName());
                     } else if (permission.getType().equals(PermissionConstant.PERMISSION_TYPE_OWNER)) {
                         pass = hasPermission(account, permission.getName());
-                        if (pass&&permission.getOffset()!=null) {
+                        if (pass && permission.getOffset() != null) {
                             String[] offsets = permission.getOffset().split(",");
                             String[] verifyNames = permission.getVerifyName().split(",");
                             for (int i = 0; i < offsets.length; i++) {
@@ -203,12 +208,11 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                     logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI());
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/authorize/forbidden");
                     dispatcher.forward(request, response);
-                    return ;
+                    return;
                 }
             }
-        }
-        else {
-            logger.trace("{} > {}", request.getRequestURI(), "不需要任何权限检查");
+        } else {
+            logger.trace("{} > {}", request.getRequestURI(), "不需要任何权限检查（没有配置）");
         }
         filterChain.doFilter(servletRequest, servletResponse);
     }

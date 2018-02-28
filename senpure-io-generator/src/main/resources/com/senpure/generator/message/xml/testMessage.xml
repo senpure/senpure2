@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<messages package="com.senpure.server.test" id="200">
+<messages package="com.senpure.server.test" id="200" model="abc">
 
     <bean name="Author" explain="作者">
         <field type="String" name="name" explain="书本名"></field>

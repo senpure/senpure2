@@ -24,4 +24,17 @@ public class PatternsRequestConditionTest  {
         System.out.println(p.getMatchingPatterns("/dem2o/students/5"));
 
     }
+
+    @Test
+    public void druid()
+    {
+        PatternsRequestCondition patternsRequestCondition = new PatternsRequestCondition("/home","/druid/**.*");
+
+
+        System.out.println(patternsRequestCondition);
+        System.out.println(patternsRequestCondition.getMatchingPatterns("/druid"));
+        System.out.println(patternsRequestCondition.getMatchingPatterns("/druid/"));
+        System.out.println(patternsRequestCondition.getMatchingPatterns("/druid/abc/jkl"));
+        System.out.println(patternsRequestCondition.getMatchingPatterns("/druid/index.html"));
+    }
 }

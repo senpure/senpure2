@@ -5,14 +5,19 @@
 </#if>
 ${luaNamespace!""}${bean.name} = {
 <#if bean.type !="NA">
+    --[comment]
     --message_id
-    _id = ${bean.id?c};
+    id = ${bean.id?c};
+  <#--
     _message_name = "${luaNameStyle(bean.name)?lower_case?substring(1)}";
+    -->
 </#if>
 <#list bean.fields as field>
     <#if field.list >
+    --[comment]
     --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     <#else ><#--不是list-->
+    --[comment]
     --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     </#if>
     <#if field.list >
@@ -33,9 +38,11 @@ ${luaNamespace!""}${bean.name} = {
     </#if>
 </#list>
 <#if bean.hasBean||hasNextIndent!false>
+    --[comment]
     --缩进${bean.fieldMaxLen} + 3 = ${bean.fieldMaxLen+3} 个空格
     _next_indent = "<#list 1..bean.fieldMaxLen+3 as i> </#list>";
 </#if>
+    --[comment]
     --格式化时统一字段长度
     _filedPad = ${bean.fieldMaxLen} ;
 }

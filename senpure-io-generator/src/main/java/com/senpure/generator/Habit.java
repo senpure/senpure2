@@ -25,7 +25,7 @@ public class Habit implements Serializable {
 
     private String luaCodeRootPath = javaServerCodeRootPath;
     private String luaCodePathChooserPath=javaServerCodePathChooserPath;
-    private boolean luaHandlerCover=false;
+    private boolean luaHandlerCover=true;
     private String luaMessageTemplate = "message.ftl";
     private String luaHandlerTemplate = "handler.ftl";
 

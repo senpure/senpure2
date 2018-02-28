@@ -1,5 +1,5 @@
 --[[
-${pack}
+Model:${model}
 <#list beans as bean>
 <#if bean_index==0>
 
@@ -10,7 +10,15 @@ Bean    :${luaNamespace!""}${rightPad(bean.name,nameMaxLen)}  ${bean.explain}
     <#if bean_index==0>
 
     </#if>
-Message :${luaNamespace!""}${rightPad(bean.name,nameMaxLen)}  ${rightPad(luaNameStyle(bean.name)?lower_case?substring(1),nameMaxLen+5)} ${rightPad(bean.id?c,7)}  ${bean.explain}
+Message :${luaNamespace!""}${rightPad(bean.name,nameMaxLen)}   ${rightPad(bean.id?c,7)}  ${bean.explain}
+</#list>
+<#list messages as bean>
+    <#if bean_index==0>
+
+    </#if>
+<#if bean.type="SC">
+GameNet :impl_receive_${model}.${bean.name}
+</#if>
 </#list>
 
 author senpure-generator
