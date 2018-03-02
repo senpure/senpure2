@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages package="com.senpure.io" id="100" model="io">
+    <message id="102" type="SC" name="Registration" explain="服务器注册消息处理器到网关">
+        <field type="String" name="serverName" explain="服务器名"></field>
+        <list type="int" name="messageIds" explain="可以处理的消息ID"></list>
+        <list type="String" name="messageClasses" explain="消息类名"></list>
+    </message>
+</messages>

@@ -81,6 +81,8 @@ public class ChatClientHandler extends ChannelInboundHandlerAdapter {
 
     public static void main(String[] args) throws UnsupportedEncodingException {
         ByteBuf bb = Unpooled.buffer();
+
+
         String str = "hello";
         byte[] bytes = str.getBytes("utf-8");
         bb.writeInt(bytes.length);
