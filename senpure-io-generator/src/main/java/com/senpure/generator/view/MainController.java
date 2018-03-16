@@ -49,6 +49,8 @@ public class MainController implements Initializable {
     private TableColumn<MessageData, Boolean> tableMessageCheckBok;
     @FXML
     private TableColumn<MessageData, String> tableMessageType;
+    @FXML
+    private TableColumn<MessageData, String> tableMessageExplain;
 
     @FXML
     private TextField pathPart;
@@ -121,6 +123,7 @@ public class MainController implements Initializable {
         tableMessageCheckBok.setCellValueFactory(param -> param.getValue().generateProperty());
         tableMessageType.setCellValueFactory(param -> param.getValue().typeProperty());
 
+        tableMessageExplain.setCellValueFactory(param -> param.getValue().explainProperty());
 
         javaServerCodeRootPath.setText(habit.getJavaServerCodeRootPath());
         javaAICodeRootPath.setText(habit.getJavaAICodeRootPath());
@@ -540,7 +543,7 @@ public class MainController implements Initializable {
             Map.Entry<String, XmlMessage> entry = iterator.next();
 
             XmlMessage value = entry.getValue();
-           // value = MessageUtil.convert2Lua(value);
+          value = MessageUtil.convert2Lua(value);
             XmlMessage xmlMessage = new XmlMessage();
             xmlMessage.setMessageNameMaxLen(value.getMessageNameMaxLen());
             xmlMessage.setNameMaxLen(value.getNameMaxLen());
@@ -548,7 +551,7 @@ public class MainController implements Initializable {
             xmlMessage.setId(value.getId());
             xmlMessage.setPack(value.getPack());
             xmlMessage.setModel(value.getModel());
-            xmlMessage.setLuaNamespace(StringUtil.toUpperFirstLetter(value.getModel())+".");
+            xmlMessage.setLuaNamespace("Net_"+StringUtil.toUpperFirstLetter(value.getModel())+"_");
             for (Bean bean : value.getBeans()) {
                 if (bean.isGenerate()) {
                     xmlMessage.getBeans().add(bean);
@@ -565,7 +568,7 @@ public class MainController implements Initializable {
                 }
 
             }
-            String fileName = xmlMessage.getPack();
+            String fileName = xmlMessage.getModel();
             int index = StringUtil.indexOf(fileName, ".", 1, true);
             if (index > -1) {
                 fileName = fileName.substring(index + 1);
@@ -573,8 +576,7 @@ public class MainController implements Initializable {
             fileName = StringUtil.toUpperFirstLetter(fileName);
             if (luaMessageCheckBox.isSelected()) {
                 File file = new File(luaCodeRootPath.getText(),
-                        xmlMessage.getModel()
-                                + File.separator + fileName + "Message.lua");
+                       fileName + "Message.lua");
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
@@ -592,7 +594,7 @@ public class MainController implements Initializable {
 //                File file = new File(luaCodeRootPath.getText(), xmlMessage
 //                        .getPack().replace(".", File.separator)
 //                        + File.separator + fileName + "MessageHandler.lua");
-                File file = new File(luaCodeRootPath.getText(), xmlMessage.getModel() + File.separator + fileName + "MessageHandler.lua");
+                File file = new File(luaCodeRootPath.getText(),  fileName + "MessageHandler.lua");
                 if (file.exists() && !luaHandlerCoverCheckBox.isSelected()) {
 
                     logger.warn("hander 文件 {} 存在，请先删除之后，再生成              \n{}", file.getName(), file.getAbsolutePath());

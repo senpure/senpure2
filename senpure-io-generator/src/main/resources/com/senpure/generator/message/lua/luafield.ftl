@@ -5,7 +5,7 @@
 </#if>
 ${luaNamespace!""}${bean.name} = {
 <#if bean.type !="NA">
-    --[Comment]
+    --[comment]
     --message_id
     id = ${bean.id?c};
   <#--
@@ -14,10 +14,10 @@ ${luaNamespace!""}${bean.name} = {
 </#if>
 <#list bean.fields as field>
     <#if field.list >
-    --[Comment]
+    --[comment]
     --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     <#else ><#--不是list-->
-    --[Comment]
+    --[comment]
     --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     </#if>
     <#if field.list >
@@ -38,52 +38,25 @@ ${luaNamespace!""}${bean.name} = {
     </#if>
 </#list>
 <#if bean.hasBean||hasNextIndent!false>
-    --[Comment]
+    --[comment]
     --缩进${bean.fieldMaxLen} + 3 = ${bean.fieldMaxLen+3} 个空格
     _next_indent = "<#list 1..bean.fieldMaxLen+3 as i> </#list>";
 </#if>
-    --[Comment]
+    --[comment]
     --格式化时统一字段长度
     _filedPad = ${bean.fieldMaxLen} ;
 }
-
 --${luaNamespace!""}${bean.name}构造方法
 function ${luaNamespace!""}${bean.name}:new()
-    local ${luaNamespace!""}${bean.name} = setmetatable({}, {__index=self}) ;
-<#list bean.fields as field>
-    <#if field.list >
-    --[Comment]
-    --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
-    <#else ><#--不是list-->
-    --[Comment]
-    --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
-    </#if>
-    <#if field.list >
-    ${luaNamespace!""}${bean.name}.${field.name} = nil;
-    <#else ><#--不是list-->
-        <#if field.baseField>
-            <#if field.classType == "String">
-    ${luaNamespace!""}${bean.name}.${field.name} = "";
-            <#elseif field.classType == "boolean">
-    ${luaNamespace!""}${bean.name}.${field.name} = false;
-            <#else >
-    ${luaNamespace!""}${bean.name}.${field.name} = 0;
-            </#if>
-        <#else>
-    ${luaNamespace!""}${bean.name}.${field.name}= nil ;<#--bean 引用-->
-        </#if>
-    </#if>
-</#list>
-    return ${luaNamespace!""}${bean.name}
+    local o = {}
+    self.__index = self
+    setmetatable(o, self)
+    return o
 end
 
 <#if bean.type =="NA"|| bean.type?ends_with("S")>
 --${bean.name}写入字节缓存
 function ${luaNamespace!""}${bean.name}:write(buf)
-     <#if bean.type?ends_with("S")>
-    --消息协议id
-    buf:WriteInt(${bean.id?c})
-     </#if>
     <#list bean.fields as field>
         <#if field.hasExplain>
     --${field.explain}
@@ -91,25 +64,27 @@ function ${luaNamespace!""}${bean.name}:write(buf)
     <#if field.list>
     if self.${field.name} then
         local ${field.name}_len = #self.${field.name}
-        buf:WriteShort(${field.name}_len)
+        self:writeUShort(${field.name}_len)
         if ${field.name}_len > 0 then
             for i = 1, ${field.name}_len do
         <#if field.classType="boolean">
-                buf:WriteBool(self.${field.name}[i])
+                buf:writeBool(self.${field.name}[i])
         <#elseif field.classType="byte">
-                buf:WriteByte(self.${field.name}[i])
+                buf:writeRawByte(self.${field.name}[i])
         <#elseif field.classType="short">
-                buf:WriteShort(self.${field.name}[i])
+                buf:writeShort(self.${field.name}[i])
         <#elseif field.classType="int">
-                buf:WriteInt(self.${field.name}[i])
+                buf:writeInt(self.${field.name}[i])
         <#elseif field.classType="float">
-                buf:WriteFloat(self.${field.name}[i])
+                buf:writeFloat(self.${field.name}[i])
         <#elseif field.classType="double">
-                buf:WriteDouble(self.${field.name}[i])
+                buf:writeDouble(self.${field.name}[i])
         <#elseif field.classType="long">
-                buf:WriteLong(self.${field.name}[i])
+                buf:writeLong(buf,self.${field.name}[i])
         <#elseif field.classType="String">
-                buf:WriteString(self.${field.name}[i])
+                local _str = string.pack(buf:_getLC("A"), self.${field.name}[i])
+                buf:writeUInt(#_str)
+                buf:writeBuf(_str)
         <#else >
                 self.${field.name}[i]:write(buf)
         </#if>
@@ -118,27 +93,29 @@ function ${luaNamespace!""}${bean.name}:write(buf)
     end
     <#else ><#-- 不是list -->
         <#if field.classType="boolean">
-    buf:WriteBool(self.${field.name})
+    buf:writeBool(self.${field.name})
         <#elseif field.classType="byte">
-    buf:WriteByte(self.${field.name})
+    buf:writeRawByte(self.${field.name})
         <#elseif field.classType="short">
-    buf:WriteShort(self.${field.name})
+    buf:writeShort(self.${field.name})
         <#elseif field.classType="int">
-    buf:WriteInt(self.${field.name})
+    buf:writeInt(self.${field.name})
         <#elseif field.classType="float">
-    buf:WriteFloat(self.${field.name})
+    buf:writeFloat(self.${field.name})
         <#elseif field.classType="double">
-    buf:WriteDouble(self.${field.name})
+    buf:writeDouble(self.${field.name})
         <#elseif field.classType="long">
-    buf:WriteLong(buf,self.${field.name})
+    buf:writeLong(buf,self.${field.name})
         <#elseif field.classType="String">
-    buf:WriteString(self.${field.name})
+    local ${field.name} = string.pack(buf:_getLC("A"), self.${field.name})
+    buf:writeUInt(#${field.name})
+    buf:writeBuf(${field.name})
         <#else >
     if self.${field.name} then
-        buf:WriteByte(1)
+        buf:writeByte(1)
         self.${field.name}:write(buf)
     else
-        buf:WriteByte(0)
+        buf:writeByte(0)
     end
         </#if>
     </#if>
@@ -154,26 +131,31 @@ function ${luaNamespace!""}${bean.name}:read(buf)
     --${field.explain}
         </#if>
         <#if field.list>
-    local ${field.name}_len  =  buf:ReadShort()
+    local ${field.name}_len  =  buf:readUShort()
     if ${field.name}_len > 0 then
-        local ${field.name}_list = {}
+        local ${field.name}_list={}
         for i=1,${field.name}_len do
             <#if field.classType="boolean">
-            ${field.name}_list[i] = buf:ReadBool()
+            ${field.name}_list[i] = buf:readBool()
             <#elseif field.classType="byte">
-            ${field.name}_list[i] = buf:ReadByte()
+            ${field.name}_list[i] = buf:readRawByte()
             <#elseif field.classType="short">
-            ${field.name}_list[i] = buf:ReadShort()
+            ${field.name}_list[i] = buf:readShort()
             <#elseif field.classType="int">
-            ${field.name}_list[i] = buf:ReadInt()
+            ${field.name}_list[i] = buf:readInt()
             <#elseif field.classType="float">
-            ${field.name}_list[i] = buf:ReadFloat()
+            ${field.name}_list[i] = buf:readFloat()
             <#elseif field.classType="double">
-            ${field.name}_list[i] = buf:ReadDouble()
+            ${field.name}_list[i] = buf:readDouble()
             <#elseif field.classType="long">
-            ${field.name}_list[i] = buf:ReadLong()
+            ${field.name}_list[i] = buf:readLong()
             <#elseif field.classType="String">
-            ${field.name}_list[i] = buf:ReadString()
+            local ${field.name}_str_len = buf:readUInt()
+            if ${field.name}_str_len  > 0 then
+                ${field.name}_list[i] = buf:readStringBytes(${field.name}_str_len)
+            else
+                ${field.name}_list[i]  = ""
+            end
             <#else>
             local _${field.classType?uncap_first} =${luaNamespace!""}${field.classType}:new()
             _${field.classType?uncap_first}:read(buf)
@@ -184,23 +166,28 @@ function ${luaNamespace!""}${bean.name}:read(buf)
     end
         <#else ><#--不是list-->
             <#if field.classType="boolean">
-    self.${field.name} = buf:ReadBool()
+    self.${field.name} = buf:readBool()
             <#elseif field.classType="byte">
-    self.${field.name} = buf:ReadByte()
+    self.${field.name} = buf:readRawByte()
             <#elseif field.classType="short">
-    self.${field.name} = buf:ReadShort()
+    self.${field.name} = buf:readShort()
             <#elseif field.classType="int">
-    self.${field.name} = buf:ReadInt()
+    self.${field.name} = buf:readInt()
             <#elseif field.classType="float">
-    self.${field.name} = buf:ReadFloat()
+    self.${field.name} = buf:readFloat()
             <#elseif field.classType="double">
-    self.${field.name} = buf:ReadDouble()
+    self.${field.name} = buf:readDouble()
             <#elseif field.classType="long">
-    self.${field.name} = buf:ReadLong()
+    self.${field.name} = buf:readLong()
             <#elseif field.classType="String">
-    self.${field.name}= buf:ReadString()
+    local ${field.name}_len = buf:readUInt()
+    if ${field.name}_len > 0 then
+        self.${field.name}= buf:readStringBytes(${field.name}_len)
+    else
+        self.${field.name}= ""
+    end
             <#else>
-    local _have${field.name}= buf:ReadByte()
+    local _have${field.name}= buf:readByte()
     if _have${field.name} ==1 then
         local ${field.name} = ${luaNamespace!""}${field.classType}:new()
         ${field.name}:read(buf)
@@ -216,7 +203,7 @@ end
 function ${luaNamespace!""}${bean.name}:toString(_indent)
     _indent = _indent or ""
     local _str = ""
-    _str = _str.."${luaNamespace!""}${bean.name}" .. "{"
+    _str = _str.."${bean.name}" .. "{"
 <#list bean.fields as field>
     <#if field.hasExplain>
     --${field.explain}
@@ -231,15 +218,15 @@ function ${luaNamespace!""}${bean.name}:toString(_indent)
             for i = 1,${field.name}_len do
                 _str = _str.."\n"
         <#if field.baseField>
-        _str = _str .. self._next_indent
+                _str = _str .. self._next_indent
             <#if field.classType="boolean">
-        _str = _str.._indent..tostring(self.${field.name}[i])
+                _str = _str.._indent..tostring(self.${field.name}[i])
                 <#else >
-        _str = _str.._indent..self.${field.name}[i]
+                _str = _str.._indent..self.${field.name}[i]
             </#if>
         <#else>
-        _str = _str..self._next_indent
-        _str = _str.._indent..self.${field.name}[i]:toString(_indent .. self._next_indent)
+                _str = _str..self._next_indent
+                _str = _str.._indent..self.${field.name}[i]:toString(_indent .. self._next_indent)
         </#if>
             end
             _str = _str.."\n"
@@ -257,7 +244,7 @@ function ${luaNamespace!""}${bean.name}:toString(_indent)
     _str = _str.._indent..rightPad("${field.name}", self._filedPad).. " = "..tostring(self.${field.name})
 
             <#else >
-    _str = _str.._indent..rightPad("${field.name}",self._filedPad).. " = "..self.${field.name}
+    _str = _str.._indent..rightPad("${field.name}", self._filedPad).. " = "..self.${field.name}
             </#if>
          <#else>
     if self.${field.name} then

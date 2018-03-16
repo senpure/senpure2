@@ -1,21 +1,19 @@
 package ${pack}.handler;
 
 import ${pack}.message.${type}${name}Message;
-import com.senpure.io.handler.AbstractMessageHandler;
+import com.senpure.io.handler.AbstractComponentMessageHandler;
 import io.netty.channel.Channel;
-import org.springframework.stereotype.Component;
 
 /**<#if hasExplain>
  * ${explain}处理器
- * </#if>
+ *</#if>
  * @author senpure-generator
  * @version ${.now?datetime}
  */
-@Component
-public class ${type}${name}MessageHandler extends AbstractMessageHandler<${type}${name}Message> {
+public class ${type}${name}MessageHandler extends AbstractComponentMessageHandler<${type}${name}Message> {
 
     @Override
-    public void execute(Channel channel, ${type}${name}Message message) {
+    public void execute(Channel channel, int token, int playerId, ${type}${name}Message message) {
         //TODO 请在这里写下你的代码
 
     }
@@ -29,5 +27,4 @@ public class ${type}${name}MessageHandler extends AbstractMessageHandler<${type}
     public ${type}${name}Message getEmptyMessage() {
         return new ${type}${name}Message();
     }
-
 }

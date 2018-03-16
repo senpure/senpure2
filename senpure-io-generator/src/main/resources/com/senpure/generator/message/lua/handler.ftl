@@ -1,16 +1,16 @@
 
 <#list messages as message>
 <#if message.type="SC">
-${message.name}Handler = {
+${luaNamespace!""}${message.name}Handler = {
 --${message.id?c}
 id=${luaNamespace!""}${message.name}.id
 }
-function ${message.name}Handler:emptyMessage()
+function ${luaNamespace!""}${message.name}Handler:emptyMessage()
     return ${luaNamespace!""}${message.name}:new()
 end
 --                              ${message.id?c}
-MessageParser:regMessageParser(${message.name}Handler.id, ${message.name}Handler,"${luaNamespace!""}${message.name}")
+MessageParser.regMessageParser( ${message.id?c}, ${luaNamespace!""}${message.name},"${luaNamespace!""}${message.name}")
 --                              ${message.id?c}
-GameNet.RegisterHandler(${message.name}Handler.id, impl_receive_${model}.${message.name})
+GameNet.RegisterHandler(${luaNamespace!""}${message.name}Handler.id, impl_receive_${model}.${message.name})
 </#if>
 </#list>

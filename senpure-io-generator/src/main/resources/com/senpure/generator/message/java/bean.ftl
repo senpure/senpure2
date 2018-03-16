@@ -7,7 +7,7 @@ import ${field.originalClassType};
         </#if>
     </#if>
 </#list >
-import com.senpure.io.message.Bean;
+import com.senpure.io.bean.Bean;
 import io.netty.buffer.ByteBuf;
 
 <#list fields as field>

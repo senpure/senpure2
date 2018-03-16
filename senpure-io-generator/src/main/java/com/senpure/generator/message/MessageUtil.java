@@ -11,7 +11,13 @@ import java.util.List;
  */
 public class MessageUtil {
     public static void copyBean(Bean source, Bean target) {
-        target.setName(source.getName());
+        String prefix = "Bean_";
+        if (source.getType().equals("CS")) {
+            prefix = "Req_";
+        } else if (source.getType().equals("SC")) {
+            prefix = "Res_";
+        }
+        target.setName(prefix + source.getName());
         target.setHasBean(source.isHasBean());
         target.setExplain(source.getExplain());
         target.setPack(source.getPack());
@@ -23,7 +29,12 @@ public class MessageUtil {
             f.setBaseField(field.isBaseField());
             f.setExplain(field.getExplain());
             f.setList(field.isList());
-            f.setClassType(field.getClassType());
+            if (f.isBaseField()) {
+                f.setClassType(field.getClassType());
+            } else {
+                f.setClassType("Bean_" + field.getClassType());
+            }
+
             f.setCapacity(field.getCapacity());
             f.setName(field.getName());
             target.getFields().add(f);
@@ -59,7 +70,7 @@ public class MessageUtil {
         for (Bean bean : xmlMessage.getBeans()) {
             Bean b = new Bean();
             copyBean(bean, b);
-            convertName2Lua(b);
+            //convertName2Lua(b);
             int len = b.getName().length();
             if (len > m.getBeanNameMaxLen()) {
                 m.setBeanNameMaxLen(len);
@@ -72,8 +83,8 @@ public class MessageUtil {
         for (Message message : xmlMessage.getMessages()) {
             Message msg = new Message();
             copyMessage(message, msg);
-            convertName2Lua(msg);
-            msg.setName(msg.getType() + msg.getName() + "Message");
+            //convertName2Lua(msg);
+            //msg.setName(msg.getType() + msg.getName() + "Message");
 
             int len = msg.getName().length();
             if (len > m.getMessageNameMaxLen()) {

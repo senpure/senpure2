@@ -19,6 +19,7 @@ public class MessageData {
     private StringProperty name;
     private BooleanProperty generate;
     private StringProperty type;
+    private StringProperty explain;
 
     public MessageData(Bean message, XmlMessage xmlMessage) {
         this.message = message;
@@ -28,6 +29,7 @@ public class MessageData {
         generate = new SimpleBooleanProperty(true);
         type = new SimpleStringProperty(message.getType());
         messageData = !"NA".equalsIgnoreCase(message.getType());
+        explain = new SimpleStringProperty(message.getExplain());
         this.xmlMessage = xmlMessage;
     }
 
@@ -89,6 +91,17 @@ public class MessageData {
         this.pack = pack;
     }
 
+    public String getExplain() {
+        return explain.get();
+    }
+
+    public StringProperty explainProperty() {
+        return explain;
+    }
+
+    public void setExplain(String explain) {
+        this.explain.set(explain);
+    }
 
     @Override
     public boolean equals(Object o) {

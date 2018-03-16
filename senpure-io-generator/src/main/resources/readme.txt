@@ -5,7 +5,7 @@ xml 消息定义格式
     model="abc"                        消息模块名，同时为lua代码的消息命名空间 默认为MSG
 </messages>
 
-<bean> 实习对象节点
+<bean> 实体对象节点
     name="Author"                       实体对象名 必须
     explain="作者"                      注释
 </bean>

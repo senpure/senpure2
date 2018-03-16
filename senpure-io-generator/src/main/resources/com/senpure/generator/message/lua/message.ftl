@@ -24,10 +24,11 @@ GameNet :impl_receive_${model}.${bean.name}
 author senpure-generator
 version ${.now?datetime}
 --]]
+<#--
 <#if luaNamespace??>
     ${luaNamespace?substring(0,luaNamespace?length-1)} =  ${luaNamespace?substring(0,luaNamespace?length-1)} or {}
 </#if>
-
+-->
 function rightPad(_str, _pad)
     local _str_len = #_str
     for i = 1, _pad do

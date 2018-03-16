@@ -9,7 +9,8 @@ import ${pack}.bean.${field.classType};
  </#if>
  </#if>
 </#list >
-import com.senpure.io.message.Message;
+import com.lhxy.game.core.annotation.Msg;
+import com.lhxy.game.message.core.<#if type="CS" >ReqMessage<#else >ResMessage</#if>;
 import io.netty.buffer.ByteBuf;
 
 <#list fields as field>
@@ -21,18 +22,19 @@ import java.util.ArrayList;
     </#if>
 </#list>
 /**<#if hasExplain>
-  * ${explain}
-  * </#if>
-  * @author senpure-generator
-  * @version ${.now?datetime}
-  */
+ * ${explain}
+ * </#if>
+ * @author senpure-generator
+ * @version ${.now?datetime}
+ */
 <#assign name>${type}${name}Message</#assign>
-public class ${name} extends  Message {
-<#include "field.ftl">
+@Msg(${id?c})
+public class ${name} implements <#if type="CS" >ReqMessage<#else >ResMessage</#if> {
+<#include "googleField.ftl">
 
     @Override
-    public int getMessageId() {
-        return ${id?c};
+    public int getId() {
+    return ${id?c};
     }
 
     @Override
@@ -43,5 +45,5 @@ public class ${name} extends  Message {
 </#list>
                 + "}";
    }
-<#include "toString.ftl">
+<#include "googleToString.ftl">
 }

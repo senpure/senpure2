@@ -38,7 +38,11 @@ public class XmlReader {
         String pack = root.attributeValue("package");
         xmlMessage.setPack(pack);
         String model = root.attributeValue("model");
-        model=model==null?"MSG":model;
+        if (model == null) {
+            model = root.attributeValue("namespace");
+            model = StringUtil.toLowerFirstLetter(model);
+        }
+        model = model == null ? "MSG" : model;
         xmlMessage.setModel(model);
         String id = root.attributeValue("id");
         xmlMessage.setId(id);
@@ -46,8 +50,8 @@ public class XmlReader {
         for (Element element : beanElemets) {
             Bean bean = new Bean();
             bean.setPack(pack);
-            String name=element.attributeValue("name");
-            name=StringUtil.toUpperFirstLetter(name);
+            String name = element.attributeValue("name");
+            name = StringUtil.toUpperFirstLetter(name);
             bean.setName(name);
             bean.setExplain(element.attributeValue("explain"));
             attr(element, bean);
@@ -58,12 +62,16 @@ public class XmlReader {
         for (Element element : messageElemets) {
             Message message = new Message();
             message.setPack(pack);
-            String name=element.attributeValue("name");
-            name=StringUtil.toUpperFirstLetter(name);
+            String name = element.attributeValue("name");
+            if (name.startsWith("Req") || name.startsWith("Res")) {
+                name = name.substring(3);
+            }
+            name = StringUtil.toUpperFirstLetter(name);
             message.setName(name);
             message.setExplain(element.attributeValue("explain"));
-            String type=element.attributeValue("type");
-            type=type.toUpperCase();
+            String type = element.attributeValue("type");
+
+            type = type.toUpperCase();
             message.setType(type);
             attr(element, message);
             String mid = element.attributeValue("id");
@@ -82,6 +90,9 @@ public class XmlReader {
             Field field = new Field();
             field.setName(e.attributeValue("name"));
             String type = e.attributeValue("type");
+            if (type == null) {
+                type = e.attributeValue("class");
+            }
             field.setOriginalClassType(type);
             bean.getSingleField().put(type, field);
             field.setBaseField(baseField(type));
@@ -97,10 +108,9 @@ public class XmlReader {
             if (!field.isBaseField()) {
                 bean.setHasBean(true);
             }
-            int fieldLen=field.getName().length();
+            int fieldLen = field.getName().length();
 
-            if(fieldLen>bean.getFieldMaxLen())
-            {
+            if (fieldLen > bean.getFieldMaxLen()) {
                 bean.setFieldMaxLen(fieldLen);
             }
             bean.getFields().add(field);

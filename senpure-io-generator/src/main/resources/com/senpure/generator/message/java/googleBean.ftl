@@ -7,7 +7,7 @@ import ${field.originalClassType};
         </#if>
     </#if>
 </#list >
-import com.senpure.io.bean.Bean;
+import com.lhxy.game.message.core.Dto;
 import io.netty.buffer.ByteBuf;
 
 <#list fields as field>
@@ -24,8 +24,8 @@ import java.util.ArrayList;
 * @author senpure-generator
 * @version ${.now?datetime}
 */
-public class ${name} extends  Bean {
-<#include "profield.ftl">
+public class ${name} implements Dto {
+<#include "googleField.ftl">
 
     @Override
     public String toString() {
@@ -35,5 +35,5 @@ public class ${name} extends  Bean {
 </#list>
                 + "}";
    }
-<#include "toString.ftl">
+<#include "googleToString.ftl">
 }

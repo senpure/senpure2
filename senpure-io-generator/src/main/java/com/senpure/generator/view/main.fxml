@@ -7,11 +7,11 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="854.0" prefWidth="768.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senpure.generator.view.MainController">
+<VBox focusTraversable="true" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="876.0" prefWidth="898.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.senpure.generator.view.MainController">
    <children>
       <SplitPane prefHeight="107.0" prefWidth="768.0">
          <items>
-            <GridPane prefHeight="78.0" prefWidth="777.0">
+            <GridPane prefHeight="90.0" prefWidth="912.0">
                <children>
                   <Label prefHeight="15.0" prefWidth="124.0" text="java服务器代码根路径" GridPane.columnIndex="1" />
                   <Button mnemonicParsing="false" onAction="#chooseJavaServerCodeRootPath" prefHeight="23.0" prefWidth="106.0" text="选择路径" GridPane.columnIndex="3">
@@ -58,8 +58,8 @@
                <children>
                   <TableView fx:id="messageView" layoutX="84.0" layoutY="14.0" prefHeight="276.0" prefWidth="540.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn fx:id="tableName" prefWidth="162.0" text="文件名" />
-                      <TableColumn fx:id="tablePath" prefWidth="339.0" text="路径" />
+                      <TableColumn fx:id="tableName" prefWidth="171.0" text="文件名" />
+                      <TableColumn fx:id="tablePath" prefWidth="501.0" text="路径" />
                     </columns>
                   </TableView>
                </children></AnchorPane>
@@ -79,9 +79,10 @@
                <children>
                   <TableView fx:id="messageCodeView" layoutX="80.0" layoutY="-30.0" onMouseClicked="#messageCodeViewClick" prefHeight="158.0" prefWidth="322.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <columns>
-                      <TableColumn fx:id="tableMessageName" prefWidth="169.0" text="message" />
-                        <TableColumn fx:id="tableMessageType" prefWidth="75.0" text="类型" />
-                      <TableColumn fx:id="tableMessageCheckBok" minWidth="4.0" prefWidth="58.0" text="生成" />
+                      <TableColumn fx:id="tableMessageName" prefWidth="165.0" text="message" />
+                        <TableColumn fx:id="tableMessageType" prefWidth="103.0" text="类型" />
+                        <TableColumn fx:id="tableMessageExplain" prefWidth="335.0" text="备注" />
+                      <TableColumn fx:id="tableMessageCheckBok" minWidth="4.0" prefWidth="69.0" text="生成" />
                     </columns>
                   </TableView>
                </children>

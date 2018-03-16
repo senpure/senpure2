@@ -15,6 +15,8 @@ public class Field {
     private boolean list;
     private int capacity;
     private boolean otherPart;
+    //lua 中的实体对象名
+    private String luaClassType;
 
 
     public String getExplain() {
@@ -86,6 +88,14 @@ public class Field {
 
     public void setOtherPart(boolean otherPart) {
         this.otherPart = otherPart;
+    }
+
+    public String getLuaClassType() {
+        return luaClassType;
+    }
+
+    public void setLuaClassType(String luaClassType) {
+        this.luaClassType = luaClassType;
     }
 
     @Override
