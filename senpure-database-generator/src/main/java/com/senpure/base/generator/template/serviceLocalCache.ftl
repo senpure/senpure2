@@ -98,7 +98,7 @@ public class ${name}Service extends BaseService {
      *
      * @return
      */
-    @Transactional(rollbackFor = Exception.class)(rollbackFor = Exception.class)
+    @Transactional(rollbackFor = Exception.class)
     public boolean delete(${id.clazzType} ${id.name}) {
         localCache.remove(cacheKey(${id.name}));
         int result = ${nameRule(name)}Mapper.delete(${id.name});

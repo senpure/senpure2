@@ -20,11 +20,12 @@ public class ComponentMessageEncoder extends MessageToByteEncoder<Server2Gateway
         ByteBuf buf = Unpooled.buffer();
         message.getMessage().write(buf);
         int length = buf.writerIndex();
-        //head 4 +messageId 4+ playerLen 2+playerIds*4+ content length
+        //head 4 +messageId 4 token 4+ playerLen 2+playerIds*4+ content length
         int playerLen = message.getPlayerIds().length;
-        int packageLen = 10 + playerLen << 2 + length;
+        int packageLen = 14 + (playerLen << 2) + length;
         out.ensureWritable(packageLen);
         out.writeInt(packageLen - 4);
+        out.writeInt(message.getToken());
         out.writeShort(playerLen);
         for (int i : message.getPlayerIds()) {
             out.writeInt(i);

@@ -11,15 +11,17 @@ import io.netty.channel.SimpleChannelInboundHandler;
  */
 public class GatewayServerAndGatewayServerHandler extends SimpleChannelInboundHandler<Server2GatewayMessage> {
 
-    private GatewayServerAndGatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecuter messageExecuter;
 
-    public GatewayServerAndGatewayServerHandler(GatewayServerAndGatewayMessageExecuter messageExecuter) {
-        this.messageExecuter= messageExecuter;
+
+    public GatewayServerAndGatewayServerHandler(GatewayMessageExecuter messageExecuter) {
+        this.messageExecuter = messageExecuter;
     }
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Server2GatewayMessage msg) throws Exception {
-        messageExecuter.execute(msg);
+      //  messageExecuter.execute(msg);
+        messageExecuter.execute(ctx.channel(),msg);
     }
 
 }

@@ -18,9 +18,10 @@ public class GatewayServerAndGatewayMessageEncoder extends MessageToByteEncoder<
     @Override
     protected void encode(ChannelHandlerContext ctx, Client2GatewayMessage msg, ByteBuf out) throws Exception {
 
-        //messageId 4 + playerId 4+ data
-        out.ensureWritable(12+msg.getData().length  );
-        out.writeInt(8 + msg.getData().length);
+        //messageId 4 token +4 + playerId 4+ data
+        out.ensureWritable(16+msg.getData().length  );
+        out.writeInt(12 + msg.getData().length);
+        out.writeInt(msg.getToken());
         out.writeInt(msg.getPlayerId());
         out.writeInt(msg.getMessageId());
         out.writeBytes(msg.getData());

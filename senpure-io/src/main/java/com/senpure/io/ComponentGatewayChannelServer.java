@@ -3,9 +3,7 @@ package com.senpure.io;
 import io.netty.channel.Channel;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -13,51 +11,37 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by 罗中正 on 2018/3/2 0002.
  */
-public class ComponentChannelServer {
+public class ComponentGatewayChannelServer {
 
-    private ConcurrentMap<Integer, Channel> serverChannels = new ConcurrentHashMap<>();
+    private static AtomicInteger atomicCount = new AtomicInteger(0);
     private List<Channel> channels = new ArrayList<>(16);
 
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
 
-    private Set<Integer> handleIds = new HashSet<>();
+    private int number = 0;
 
+    public ComponentGatewayChannelServer() {
+        number = atomicCount.incrementAndGet();
+    }
 
     public void addChannel(Channel channel) {
         channels.add(channel);
     }
 
-    public Channel channel(Integer playerId) {
-        Channel channel = serverChannels.get(playerId);
-        if (channel == null) {
-            channel = nextChannel();
-            Channel temp = serverChannels.putIfAbsent(playerId, channel);
-            if (temp != null) {
-                channel = temp;
-            }
-        }
-        return channel;
-    }
 
-    public boolean handleMessageId(int messageId) {
-        return handleIds.contains(messageId);
-
-
-    }
-
-    public void markMessageId(int messageId) {
-
-        handleIds.add(messageId);
-
-
-    }
-
-    private Channel nextChannel() {
+    public Channel nextChannel() {
 
         return channels.get(nextIndex());
     }
 
+    public int getNumber() {
+        return number;
+    }
+
     private int nextIndex() {
+        if (channels.size() == 1) {
+            return 0;
+        }
         int index = atomicIndex.incrementAndGet();
         if (index >= channels.size()) {
             boolean reset = atomicIndex.compareAndSet(index, 0);
@@ -68,6 +52,7 @@ public class ComponentChannelServer {
         }
         return index;
     }
+
 
     public static void main(String[] args) {
         ConcurrentMap<Integer, Integer> ids = new ConcurrentHashMap<>();

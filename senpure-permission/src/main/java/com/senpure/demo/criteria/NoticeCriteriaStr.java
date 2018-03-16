@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 公告模型
  *
  * @author senpure-generator
- * @version 2018-1-25 18:24:57
+ * @version 2018-3-12 19:29:57
  */
 public class NoticeCriteriaStr extends CriteriaStr implements Serializable {
     private static final long serialVersionUID = 339330519L;

@@ -32,7 +32,7 @@ public class GatewayClientAndGatewayMessageDecoder extends ByteToMessageDecoder 
                 if (packageLength > 2000000) {
                     ctx.close().sync();
                 }
-                this.logger.info("数据不够一个数据包 pl={} ,rl={}", Integer.valueOf(packageLength), Integer.valueOf(in.readableBytes()));
+                this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", Integer.valueOf(packageLength), Integer.valueOf(in.readableBytes()));
                 in.resetReaderIndex();
             } else {
                 int messageId = in.readInt();

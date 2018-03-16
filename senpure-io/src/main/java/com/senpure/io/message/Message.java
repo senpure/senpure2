@@ -1,5 +1,7 @@
 package com.senpure.io.message;
 
+import com.senpure.io.bean.Bean;
+
 /**
  * Created by 罗中正 on 2017/5/26.
  */

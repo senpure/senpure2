@@ -1,5 +1,6 @@
 package com.senpure.io;
 
+import com.senpure.base.util.Assert;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -30,12 +31,14 @@ public class GatewayClientAndGatewayServer {
     private ChannelFuture channelFuture;
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
-   private  GatewayClientAndGatewayMessageExecuter messageExecuter;
+    private GatewayMessageExecuter messageExecuter;
 
-    private String serverName = "网关[CS]服务器";
+    private String serverName = "gatewayServer[cs]";
+    private String readableServerName = "网关[CS]服务器";
 
     public void start() throws CertificateException, SSLException {
-        {
+
+        Assert.notNull(messageExecuter);
             if (properties == null) {
                 properties = new IOServerProperties();
             }
@@ -44,11 +47,9 @@ public class GatewayClientAndGatewayServer {
                 ioMessageProperties.setInFormat(properties.isCsInFormat());
                 ioMessageProperties.setOutFormat(properties.isCsOutFormat());
             }
-            if (messageExecuter == null) {
-                messageExecuter = new GatewayClientAndGatewayMessageExecuter();
-            }
-            logger.info("启动{}，监听端口号 {}", getServerName(), properties.getCsPort());
-            serverName = serverName + "[" + properties.getCsPort() + "]";
+
+            logger.info("启动{}，监听端口号 {}", getReadableServerName(), properties.getCsPort());
+             readableServerName = readableServerName + "[" + properties.getCsPort() + "]";
             // Configure SSL.
             final SslContext sslCtx;
             if (properties.isSsl()) {
@@ -88,16 +89,20 @@ public class GatewayClientAndGatewayServer {
                 // Start the server.
 
                 channelFuture = b.bind(properties.getCsPort()).sync();
-                logger.info("{}启动完成", getServerName());
+                logger.info("{}启动完成", getReadableServerName());
             } catch (Exception e) {
 
-                logger.error("启动" + getServerName() + " 失败", e);
+                logger.error("启动" + getReadableServerName() + " 失败", e);
                 destroy();
             }
 
-        }
+
     }
 
+
+    public String getReadableServerName() {
+        return readableServerName;
+    }
 
     public void destroy() {
         if (channelFuture != null) {
@@ -109,7 +114,7 @@ public class GatewayClientAndGatewayServer {
         if (workerGroup != null) {
             workerGroup.shutdownGracefully();
         }
-        logger.debug("关闭{}并释放资源 ", getServerName());
+        logger.debug("关闭{}并释放资源 ", getReadableServerName());
 
     }
 
@@ -126,11 +131,15 @@ public class GatewayClientAndGatewayServer {
         this.properties = properties;
     }
 
-    public GatewayClientAndGatewayMessageExecuter getMessageExecuter() {
+    public void setReadableServerName(String readableServerName) {
+        this.readableServerName = readableServerName;
+    }
+
+    public GatewayMessageExecuter getMessageExecuter() {
         return messageExecuter;
     }
 
-    public void setMessageExecuter(GatewayClientAndGatewayMessageExecuter messageExecuter) {
+    public void setMessageExecuter(GatewayMessageExecuter messageExecuter) {
         this.messageExecuter = messageExecuter;
     }
 }

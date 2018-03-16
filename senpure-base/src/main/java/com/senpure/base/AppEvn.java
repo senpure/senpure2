@@ -58,9 +58,12 @@ public class AppEvn {
             }
             classRootPath = classRootPath.replace("/", File.separator);
             if (cutPackage) {
-                String packpath = clazz.getPackage().getName();
-                packpath = packpath.replace(".", File.separator);
-                classRootPath = classRootPath.replace(packpath, "");
+                if (clazz.getPackage() != null) {
+                    //System.out.println(clazz.getProtectionDomain().getCodeSource().getLocation().getPath());
+                    String packpath = clazz.getPackage().getName();
+                    packpath = packpath.replace(".", File.separator);
+                    classRootPath = classRootPath.replace(packpath, "");
+                }
             }
             while (classRootPath.charAt(classRootPath.length() - 1) == File.separatorChar) {
                 classRootPath = classRootPath.substring(0, classRootPath.length() - 1);

@@ -36,6 +36,7 @@ public class DefaultBannerShowConfiguration {
             }
             if (show) {
                 BannerShow.show();
+                Thread.sleep(500);
             }
 
         }

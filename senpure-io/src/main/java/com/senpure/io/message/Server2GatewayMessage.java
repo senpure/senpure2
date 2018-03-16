@@ -7,21 +7,24 @@ import java.util.Arrays;
  */
 public class Server2GatewayMessage {
 
-    private  int [] playerIds;
+    private Integer[] playerIds;
 
+    private int token;
     private int messageId;
     //具体服务器上有值
     private Message message;
     //网关解析出来有值
     private byte[] data;
 
-    public int[] getPlayerIds() {
+
+    public Integer[] getPlayerIds() {
         return playerIds;
     }
 
-    public void setPlayerIds(int[] playerIds) {
+    public void setPlayerIds(Integer[] playerIds) {
         this.playerIds = playerIds;
     }
+
 
     public int getMessageId() {
         return messageId;
@@ -47,12 +50,21 @@ public class Server2GatewayMessage {
         this.data = data;
     }
 
+    public int getToken() {
+        return token;
+    }
+
+    public void setToken(int token) {
+        this.token = token;
+    }
+
     @Override
     public String toString() {
         return "Server2GatewayMessage{" +
                 "playerIds=" + Arrays.toString(playerIds) +
+                ", token=" + token +
                 ", messageId=" + messageId +
-                ", message=" + message +
+                ", data=" + data==null?"":data.length+""+
                 '}';
     }
 }

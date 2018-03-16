@@ -33,16 +33,19 @@ public class ComponentMessageDecoder extends ByteToMessageDecoder {
                 if (packageLength > 2000000) {
                     ctx.close().sync();
                 }
-                this.logger.info("数据不够一个数据包 pl={} ,rl={}", Integer.valueOf(packageLength), Integer.valueOf(in.readableBytes()));
+                this.logger.info("数据不够一个数据包 packageLength ={} ,readableBytes={}", Integer.valueOf(packageLength), Integer.valueOf(in.readableBytes()));
                 in.resetReaderIndex();
             } else {
-                int playerId = in.readInt();
 
+                int token = in.readInt();
+                int playerId = in.readInt();
                 int messageId = in.readInt();
                 Gateway2ServerMessage message = new Gateway2ServerMessage();
-                ByteBuf buf = in.readBytes(packageLength - 8);
+                ByteBuf buf = in.readBytes(packageLength - 12);
                 message.setMessageId(messageId);
+                message.setToken(token);
                 message.setBuf(buf);
+
                 message.setPlayerId(playerId);
                 out.add(message);
             }

@@ -36,6 +36,7 @@ public class Config {
 
     private String javaCodePart="src/main/java/";
     private String viewPart="src/main/web/templates/";
+    private  int classLevel=2;
     private int menuStartId=0;
     private boolean userCriteriaStr=true;
 
@@ -311,6 +312,14 @@ public class Config {
 
     public void setUserCriteriaStr(boolean userCriteriaStr) {
         this.userCriteriaStr = userCriteriaStr;
+    }
+
+    public int getClassLevel() {
+        return classLevel;
+    }
+
+    public void setClassLevel(int classLevel) {
+        this.classLevel = classLevel;
     }
 
     protected static class CacheConfig {

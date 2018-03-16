@@ -5,8 +5,9 @@ import io.netty.buffer.ByteBuf;
 /**
  * Created by 罗中正 on 2018/3/1 0001.
  */
-public class Gateway2ServerMessage {
+public class Gateway2ServerMessage  {
 
+    private int token;
     private int messageId;
 
     private int playerId;
@@ -37,5 +38,24 @@ public class Gateway2ServerMessage {
 
     public void setBuf(ByteBuf buf) {
         this.buf = buf;
+    }
+
+
+    public int getToken() {
+        return token;
+    }
+
+    public void setToken(int token) {
+        this.token = token;
+    }
+
+    @Override
+    public String toString() {
+        return "Gateway2ServerMessage{" +
+                "token=" + token +
+                ", messageId=" + messageId +
+                ", playerId=" + playerId +
+                ", buf=" + buf.writerIndex()+
+                '}';
     }
 }

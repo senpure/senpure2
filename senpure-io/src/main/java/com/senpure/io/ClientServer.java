@@ -27,7 +27,6 @@ public class ClientServer {
     private ChannelFuture channelFuture;
     private EventLoopGroup group;
     private String serverName = "游戏客户端";
-    private ComponentMessageExecuter messageExecuter;
     private Channel channel;
 
     public boolean start(String host, int port) throws CertificateException, SSLException {
@@ -38,9 +37,6 @@ public class ClientServer {
             ioMessageProperties = new IOMessageProperties();
             ioMessageProperties.setInFormat(properties.isInFormat());
             ioMessageProperties.setOutFormat(properties.isOutFormat());
-        }
-        if (messageExecuter == null) {
-            messageExecuter = new ComponentMessageExecuter();
         }
 
         logger.debug("启动{}，服务器地址 {}", getServerName(), host + ":" + port);

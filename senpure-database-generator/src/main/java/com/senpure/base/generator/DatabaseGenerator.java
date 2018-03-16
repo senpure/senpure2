@@ -113,9 +113,13 @@ public class DatabaseGenerator {
         }
         logger.info("classRootPath:{}", AppEvn.getClassRootPath());
         File file = new File(AppEvn.getClassRootPath());
-        File javaPart = new File(file.getParentFile().getParentFile(),
+        File parent=file;
+        for (int i = 0; i <config.getClassLevel() ; i++) {
+            parent=parent.getParentFile();
+        }
+        File javaPart = new File(parent,
                 config.getJavaCodePart() + part.replace(".", "/"));
-        File viewPart = new File(file.getParentFile().getParentFile(),
+        File viewPart = new File(parent,
                 config.getViewPart() + module);
         EntityReader reader = new EntityReader(config);
         Map<String, Model> modelMap = reader.read(part + ".entity");

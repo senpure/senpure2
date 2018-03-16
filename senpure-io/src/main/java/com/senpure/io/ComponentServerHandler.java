@@ -19,7 +19,7 @@ public class ComponentServerHandler extends SimpleChannelInboundHandler<Gateway2
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Gateway2ServerMessage msg) throws Exception {
-        messageExecuter.execute(msg);
+        messageExecuter.execute(ctx.channel(),msg);
     }
 
 }

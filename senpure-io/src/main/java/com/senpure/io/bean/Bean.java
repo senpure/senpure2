@@ -1,4 +1,4 @@
-package com.senpure.io.message;
+package com.senpure.io.bean;
 
 import io.netty.buffer.ByteBuf;
 import org.apache.commons.lang3.StringUtils;

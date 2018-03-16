@@ -1,8 +1,9 @@
-package com.senpure.io.message;
+package com.senpure.io.handler;
 
 
 import com.senpure.base.util.Assert;
 import com.senpure.io.ComponentMessageHandlerUtil;
+import com.senpure.io.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -36,4 +37,5 @@ public abstract class AbstractComponentMessageHandler<T extends Message> impleme
         ComponentMessageHandlerUtil.regMessageHandler(this);
 
     }
+
 }

@@ -9,6 +9,7 @@ public class Client2GatewayMessage {
     private int messageId;
 
     private int playerId;
+    private int token;
 
     private byte[] data;
 
@@ -36,6 +37,14 @@ public class Client2GatewayMessage {
         this.data = data;
     }
 
+
+    public int getToken() {
+        return token;
+    }
+
+    public void setToken(int token) {
+        this.token = token;
+    }
 
     @Override
     public String toString() {

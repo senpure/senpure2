@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author senpure-generator
- * @version 2018-1-25 18:24:57
+ * @version 2018-3-12 19:29:57
  */
 @Mapper
 public interface NoticeMapper {

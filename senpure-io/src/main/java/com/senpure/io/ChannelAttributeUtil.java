@@ -12,10 +12,11 @@ public class ChannelAttributeUtil {
     private static String OFFLINE_HANDLER = "offlineHandler";
     private static String CHANNEL_PLAYER = "channelPlayer";
 
+    private static String IP_AND_PORT= "ipAndPort";
     public static AttributeKey<Integer> playerIdKey = AttributeKey.valueOf(PLAYER_ID);
 
     public static AttributeKey<String> playerNameKey = AttributeKey.valueOf(PLAYER_NAME);
-
+    public static AttributeKey<String> ipAndPortKey = AttributeKey.valueOf(IP_AND_PORT);
     public static AttributeKey<ChannelPlayer> channelPlayerKey = AttributeKey.valueOf(CHANNEL_PLAYER);
     public static AttributeKey<OffLineHandler> offlineHandlerKey = AttributeKey.valueOf(OFFLINE_HANDLER);
 
@@ -70,6 +71,19 @@ public class ChannelAttributeUtil {
 
     }
 
+
+
+    public static String getIpAndPort(Channel channel) {
+
+        return channel.attr(ipAndPortKey).get();
+
+    }
+
+    public static void setIpAndPort(Channel channel,String ipAndPort) {
+
+     channel.attr(ipAndPortKey).set(ipAndPort);
+
+    }
     public static void setOfflineHandler(Channel channel, OffLineHandler handler) {
 
         channel.attr(offlineHandlerKey).set(handler);

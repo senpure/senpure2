@@ -13,7 +13,7 @@ import javax.annotation.PostConstruct;
 
 /**
  * @author senpure-generator
- * @version 2018-1-25 18:24:58
+ * @version 2018-3-12 19:29:57
  */
 @Configuration
 @ConditionalOnClass({RedisTemplate.class, CacheManager.class})

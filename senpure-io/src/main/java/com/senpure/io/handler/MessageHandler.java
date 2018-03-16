@@ -1,5 +1,6 @@
-package com.senpure.io.message;
+package com.senpure.io.handler;
 
+import com.senpure.io.message.Message;
 import io.netty.channel.Channel;
 
 
