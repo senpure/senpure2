@@ -1,15 +1,14 @@
 package com.senpure.io;
 
 import com.senpure.io.bean.HandleMessage;
-import com.senpure.io.message.Client2GatewayMessage;
-import com.senpure.io.message.SCRegServerHandleMessageMessage;
-import com.senpure.io.message.Server2GatewayMessage;
+import com.senpure.io.message.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,8 +28,10 @@ public class GatewayMessageExecuter {
 
     private int scLoginMessageId = 3;
     private int scLogoutMessageId = 4;
-    private int regServerInstanceMessageId = 1104;
-    // private int regServerHandleMessageId = 100104;
+    private Message regServerInstanceMessage = new SCRegServerHandleMessageMessage();
+    private int regServerInstanceMessageId = regServerInstanceMessage.getMessageId();
+    private Message askMessage = new SCAskHandleMessage();
+    private int askMessageId = askMessage.getMessageId();
 
     private ConcurrentMap<Integer, Channel> prepLoginChannels = new ConcurrentHashMap<>(2048);
 
@@ -39,6 +40,9 @@ public class GatewayMessageExecuter {
     private ConcurrentMap<String, GatewayComponentServer> serverInstanceMap = new ConcurrentHashMap<>(128);
 
     private ConcurrentMap<Integer, GatewayComponentServer> messageHandleMap = new ConcurrentHashMap<>(2048);
+    private ConcurrentMap<Integer, GatewayHandleMessageServer> handleMessageMap = new ConcurrentHashMap<>(2048);
+
+    private ConcurrentMap<Long, AskMessage> askMap = new ConcurrentHashMap<>();
 
     public GatewayMessageExecuter() {
         service = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
@@ -48,11 +52,11 @@ public class GatewayMessageExecuter {
         this.service = service;
     }
 
-    public  void channelActive(Channel channel)
-    {
+    public void channelActive(Channel channel) {
         tokenChannel.putIfAbsent(channel.hashCode(), channel);
     }
 
+    //将客户端消息转发给具体的服务器
     public void execute(final Channel channel, final Client2GatewayMessage message) {
         service.execute(() -> {
             logger.info("messageId {} data {}", message.getMessageId(), message.getData()[0]);
@@ -94,6 +98,9 @@ public class GatewayMessageExecuter {
         if (message.getMessageId() == regServerInstanceMessageId) {
             regServerInstance(channel, message);
             return;
+        } else if (message.getMessageId() == askMessageId) {
+            askMessage(channel, message);
+            return;
         }
         if (message.getMessageId() == scLoginMessageId) {
             int playerId = message.getPlayerIds()[0];
@@ -124,6 +131,16 @@ public class GatewayMessageExecuter {
 
     }
 
+    public void askMessage(Channel channel, Server2GatewayMessage server2GatewayMessage) {
+        SCAskHandleMessage message = new SCAskHandleMessage();
+        ByteBuf buf = Unpooled.buffer();
+        buf.writeBytes(server2GatewayMessage.getData());
+        message.read(buf);
+        if (message.isHandle()) {
+
+        }
+    }
+
     public synchronized void regServerInstance(Channel channel, Server2GatewayMessage server2GatewayMessage) {
         SCRegServerHandleMessageMessage message = new SCRegServerHandleMessageMessage();
         ByteBuf buf = Unpooled.buffer();
@@ -145,11 +162,32 @@ public class GatewayMessageExecuter {
             }
             componentServer.setServerName(message.getServerName());
         }
+
+        for (HandleMessage handleMessage : handleMessages) {
+            GatewayHandleMessageServer handleMessageServer = null;
+            if (handleMessage.isServerShare()) {
+                handleMessageServer = handleMessageMap.get(handleMessage.getHandleMessageId());
+                if (handleMessage == null) {
+                    List<GatewayComponentServer> gatewayComponentServers = new ArrayList<>();
+                    //  handleMessageServer = new GatewayHandleMessageServer(gatewayComponentServers);
+                }
+
+            } else {
+                // handleMessageServer = new GatewayHandleMessageServer(componentServer);
+            }
+            handleMessageServer.setNumStart(handleMessage.getNumStart());
+            handleMessageServer.setNumEnd(handleMessage.getNumEnd());
+            handleMessageServer.setMessageType(handleMessage.getMessageType());
+            handleMessageServer.setValueType(handleMessage.getValueType());
+        }
         //如果同一个服务有新的消息处理，旧得实例停止接收新的连接
         for (HandleMessage handleMessage : handleMessages) {
             if (!componentServer.handleId(handleMessage.getHandleMessageId())) {
                 logger.info("{} 处理了新的消息{}[{}] ，旧的服务器停止接收新的请求分发", message.getServerName(), handleMessage.getHandleMessageId(), handleMessage.getMessageClasses());
                 componentServer.prepStopOldInstance();
+                for (HandleMessage hm : handleMessages) {
+                    componentServer.markHandleId(hm.getHandleMessageId());
+                }
                 break;
             }
         }
@@ -159,5 +197,8 @@ public class GatewayMessageExecuter {
 
     }
 
+    public void addAskMessage(AskMessage askMessage) {
+        askMap.put(askMessage.getToken(), askMessage);
+    }
 
 }

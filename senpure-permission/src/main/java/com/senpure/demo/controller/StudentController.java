@@ -23,11 +23,11 @@ import javax.validation.Valid;
 
 /**
  * @author senpure-generator
- * @version 2018-3-12 19:29:56
+ * @version 2018-3-22 20:18:02
  */
 @Controller
 @RequestMapping("/demo")
-@MenuGenerator(id = 1000, text = "Student")
+@MenuGenerator(id = 1100, text = "Student")
 public class StudentController extends BaseController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class StudentController extends BaseController {
 
     @RequestMapping(value = {"/students", "/students/{page}"}, method = {RequestMethod.GET, RequestMethod.POST})
     @PermissionVerify(name = "/demo/student_read", value = "students_read")
-    @MenuGenerator(id = 1001, text = "Student Detail")
+    @MenuGenerator(id = 1101, text = "Student Detail")
 
     public ModelAndView readStudents(HttpServletRequest request, @ModelAttribute("criteria") @Valid StudentCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {

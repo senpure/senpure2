@@ -1,7 +1,7 @@
 package com.senpure.demo.mapper;
 
-import com.senpure.demo.model.Clazz;
-import com.senpure.demo.criteria.ClazzCriteria;
+import com.senpure.demo.model.Proxy;
+import com.senpure.demo.criteria.ProxyCriteria;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
  * @version 2018-3-22 20:18:02
  */
 @Mapper
-public interface ClazzMapper {
+public interface ProxyMapper {
 
-    Clazz find(Long id);
+    Proxy find(Long id);
 
     /**
      * 根据主键删除
@@ -27,7 +27,7 @@ public interface ClazzMapper {
      *
      * @return 影响的行数
      */
-    int deleteByCriteria(ClazzCriteria criteria);
+    int deleteByCriteria(ProxyCriteria criteria);
 
     /**
      * 取对象的值，直接插入数据库(包括空值)
@@ -35,7 +35,7 @@ public interface ClazzMapper {
      *
      * @return 影响的行数
      */
-    int save(Clazz clazz);
+    int save(Proxy proxy);
 
     /**
      * 取对象的值，直接插入数据库(包括空值)
@@ -43,7 +43,7 @@ public interface ClazzMapper {
      *
      * @return 影响的行数
      */
-    int saveBatch(List<Clazz> clazzs);
+    int saveBatch(List<Proxy> proxies);
 
     /**
      * 会进行对象的空值判断，不为空才更新，以主键进行where判断
@@ -51,7 +51,7 @@ public interface ClazzMapper {
      *
      * @return 影响的行数
      */
-    int update(Clazz clazz);
+    int update(Proxy proxy);
 
     /**
      * 直接将值覆盖到数据库，不会做为空判断，以主键进行where判断
@@ -59,30 +59,30 @@ public interface ClazzMapper {
      *
      * @return 影响的行数
      */
-    int cover(Clazz clazz);
+    int cover(Proxy proxy);
 
     /**
      * 会进行对象的空值判断，不为空才更新，主键无值时，可以进行批量更新
      *
      * @return 影响的行数
      */
-    int updateByCriteria(ClazzCriteria criteria);
+    int updateByCriteria(ProxyCriteria criteria);
 
     int count();
 
-    List<Clazz> findAll();
+    List<Proxy> findAll();
 
     /**
      * <b>主键会无效化,不会进行条件对比</b>
      *
      * @return 满足条件的总行数
      */
-    int countByCriteria(ClazzCriteria criteria);
+    int countByCriteria(ProxyCriteria criteria);
 
     /**
      * <b>主键会无效化,不会进行条件对比</b>
      *
      * @return 满足条件的记录
      */
-    List<Clazz> findByCriteria(ClazzCriteria criteria);
+    List<Proxy> findByCriteria(ProxyCriteria criteria);
 }

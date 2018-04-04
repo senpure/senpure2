@@ -1,25 +1,26 @@
 package com.senpure.io.bean;
 
-import com.senpure.io.bean.Bean;
 import io.netty.buffer.ByteBuf;
 
 /**
 * @author senpure-generator
-* @version 2018-3-16 17:14:31
+* @version 2018-3-21 20:05:32
 */
 public class HandleMessage extends  Bean {
     //可以处理的消息ID
     private int handleMessageId;
     //消息类名
     private String messageClasses;
-    //消息类型 0 可以直接转发过来 1 网关向服务器请求是否可以处理 2 网关读取数字范围
-    private int type;
+    //是否共享messageId 不同的服务都可以处理
+    private boolean serverShare;
+    //消息类型 0 可以直接转发过来 1 网关读取范围  2 网关询问
+    private int messageType;
     //数字类型 0int 1 long
-    private int numType;
+    private int valueType;
     //范围开始
-    private int start;
+    private long numStart;
     //范围结束
-    private int end;
+    private long numEnd;
 
     /**
      * 写入字节缓存
@@ -30,14 +31,16 @@ public class HandleMessage extends  Bean {
         writeInt(buf,handleMessageId);
         //消息类名
         writeStr(buf,messageClasses);
-        //消息类型 0 可以直接转发过来 1 网关向服务器请求是否可以处理 2 网关读取数字范围
-        writeInt(buf,type);
+        //是否共享messageId 不同的服务都可以处理
+        writeBoolean(buf,serverShare);
+        //消息类型 0 可以直接转发过来 1 网关读取范围  2 网关询问
+        writeInt(buf,messageType);
         //数字类型 0int 1 long
-        writeInt(buf,numType);
+        writeInt(buf,valueType);
         //范围开始
-        writeInt(buf,start);
+        writeLong(buf,numStart);
         //范围结束
-        writeInt(buf,end);
+        writeLong(buf,numEnd);
     }
 
 
@@ -50,14 +53,16 @@ public class HandleMessage extends  Bean {
         this.handleMessageId = readInt(buf);
         //消息类名
         this.messageClasses= readStr(buf);
-        //消息类型 0 可以直接转发过来 1 网关向服务器请求是否可以处理 2 网关读取数字范围
-        this.type = readInt(buf);
+        //是否共享messageId 不同的服务都可以处理
+        this.serverShare = readBoolean(buf);
+        //消息类型 0 可以直接转发过来 1 网关读取范围  2 网关询问
+        this.messageType = readInt(buf);
         //数字类型 0int 1 long
-        this.numType = readInt(buf);
+        this.valueType = readInt(buf);
         //范围开始
-        this.start = readInt(buf);
+        this.numStart = readLong(buf);
         //范围结束
-        this.end = readInt(buf);
+        this.numEnd = readLong(buf);
     }
 
     /**
@@ -91,63 +96,78 @@ public class HandleMessage extends  Bean {
         return this;
     }
     /**
-     * get 消息类型 0 可以直接转发过来 1 网关向服务器请求是否可以处理 2 网关读取数字范围
+     *  is 是否共享messageId 不同的服务都可以处理
      * @return
      */
-    public  int getType() {
-        return type;
+    public  boolean  isServerShare() {
+        return serverShare;
     }
 
     /**
-     * set 消息类型 0 可以直接转发过来 1 网关向服务器请求是否可以处理 2 网关读取数字范围
+     * set 是否共享messageId 不同的服务都可以处理
      */
-    public HandleMessage setType(int type) {
-        this.type=type;
+    public HandleMessage setServerShare(boolean serverShare) {
+        this.serverShare=serverShare;
+        return this;
+    }
+    /**
+     * get 消息类型 0 可以直接转发过来 1 网关读取范围  2 网关询问
+     * @return
+     */
+    public  int getMessageType() {
+        return messageType;
+    }
+
+    /**
+     * set 消息类型 0 可以直接转发过来 1 网关读取范围  2 网关询问
+     */
+    public HandleMessage setMessageType(int messageType) {
+        this.messageType=messageType;
         return this;
     }
     /**
      * get 数字类型 0int 1 long
      * @return
      */
-    public  int getNumType() {
-        return numType;
+    public  int getValueType() {
+        return valueType;
     }
 
     /**
      * set 数字类型 0int 1 long
      */
-    public HandleMessage setNumType(int numType) {
-        this.numType=numType;
+    public HandleMessage setValueType(int valueType) {
+        this.valueType=valueType;
         return this;
     }
     /**
      * get 范围开始
      * @return
      */
-    public  int getStart() {
-        return start;
+    public  long getNumStart() {
+        return numStart;
     }
 
     /**
      * set 范围开始
      */
-    public HandleMessage setStart(int start) {
-        this.start=start;
+    public HandleMessage setNumStart(long numStart) {
+        this.numStart=numStart;
         return this;
     }
     /**
      * get 范围结束
      * @return
      */
-    public  int getEnd() {
-        return end;
+    public  long getNumEnd() {
+        return numEnd;
     }
 
     /**
      * set 范围结束
      */
-    public HandleMessage setEnd(int end) {
-        this.end=end;
+    public HandleMessage setNumEnd(long numEnd) {
+        this.numEnd=numEnd;
         return this;
     }
 
@@ -156,10 +176,11 @@ public class HandleMessage extends  Bean {
         return "HandleMessage{"
                 +"handleMessageId=" + handleMessageId
                 +",messageClasses=" + messageClasses
-                +",type=" + type
-                +",numType=" + numType
-                +",start=" + start
-                +",end=" + end
+                +",serverShare=" + serverShare
+                +",messageType=" + messageType
+                +",valueType=" + valueType
+                +",numStart=" + numStart
+                +",numEnd=" + numEnd
                 + "}";
    }
 
@@ -177,18 +198,21 @@ public class HandleMessage extends  Bean {
         //消息类名
         sb.append("\n");
         sb.append(indent).append(rightPad("messageClasses", filedPad)).append(" = ").append(messageClasses);
-        //消息类型 0 可以直接转发过来 1 网关向服务器请求是否可以处理 2 网关读取数字范围
+        //是否共享messageId 不同的服务都可以处理
         sb.append("\n");
-        sb.append(indent).append(rightPad("type", filedPad)).append(" = ").append(type);
+        sb.append(indent).append(rightPad("serverShare", filedPad)).append(" = ").append(serverShare);
+        //消息类型 0 可以直接转发过来 1 网关读取范围  2 网关询问
+        sb.append("\n");
+        sb.append(indent).append(rightPad("messageType", filedPad)).append(" = ").append(messageType);
         //数字类型 0int 1 long
         sb.append("\n");
-        sb.append(indent).append(rightPad("numType", filedPad)).append(" = ").append(numType);
+        sb.append(indent).append(rightPad("valueType", filedPad)).append(" = ").append(valueType);
         //范围开始
         sb.append("\n");
-        sb.append(indent).append(rightPad("start", filedPad)).append(" = ").append(start);
+        sb.append(indent).append(rightPad("numStart", filedPad)).append(" = ").append(numStart);
         //范围结束
         sb.append("\n");
-        sb.append(indent).append(rightPad("end", filedPad)).append(" = ").append(end);
+        sb.append(indent).append(rightPad("numEnd", filedPad)).append(" = ").append(numEnd);
         sb.append("\n");
         sb.append(indent).append("}");
         return sb.toString();

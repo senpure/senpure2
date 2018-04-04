@@ -3,6 +3,7 @@ package com.senpure.io;
 import com.senpure.io.message.Message;
 import com.senpure.io.message.Server2GatewayMessage;
 import io.netty.channel.Channel;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class ComponentGatewayServer {
 
+    private org.slf4j.Logger logger = LoggerFactory.getLogger(getClass());
     private ConcurrentMap<String, ComponentGatewayChannelServer> gatewayChannelMap = new ConcurrentHashMap<>();
 
     private ConcurrentMap<Integer, ComponentGatewayChannelServer> playerGatewayMap = new ConcurrentHashMap<>();
@@ -49,6 +51,20 @@ public class ComponentGatewayServer {
         tokenGatewayMap.remove(token);
     }
 
+    public void offline(int token, int playerId) {
+        logger.debug("token {} id {}离线", token, playerId);
+        if (token != 0) {
+            breakToken(token);
+        }
+        if (playerId > 0) {
+            breakPlayer(playerId);
+        }
+    }
+
+    public boolean canHandleMessageValue(int messageId,String value)
+    {
+        return  false;
+    }
 
     public void sendMessage2GatewayByToken(Integer token, Message message) {
         Server2GatewayMessage toGateway = new Server2GatewayMessage();

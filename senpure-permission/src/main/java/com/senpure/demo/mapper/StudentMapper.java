@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @author senpure-generator
- * @version 2018-3-12 19:29:56
+ * @version 2018-3-22 20:18:02
  */
 @Mapper
 public interface StudentMapper {

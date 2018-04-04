@@ -8,9 +8,11 @@ import com.senpure.base.util.RandomUtil;
 import com.senpure.base.util.TimeCalculator;
 import com.senpure.demo.model.Clazz;
 import com.senpure.demo.model.Notice;
+import com.senpure.demo.model.Proxy;
 import com.senpure.demo.model.Student;
 import com.senpure.demo.service.ClazzService;
 import com.senpure.demo.service.NoticeService;
+import com.senpure.demo.service.ProxyService;
 import com.senpure.demo.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -34,7 +36,8 @@ public class DemoDataGenerator extends SpringContextRefreshEvent {
     @Autowired
     private NoticeService noticeService;
 
-
+    @Autowired
+    private ProxyService proxyService;
     @Autowired
     private SystemValueService systemValueService;
 
@@ -96,6 +99,7 @@ public class DemoDataGenerator extends SpringContextRefreshEvent {
 
         }
         createNotice();
+        createProxy();
     }
 
     private void createNotice() {
@@ -125,6 +129,58 @@ public class DemoDataGenerator extends SpringContextRefreshEvent {
             systemValue.setKey("demo.student.notice.create");
             systemValue.setValue("true");
             systemValue.setDescription("标记是否创建了demo下的notice数据");
+            systemValue.setType(PermissionConstant.VALUE_TYPE_SYSTEM);
+            systemValueService.save(systemValue);
+        } else {
+            systemValue.setValue("true");
+            systemValueService.update(systemValue);
+        }
+    }
+
+    private void createProxy() {
+        SystemValue systemValue = systemValueService.findByKey("demo.student.proxy.create");
+        if (systemValue == null || !"true".equals(systemValue.getValue())) {
+            int i = 1;
+            List<Proxy> proxies = new ArrayList<>();
+
+
+            Date date = new Date();
+
+            for (long j = 2; j < 10; j++) {
+                Proxy proxy = new Proxy();
+                proxy.setParent(1L);
+                proxy.setChild(j);
+                proxy.setBindDate(date);
+                proxy.setBindTime(date.getTime());
+                proxy.setLevel(1);
+                proxies.add(proxy);
+            }
+
+            for (long j = 11; j < 13; j++) {
+                Proxy proxy = new Proxy();
+                proxy.setParent(j - 9);
+                proxy.setChild(j);
+                proxy.setBindDate(date);
+                proxy.setBindTime(date.getTime());
+                proxy.setLevel(1);
+
+                Proxy proxy1 = new Proxy();
+                proxy1.setBindTime(date.getTime());
+                proxy1.setParent(1L);
+                proxy1.setChild(j);
+                proxy1.setLevel(2);
+                proxy1.setBindDate(date);
+
+                proxies.add(proxy);
+                proxies.add(proxy1);
+            }
+            proxyService.save(proxies);
+        }
+        if (systemValue == null) {
+            systemValue = new SystemValue();
+            systemValue.setKey("demo.student.proxy.create");
+            systemValue.setValue("true");
+            systemValue.setDescription("标记是否创建了demo下的proxy数据");
             systemValue.setType(PermissionConstant.VALUE_TYPE_SYSTEM);
             systemValueService.save(systemValue);
         } else {

@@ -22,13 +22,25 @@ public class GatewayComponentChannelServer {
 
     private Set<Integer> handleIds = new HashSet<>();
 
+    private long start;
+    private long end;
+
 
     private String serverKey;
+
+
+    public boolean handleRange(long num) {
+        return num >= start && num <= end;
+    }
+
     public void addChannel(Channel channel) {
         channels.add(channel);
     }
 
 
+    public boolean handle(long value) {
+        return value >= start && value <= end;
+    }
 
     public String getServerKey() {
         return serverKey;
@@ -66,6 +78,21 @@ public class GatewayComponentChannelServer {
     }
 
 
+    public long getStart() {
+        return start;
+    }
+
+    public void setStart(long start) {
+        this.start = start;
+    }
+
+    public long getEnd() {
+        return end;
+    }
+
+    public void setEnd(long end) {
+        this.end = end;
+    }
 
     public static void main(String[] args) {
         ConcurrentMap<Integer, Integer> ids = new ConcurrentHashMap<>();

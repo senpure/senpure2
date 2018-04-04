@@ -15,6 +15,7 @@ public class Field {
     private boolean list;
     private int capacity;
     private boolean otherPart;
+    private int index;
     //lua 中的实体对象名
     private String luaClassType;
 
@@ -96,6 +97,14 @@ public class Field {
 
     public void setLuaClassType(String luaClassType) {
         this.luaClassType = luaClassType;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     @Override

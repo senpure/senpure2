@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Created by 罗中正 on 2018/3/5 0005.
  */
 public class GatewayComponentServer {
-   private  CSRelationPlayerGatewayMessage message = new CSRelationPlayerGatewayMessage();
+    private CSRelationPlayerGatewayMessage message = new CSRelationPlayerGatewayMessage();
     private int relationMessageId = message.getMessageId();
     private ConcurrentMap<Integer, Channel> playerChannelMap = new ConcurrentHashMap<>();
     private List<GatewayComponentChannelServer> useChannelServer = new ArrayList<>();
@@ -29,30 +29,32 @@ public class GatewayComponentServer {
     private String serverName;
     private AtomicInteger atomicIndex = new AtomicInteger(-1);
 
-    public Channel channel(Integer playerId,int token) {
+    public Channel channel(Integer playerId, int token) {
         Channel channel = playerChannelMap.get(playerId);
         if (channel == null) {
             channel = nextGatewayComponentChannelServer().nextChannel();
-            if (playerId.intValue() > 0) {
-                playerChannelMap.putIfAbsent(playerId, channel);
-                //channel=playerChannelMap.get(playerId);
-            }
-            CSRelationPlayerGatewayMessage message = new CSRelationPlayerGatewayMessage();
-            message.setPlayerId(playerId);
-            message.setToken(token);
-           Client2GatewayMessage toMessage = new  Client2GatewayMessage();
-            toMessage.setMessageId(relationMessageId);
-            ByteBuf buf = Unpooled.buffer();
-            message.write(buf);
-            toMessage.setData(buf.array());
-           // toMessage.setBuf(buf);
-            channel.writeAndFlush(toMessage);
+            relationGateway(channel, token, playerId);
             return channel;
         }
         return channel;
     }
 
-    private  GatewayComponentChannelServer nextGatewayComponentChannelServer() {
+    public void relationGateway(Channel channel, int token, int playerId) {
+        if (playerId > 0) {
+            playerChannelMap.put(playerId, channel);
+        }
+        CSRelationPlayerGatewayMessage message = new CSRelationPlayerGatewayMessage();
+        message.setPlayerId(playerId);
+        message.setToken(token);
+        Client2GatewayMessage toMessage = new Client2GatewayMessage();
+        toMessage.setMessageId(relationMessageId);
+        ByteBuf buf = Unpooled.buffer();
+        message.write(buf);
+        toMessage.setData(buf.array());
+        channel.writeAndFlush(toMessage);
+    }
+
+    private GatewayComponentChannelServer nextGatewayComponentChannelServer() {
         GatewayComponentChannelServer server = useChannelServer.get(nextIndex());
         return server;
     }
@@ -96,6 +98,10 @@ public class GatewayComponentServer {
         server.setServerKey(serverKey);
         return server;
 
+    }
+
+    public List<GatewayComponentChannelServer> getUseChannelServer() {
+        return useChannelServer;
     }
 
     public synchronized void checkChannelServer(String serverKey, GatewayComponentChannelServer channelServer) {

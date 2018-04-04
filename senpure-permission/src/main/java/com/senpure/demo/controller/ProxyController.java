@@ -2,10 +2,10 @@ package com.senpure.demo.controller;
 
 import com.senpure.base.result.ResultMap;
 import com.senpure.base.spring.BaseController;
-import com.senpure.demo.criteria.NoticeCriteriaStr;
-import com.senpure.demo.criteria.NoticeCriteria;
-import com.senpure.demo.service.NoticeService;
-import com.senpure.demo.model.Notice;
+import com.senpure.demo.criteria.ProxyCriteriaStr;
+import com.senpure.demo.criteria.ProxyCriteria;
+import com.senpure.demo.service.ProxyService;
+import com.senpure.demo.model.Proxy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -27,32 +27,32 @@ import javax.validation.Valid;
  */
 @Controller
 @RequestMapping("/demo")
-@MenuGenerator(id = 1200, text = "Notice")
-public class NoticeController extends BaseController {
+@MenuGenerator(id = 1000, text = "Proxy")
+public class ProxyController extends BaseController {
 
     @Autowired
-    private NoticeService noticeService;
-    private String view = "/demo/notice";
+    private ProxyService proxyService;
+    private String view = "/demo/proxy";
 
-    @RequestMapping(value = {"/notices", "/notices/{page}"}, method = {RequestMethod.GET, RequestMethod.POST})
-    @PermissionVerify(name = "/demo/notice_read", value = "notices_read")
-    @MenuGenerator(id = 1201, text = "Notice Detail")
+    @RequestMapping(value = {"/proxies", "/proxies/{page}"}, method = {RequestMethod.GET, RequestMethod.POST})
+    @PermissionVerify(name = "/demo/proxy_read", value = "proxies_read")
+    @MenuGenerator(id = 1001, text = "Proxy Detail")
 
-    public ModelAndView readNotices(HttpServletRequest request, @ModelAttribute("criteria") @Valid NoticeCriteriaStr criteriaStr, BindingResult result) {
+    public ModelAndView readProxies(HttpServletRequest request, @ModelAttribute("criteria") @Valid ProxyCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result, view);
         }
-        NoticeCriteria criteria = criteriaStr.toNoticeCriteria();
+        ProxyCriteria criteria = criteriaStr.toProxyCriteria();
         logger.debug("查询条件:{}", criteria);
-        ResultMap resultMap = noticeService.findPage(criteria);
+        ResultMap resultMap = proxyService.findPage(criteria);
         return result(request, view, resultMap);
     }
 
-    @RequestMapping(value = "/notice/{id}", method = RequestMethod.GET)
-    @PermissionVerify(name = "/demo/notice_read", value = "notice_read")
+    @RequestMapping(value = "/proxy/{id}", method = RequestMethod.GET)
+    @PermissionVerify(name = "/demo/proxy_read", value = "proxy_read")
     @ResponseBody
-    public ResultMap readNotice(HttpServletRequest request, @PathVariable String id) {
+    public ResultMap readProxy(HttpServletRequest request, @PathVariable String id) {
         Long numberId;
         try {
             numberId = Long.valueOf(id);
@@ -60,37 +60,37 @@ public class NoticeController extends BaseController {
             logger.error("输入转换失败", e);
             return wrapMessage(request, ResultMap.notExist(), id);
         }
-        logger.debug("查询Notice:{}", id);
-        Notice notice = noticeService.find(numberId);
-        if (notice != null) {
-            return wrapMessage(request, ResultMap.success().putItem(notice));
+        logger.debug("查询Proxy:{}", id);
+        Proxy proxy = proxyService.find(numberId);
+        if (proxy != null) {
+            return wrapMessage(request, ResultMap.success().putItem(proxy));
         } else {
             return wrapMessage(request, ResultMap.notExist(), id);
         }
     }
 
 
-    @RequestMapping(value = "/notice", method = RequestMethod.POST)
-    @PermissionVerify(value = "notice_create")
+    @RequestMapping(value = "/proxy", method = RequestMethod.POST)
+    @PermissionVerify(value = "proxy_create")
     @ResponseBody
-    public ResultMap createNotice(HttpServletRequest request, @ModelAttribute("criteria") @Valid NoticeCriteriaStr criteriaStr, BindingResult result) {
+    public ResultMap createProxy(HttpServletRequest request, @ModelAttribute("criteria") @Valid ProxyCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
         }
-        NoticeCriteria criteria = criteriaStr.toNoticeCriteria();
-        logger.debug("创建Notice:{}", criteria);
-        if (noticeService.save(criteria)) {
+        ProxyCriteria criteria = criteriaStr.toProxyCriteria();
+        logger.debug("创建Proxy:{}", criteria);
+        if (proxyService.save(criteria)) {
             return wrapMessage(request, ResultMap.success().put("id", criteria.getId()));
         } else {
             return wrapMessage(request, ResultMap.dim());
         }
     }
 
-    @RequestMapping(value = "/notice/{id}", method = RequestMethod.PUT)
-    @PermissionVerify(value = "notice_update")
+    @RequestMapping(value = "/proxy/{id}", method = RequestMethod.PUT)
+    @PermissionVerify(value = "proxy_update")
     @ResponseBody
-    public ResultMap updateNotice(HttpServletRequest request, @PathVariable String id, @ModelAttribute("criteria") @Valid NoticeCriteriaStr criteriaStr, BindingResult result) {
+    public ResultMap updateProxy(HttpServletRequest request, @PathVariable String id, @ModelAttribute("criteria") @Valid ProxyCriteriaStr criteriaStr, BindingResult result) {
         if (result.hasErrors()) {
             logger.warn("客户端输入不正确{}", result);
             return incorrect(request, result);
@@ -102,32 +102,32 @@ public class NoticeController extends BaseController {
             logger.error("输入转换失败", e);
             return wrapMessage(request, ResultMap.notExist(), id);
         }
-        NoticeCriteria criteria = criteriaStr.toNoticeCriteria();
+        ProxyCriteria criteria = criteriaStr.toProxyCriteria();
         criteria.setId(numberId);
-        logger.debug("修改Notice:{}", criteria);
+        logger.debug("修改Proxy:{}", criteria);
         if (criteria.getVersion() == null) {
-            Notice notice = noticeService.find(criteria.getId());
-            if (notice == null) {
+            Proxy proxy = proxyService.find(criteria.getId());
+            if (proxy == null) {
                 return wrapMessage(request, ResultMap.notExist(), id);
             }
-            criteria.effective(notice);
-            if (noticeService.update(notice)) {
+            criteria.effective(proxy);
+            if (proxyService.update(proxy)) {
                 return wrapMessage(request, ResultMap.success());
             } else {
                 return wrapMessage(request, ResultMap.dim());
             }
         }
-        if (noticeService.update(criteria.toNotice())) {
+        if (proxyService.update(criteria.toProxy())) {
             return wrapMessage(request, ResultMap.success());
         } else {
             return wrapMessage(request, ResultMap.dim());
         }
     }
 
-    @RequestMapping(value = "/notice/{id}", method = RequestMethod.DELETE)
-    @PermissionVerify(value = "notice_delete")
+    @RequestMapping(value = "/proxy/{id}", method = RequestMethod.DELETE)
+    @PermissionVerify(value = "proxy_delete")
     @ResponseBody
-    public ResultMap deleteNotice(HttpServletRequest request, @PathVariable String id) {
+    public ResultMap deleteProxy(HttpServletRequest request, @PathVariable String id) {
         Long numberId;
         try {
             numberId = Long.valueOf(id);
@@ -135,8 +135,8 @@ public class NoticeController extends BaseController {
             logger.error("输入转换失败", e);
             return wrapMessage(request, ResultMap.notExist(), id);
         }
-        logger.debug("删除Notice:{}", id);
-        if (noticeService.delete(numberId)) {
+        logger.debug("删除Proxy:{}", id);
+        if (proxyService.delete(numberId)) {
             return wrapMessage(request, ResultMap.success());
         } else {
             return wrapMessage(request, ResultMap.dim());

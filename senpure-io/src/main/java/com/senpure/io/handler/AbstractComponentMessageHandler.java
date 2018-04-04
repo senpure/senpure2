@@ -21,6 +21,7 @@ public abstract class AbstractComponentMessageHandler<T extends Message> impleme
         ResolvableType resolvableType = ResolvableType.forClass(getClass());
         messageClass = (Class<T>) resolvableType.getSuperType().getGeneric(0).resolve();
     }
+
     @Override
     public T getEmptyMessage() {
 
@@ -32,10 +33,42 @@ public abstract class AbstractComponentMessageHandler<T extends Message> impleme
         }
         return null;
     }
+
     @Override
     public void afterPropertiesSet() throws Exception {
         ComponentMessageHandlerUtil.regMessageHandler(this);
 
     }
 
+    @Override
+    public int messageType() {
+        return 0;
+    }
+
+    @Override
+    public boolean serverShare() {
+        return false;
+    }
+
+
+    @Override
+    public int valueType() {
+        return 0;
+    }
+
+    @Override
+    public long numStart() {
+        return 0;
+    }
+
+    @Override
+    public long numEnd() {
+        return 0;
+    }
+
+
+    @Override
+    public boolean regToGateway() {
+        return true;
+    }
 }

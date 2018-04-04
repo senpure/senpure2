@@ -1,8 +1,8 @@
 package com.senpure.demo.service;
 
-import com.senpure.demo.model.Clazz;
-import com.senpure.demo.criteria.ClazzCriteria;
-import com.senpure.demo.mapper.ClazzMapper;
+import com.senpure.demo.model.Proxy;
+import com.senpure.demo.criteria.ProxyCriteria;
+import com.senpure.demo.mapper.ProxyMapper;
 import com.senpure.base.exception.OptimisticLockingFailureException;
 import com.senpure.base.service.BaseService;
 import com.senpure.base.result.ResultMap;
@@ -22,11 +22,11 @@ import java.util.ArrayList;
  * @version 2018-3-22 20:18:02
  */
 @Service
-@CacheConfig(cacheNames = "clazz")
-public class ClazzService extends BaseService {
+@CacheConfig(cacheNames = "proxy")
+public class ProxyService extends BaseService {
 
     @Autowired
-    private ClazzMapper clazzMapper;
+    private ProxyMapper proxyMapper;
 
     @CacheEvict(key = "#id")
     public void clearCache(Long id) {
@@ -37,63 +37,63 @@ public class ClazzService extends BaseService {
     }
 
     @Cacheable(key = "#id", unless = "#result == null")
-    public Clazz find(Long id) {
-        return clazzMapper.find(id);
+    public Proxy find(Long id) {
+        return proxyMapper.find(id);
     }
 
     @Cacheable(key = "#id", unless = "#result == null")
-    public Clazz findOnlyCache(Long id) {
+    public Proxy findOnlyCache(Long id) {
         return null;
     }
 
     @CachePut(key = "#id", unless = "#result == null")
-    public Clazz findSkipCache(Long id) {
-        return clazzMapper.find(id);
+    public Proxy findSkipCache(Long id) {
+        return proxyMapper.find(id);
     }
 
     public int count() {
-        return clazzMapper.count();
+        return proxyMapper.count();
     }
 
-    public List<Clazz> findAll() {
-        return clazzMapper.findAll();
+    public List<Proxy> findAll() {
+        return proxyMapper.findAll();
     }
 
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#id")
     public boolean delete(Long id) {
-        int result = clazzMapper.delete(id);
+        int result = proxyMapper.delete(id);
         return result == 1;
     }
 
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
-    public int delete(ClazzCriteria criteria) {
-        return clazzMapper.deleteByCriteria(criteria);
+    public int delete(ProxyCriteria criteria) {
+        return proxyMapper.deleteByCriteria(criteria);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean save(Clazz clazz) {
-        clazz.setId(idGenerator.nextId());
-        int result = clazzMapper.save(clazz);
+    public boolean save(Proxy proxy) {
+        proxy.setId(idGenerator.nextId());
+        int result = proxyMapper.save(proxy);
         return result == 1;
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public int save(List<Clazz> clazzs) {
-        if (clazzs == null || clazzs.size() == 0) {
+    public int save(List<Proxy> proxies) {
+        if (proxies == null || proxies.size() == 0) {
             return 0;
         }
-        for (Clazz clazz : clazzs) {
-            clazz.setId(idGenerator.nextId());
+        for (Proxy proxy : proxies) {
+            proxy.setId(idGenerator.nextId());
         }
-        return clazzMapper.saveBatch(clazzs);
+        return proxyMapper.saveBatch(proxies);
     }
 
     @Transactional(rollbackFor = Exception.class)
-    public boolean save(ClazzCriteria criteria) {
+    public boolean save(ProxyCriteria criteria) {
         criteria.setId(idGenerator.nextId());
-        int result = clazzMapper.save(criteria.toClazz());
+        int result = proxyMapper.save(criteria.toProxy());
         return result == 1;
     }
 
@@ -103,11 +103,11 @@ public class ClazzService extends BaseService {
      * @return
      */
     @Transactional(rollbackFor = Exception.class)
-    @CacheEvict(key = "#clazz.id")
-    public boolean update(Clazz clazz) {
-        int updateCount = clazzMapper.update(clazz);
+    @CacheEvict(key = "#proxy.id")
+    public boolean update(Proxy proxy) {
+        int updateCount = proxyMapper.update(proxy);
         if (updateCount == 0) {
-            throw new OptimisticLockingFailureException(clazz.getClass() + ",[" + clazz.getId() + "],版本号冲突,版本号[" + clazz.getVersion() + "]");
+            throw new OptimisticLockingFailureException(proxy.getClass() + ",[" + proxy.getId() + "],版本号冲突,版本号[" + proxy.getVersion() + "]");
         }
         return true;
     }
@@ -119,8 +119,8 @@ public class ClazzService extends BaseService {
      */
     @Transactional(rollbackFor = Exception.class)
     @CacheEvict(key = "#criteria.id", allEntries = true)
-    public int update(ClazzCriteria criteria) {
-        int updateCount = clazzMapper.updateByCriteria(criteria);
+    public int update(ProxyCriteria criteria) {
+        int updateCount = proxyMapper.updateByCriteria(criteria);
         if (updateCount == 0 && criteria.getVersion() != null
                 && criteria.getId() != null) {
             throw new OptimisticLockingFailureException(criteria.getClass() + ",[" + criteria.getId() + "],版本号冲突,版本号[" + criteria.getVersion() + "]");
@@ -129,56 +129,56 @@ public class ClazzService extends BaseService {
     }
 
     @Transactional(readOnly = true)
-    public ResultMap findPage(ClazzCriteria criteria) {
+    public ResultMap findPage(ProxyCriteria criteria) {
         ResultMap resultMap = ResultMap.success();
         //是否是主键查找
         if (criteria.getId() != null) {
-            Clazz clazz = clazzMapper.find(criteria.getId());
-            if (clazz != null) {
-                List<Clazz> clazzs = new ArrayList<>(16);
-                clazzs.add(clazz);
+            Proxy proxy = proxyMapper.find(criteria.getId());
+            if (proxy != null) {
+                List<Proxy> proxies = new ArrayList<>(16);
+                proxies.add(proxy);
                 resultMap.putTotal(1);
-                resultMap.putItems(clazzs);
+                resultMap.putItems(proxies);
             } else {
                 resultMap.putTotal(0);
             }
             return resultMap;
         }
-        int total = clazzMapper.countByCriteria(criteria);
+        int total = proxyMapper.countByCriteria(criteria);
         resultMap.putTotal(total);
         if (total == 0) {
             return resultMap;
         }
         //检查页数是否合法
         checkPage(criteria, total);
-        List<Clazz> clazzs = clazzMapper.findByCriteria(criteria);
-        resultMap.putItems(clazzs);
+        List<Proxy> proxies = proxyMapper.findByCriteria(criteria);
+        resultMap.putItems(proxies);
         return resultMap;
     }
 
-    public List<Clazz> find(ClazzCriteria criteria) {
+    public List<Proxy> find(ProxyCriteria criteria) {
         //是否是主键查找
         if (criteria.getId() != null) {
-            List<Clazz> clazzs = new ArrayList<>(16);
-            Clazz clazz = clazzMapper.find(criteria.getId());
-            if (clazz != null) {
-                clazzs.add(clazz);
+            List<Proxy> proxies = new ArrayList<>(16);
+            Proxy proxy = proxyMapper.find(criteria.getId());
+            if (proxy != null) {
+                proxies.add(proxy);
             }
-            return clazzs;
+            return proxies;
         }
-        return clazzMapper.findByCriteria(criteria);
+        return proxyMapper.findByCriteria(criteria);
     }
 
-    public Clazz findOne(ClazzCriteria criteria) {
+    public Proxy findOne(ProxyCriteria criteria) {
         //是否是主键查找
         if (criteria.getId() != null) {
-            return clazzMapper.find(criteria.getId());
+            return proxyMapper.find(criteria.getId());
         }
-        List<Clazz> clazzs = clazzMapper.findByCriteria(criteria);
-        if (clazzs.size() == 0) {
+        List<Proxy> proxies = proxyMapper.findByCriteria(criteria);
+        if (proxies.size() == 0) {
             return null;
         }
-        return clazzs.get(0);
+        return proxies.get(0);
     }
 
 }

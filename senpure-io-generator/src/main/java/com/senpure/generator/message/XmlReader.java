@@ -85,9 +85,11 @@ public class XmlReader {
 
     private static void attr(Element element, Bean bean) {
 
+        int fieldIndex=0;
         List<Element> elements = element.elements();
         for (Element e : elements) {
             Field field = new Field();
+            field.setIndex(fieldIndex++);
             field.setName(e.attributeValue("name"));
             String type = e.attributeValue("type");
             if (type == null) {

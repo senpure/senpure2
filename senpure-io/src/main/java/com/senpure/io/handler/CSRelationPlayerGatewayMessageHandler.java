@@ -4,6 +4,7 @@ import com.senpure.io.ChannelAttributeUtil;
 import com.senpure.io.ComponentGatewayServer;
 import com.senpure.io.message.CSRelationPlayerGatewayMessage;
 import io.netty.channel.Channel;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * 关联玩家与网关处理器
@@ -11,11 +12,10 @@ import io.netty.channel.Channel;
  * @author senpure-generator
  * @version 2018-3-16 17:14:32
  */
-public class CSRelationPlayerGatewayMessageHandler extends AbstractComponentMessageHandler<CSRelationPlayerGatewayMessage> {
+public class CSRelationPlayerGatewayMessageHandler extends AbstractInnerComponentMessageHandler<CSRelationPlayerGatewayMessage> {
 
-
+    @Autowired
     private ComponentGatewayServer gatewayServer;
-
     @Override
     public void execute(Channel channel, int token, int playerId, CSRelationPlayerGatewayMessage relationMessage) {
         String gatewayKey = ChannelAttributeUtil.getIpAndPort(channel);
@@ -25,14 +25,11 @@ public class CSRelationPlayerGatewayMessageHandler extends AbstractComponentMess
         if (relationMessage.getToken() != 0) {
             gatewayServer.relationToken(gatewayKey, relationMessage.getToken());
         }
-
     }
-
 
     public void setGatewayServer(ComponentGatewayServer gatewayServer) {
         this.gatewayServer = gatewayServer;
     }
-
     @Override
     public int handlerId() {
         return 1101;

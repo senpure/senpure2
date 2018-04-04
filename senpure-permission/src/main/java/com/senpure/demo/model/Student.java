@@ -5,7 +5,7 @@ import java.util.Date;
 
 /**
  * @author senpure-generator
- * @version 2018-3-12 19:29:56
+ * @version 2018-3-22 20:18:02
  */
 public class Student implements Serializable {
     private static final long serialVersionUID = 2004864803L;

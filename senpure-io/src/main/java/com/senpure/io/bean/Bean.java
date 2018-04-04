@@ -90,6 +90,7 @@ public abstract class Bean {
 
     protected String readStr(ByteBuf buf) {
         int length = buf.readInt();
+
         if (length <= 0) {
             return null;
         }

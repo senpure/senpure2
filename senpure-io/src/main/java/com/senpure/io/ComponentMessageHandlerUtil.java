@@ -2,6 +2,7 @@ package com.senpure.io;
 
 
 import com.senpure.base.util.Assert;
+import com.senpure.io.bean.HandleMessage;
 import com.senpure.io.handler.ComponentMessageHandler;
 import com.senpure.io.message.Message;
 
@@ -20,9 +21,16 @@ public class ComponentMessageHandlerUtil {
         return handlerMap.get(messageId);
     }
 
+
+    public List<HandleMessage> regMessageIds = new ArrayList<>(128);
     public static void regMessageHandler(ComponentMessageHandler handler) {
         Assert.isNull(handlerMap.get(handler.handlerId()), handler.handlerId() + " -> " + handler.getEmptyMessage().getClass().getName() + "  处理程序已经存在");
         handlerMap.put(handler.handlerId(), handler);
+
+        if (handler.regToGateway()) {
+            HandleMessage handleMessage=new HandleMessage();
+
+        }
     }
 
     public static Message getEmptyMessage(int messageId) {
