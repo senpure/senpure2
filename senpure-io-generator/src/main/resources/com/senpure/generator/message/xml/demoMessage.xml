@@ -1,29 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<messages package="com.senpure.game.demo" id="66" model="demo">
-
-    <bean name="Author" explain="作者">
-        <field messageType="String" name="name" explain="书本名"></field>
-        <field messageType="int" name="phone" explain="电话"></field>
-    </bean>
-    <bean name="Book" explain="书本">
-        <field messageType="String" name="name" explain="书本名"></field>
-        <field messageType="int" name="price" explain="书本单价"></field>
-        <field messageType="Author" name="author" explain="作者"></field>
-    </bean>
-    <bean name="Student" explain="学生">
-        <field messageType="String" name="name" explain="学生名"></field>
-        <field messageType="int" name="age" explain="学生年龄"></field>
-        <field messageType="int" name="num" explain="学号"></field>
-        <list messageType="int" name="luckNums" explain="幸运数字"></list>
-        <list messageType="String" name="provide" explain="格言"></list>
-        <field messageType="Book" name="readBook" explain="正在读的书"></field>
-        <list messageType="Book" name="likeBooks" explain="喜欢的书"></list>
-    </bean>
-    <message id="101" messageType="CS" name="Student" explain="请求学生信息" >
-        <field messageType="String" name="name" explain="学生名"></field>
+<messages package="com.senpure.demo" id="66" model="demo">
+    <import path="demoBean.xml"></import>
+    <message id="101" type="CS" name="Student" explain="请求学生信息">
+        <field type="String" name="name" explain="学生名"></field>
     </message>
-    <message id="102" messageType="SC" name="Student" explain="学生信息" >
-        <field messageType="Student" name="student" explain="学生信息"></field>
+    <message id="102" type="SC" name="Student" explain="学生信息">
+        <field type="Student" name="student" explain="学生信息"></field>
     </message>
 </messages>

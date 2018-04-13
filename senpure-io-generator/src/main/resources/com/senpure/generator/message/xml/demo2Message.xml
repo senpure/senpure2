@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages package="com.senpure.demo2" id="661" model="demo2">
+    <import path="demoMessage.xml"></import>
+    <bean name="Book" explain="书本">
+        <field type="String" name="name" explain="书本名"></field>
+        <field type="int" name="price" explain="书本单价"></field>
+        <field type="Author" name="author" explain="作者"></field>
+    </bean>
+</messages>

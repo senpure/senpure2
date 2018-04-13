@@ -4,6 +4,8 @@ package com.senpure.generator.message;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -14,23 +16,23 @@ import java.util.List;
  */
 public class Generator {
 
-    public static  void generate(Object object,   Template template ,File file)
-    {
+    private static Logger logger = LoggerFactory.getLogger(Generator.class);
+
+    public static void generate(Object object, Template template, File file) {
         try {
             FileOutputStream fos = new FileOutputStream(file);
             template.process(object, new OutputStreamWriter(fos, "utf-8"));
             fos.close();
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            logger.error("FileNotFoundException", e);
         } catch (TemplateException e) {
-            e.printStackTrace();
+            logger.error("TemplateException", e);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            logger.error("UnsupportedEncodingException", e);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("IOException", e);
         }
     }
-
 
 
     public static void main(String[] args) throws IOException, TemplateException {

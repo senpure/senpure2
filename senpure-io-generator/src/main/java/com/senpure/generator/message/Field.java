@@ -18,6 +18,8 @@ public class Field {
     private int index;
     //lua 中的实体对象名
     private String luaClassType;
+    //自定义对象时的信息
+    private Bean bean;
 
 
     public String getExplain() {
@@ -105,6 +107,14 @@ public class Field {
 
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    public Bean getBean() {
+        return bean;
+    }
+
+    public void setBean(Bean bean) {
+        this.bean = bean;
     }
 
     @Override

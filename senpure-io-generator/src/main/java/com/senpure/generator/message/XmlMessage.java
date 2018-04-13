@@ -1,5 +1,6 @@
 package com.senpure.generator.message;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
 public class XmlMessage {
 
   //  private Set<String> imports=new HashSet<>();
+    private File file;
     private String pack;
     private String id;
     private  String model;
@@ -16,7 +18,7 @@ public class XmlMessage {
     private int beanNameMaxLen;
     private int messageNameMaxLen;
     private int nameMaxLen;
-    private String luaNamespace;
+
     private List<Message> messages = new ArrayList<>();
 
     public String getPack() {
@@ -83,11 +85,12 @@ public class XmlMessage {
         this.model = model;
     }
 
-    public String getLuaNamespace() {
-        return luaNamespace;
+
+    public File getFile() {
+        return file;
     }
 
-    public void setLuaNamespace(String luaNamespace) {
-        this.luaNamespace = luaNamespace;
+    public void setFile(File file) {
+        this.file = file;
     }
 }

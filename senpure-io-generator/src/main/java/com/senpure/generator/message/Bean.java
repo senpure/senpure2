@@ -1,9 +1,6 @@
 package com.senpure.generator.message;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 罗中正 on 2017/6/1.
@@ -11,24 +8,29 @@ import java.util.Map;
 public class Bean {
 
 
-
-    private String pack;
     private String name;
-    private List<Field> fields=new ArrayList<>();
+    private String pack;
+    private String model;
+    private String javaPack;
+
+
+    private String luaNamespace = "";
+    private List<Field> fields = new ArrayList<>();
     private boolean hasExplain;
     private String explain;
     //引用其他的去重
     private Map<String, Field> singleField = new HashMap<>();
     //是否包含其他bean
-    private boolean hasBean=false;
+    private boolean hasBean = false;
 
     //字段的长度格式化toString使用
-    private int fieldMaxLen=0;
-    private boolean generate=true;
+    private int fieldMaxLen = 0;
+    private boolean generate = true;
 
     public String getType() {
         return "NA";
     }
+
     public String getName() {
         return name;
     }
@@ -53,7 +55,6 @@ public class Bean {
     public void setPack(String pack) {
         this.pack = pack;
     }
-
 
 
     public boolean isHasExplain() {
@@ -104,14 +105,59 @@ public class Bean {
         this.generate = generate;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+
+    public String getJavaPack() {
+        return javaPack;
+    }
+
+    public void setJavaPack(String javaPack) {
+        this.javaPack = javaPack;
+    }
+
+
+    public String getLuaNamespace() {
+        return luaNamespace;
+    }
+
+    public void setLuaNamespace(String luaNamespace) {
+        this.luaNamespace = luaNamespace;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Bean bean = (Bean) o;
+        return Objects.equals(getName(), bean.getName()) &&
+                Objects.equals(getType(), bean.getType()) &&
+                Objects.equals(getPack(), bean.getPack()) &&
+                Objects.equals(getModel(), bean.getModel());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), getType(), getPack(), getModel());
+    }
+
     @Override
     public String toString() {
         return "Bean{" +
-                "pack='" + pack + '\'' +
-                ", name='" + name + '\'' +
-                ", fields=" + fields +
-                ", hasExplain=" + hasExplain +
-                ", explain='" + explain + '\'' +
+                "type='" + getType() + '\'' +
+                ",name='" + name + '\'' +
+                ", pack='" + pack + '\'' +
                 '}';
     }
 }

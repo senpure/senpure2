@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages package="com.senpure.demo" id="66" model="demo">
+
+    <bean name="Author" explain="作者">
+        <field type="String" name="name" explain="书本名"></field>
+        <field type="int" name="phone" explain="电话"></field>
+    </bean>
+    <bean name="Book" explain="书本">
+        <field type="String" name="name" explain="书本名"></field>
+        <field type="int" name="price" explain="书本单价"></field>
+        <field type="Author" name="author" explain="作者"></field>
+    </bean>
+    <bean name="Student" explain="学生">
+        <field type="String" name="name" explain="学生名"></field>
+        <field type="int" name="age" explain="学生年龄"></field>
+        <field type="int" name="num" explain="学号"></field>
+        <list type="int" name="luckNums" explain="幸运数字"></list>
+        <list type="String" name="provide" explain="格言"></list>
+        <field type="Book" name="readBook" explain="正在读的书"></field>
+        <list type="Book" name="likeBooks" explain="喜欢的书"></list>
+    </bean>
+</messages>

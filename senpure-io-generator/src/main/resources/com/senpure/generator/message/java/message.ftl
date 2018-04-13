@@ -1,13 +1,11 @@
-package ${pack}.message;
+package ${javaPack};
 
 <#list singleField?values as field>
- <#if !field.baseField>
- <#if field.otherPart>
-import ${field.originalClassType};
- <#else >
-import ${pack}.bean.${field.classType};
- </#if>
- </#if>
+    <#if !field.baseField>
+        <#if field.bean.javaPack!=javaPack>
+import ${field.bean.javaPack}.${field.classType};
+        </#if>
+    </#if>
 </#list >
 import com.senpure.io.message.Message;
 import io.netty.buffer.ByteBuf;

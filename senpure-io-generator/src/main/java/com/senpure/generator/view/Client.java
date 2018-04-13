@@ -49,12 +49,14 @@ public class Client extends Application {
             primaryStage.show();
             primaryStage.setFullScreen(false);
 
+            //Thread.currentThread().setUncaughtExceptionHandler((t, e) -> logger.error("出现错误", e));
+            Thread.setDefaultUncaughtExceptionHandler((t, e) -> logger.error("出现错误", e));
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 GeneratorContext.getMainController().writeHabit();
                 HabitUtil.saveHabit(GeneratorContext.getHabit());
             }));
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("出现错误", e);
         }
 
 
@@ -70,7 +72,6 @@ public class Client extends Application {
         AnsiOutput.setEnabled(AnsiOutput.Enabled.ALWAYS);
         BannerShow.show();
         launch(args);
-
 
 
     }

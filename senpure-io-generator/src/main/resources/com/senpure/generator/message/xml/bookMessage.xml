@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<messages package="com.senpure.book" id="100">
+<messages package="com.senpure.book" id="100" >
     <bean name="Author" explain="作者">
         <field type="String" name="name" explain="作者名"></field>
         <field type="int" name="age" explain="年龄"></field>

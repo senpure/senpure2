@@ -136,7 +136,7 @@ public class MainController implements Initializable {
     private void initChooser() {
         messageChooser = new FileChooser();
         messageChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("message", "*message.xml"),
+                new FileChooser.ExtensionFilter("message", "*message.xml","*bean.xml"),
                 new FileChooser.ExtensionFilter("xml", "*.xml")
         );
 
@@ -295,7 +295,6 @@ public class MainController implements Initializable {
     }
 
     public void chooseJavaAICodeRootPath() {
-
         File file = javaAICodePathChooser.showDialog(GeneratorContext.getPrimaryStage());
         if (file != null) {
             javaAICodeRootPath.setText(file.getAbsolutePath());
@@ -389,8 +388,7 @@ public class MainController implements Initializable {
         messageCodeView.getItems().clear();
         for (File file : messageFiles) {
             XmlMessage xmlMessage = XmlReader.readXml(file);
-
-            xmlMessageMap.put(xmlMessage.getPack(), xmlMessage);
+            xmlMessageMap.put(xmlMessage.getFile().getAbsolutePath(), xmlMessage);
             for (Message message : xmlMessage.getMessages()) {
                 MessageData messageData = new MessageData(message, xmlMessage);
                 if (!messageCodeView.getItems().contains(messageData)) {
@@ -460,8 +458,9 @@ public class MainController implements Initializable {
                 if (messageData.isGenerate() && "NA".equalsIgnoreCase(messageData.getType())) {
                     Bean bean = messageData.getMessage();
                     File file = new File(ai ? javaAICodeRootPath.getText() : javaServerCodeRootPath.getText(),
-                            bean.getPack().replace(".", File.separator)
-                                    + File.separator + "bean" + File.separator + bean.getName() + ".java");
+                            bean.getJavaPack().replace(".", File.separator)
+                                    //  + File.separator + "bean"
+                                    + File.separator + bean.getName() + ".java");
                     if (!file.getParentFile().exists()) {
                         file.getParentFile().mkdirs();
                     }
@@ -478,9 +477,12 @@ public class MainController implements Initializable {
             for (MessageData messageData : messageCodeView.getItems()) {
                 if (messageData.isGenerate() && !"NA".equalsIgnoreCase(messageData.getType())) {
                     Message message = (Message) messageData.getMessage();
+
                     File file = new File(ai ? javaAICodeRootPath.getText() : javaServerCodeRootPath.getText(), message
-                            .getPack().replace(".", File.separator)
-                            + File.separator + "message" + File.separator + message.getType() + message.getName() + "Message.java");
+                            .getJavaPack().replace(".", File.separator)
+                            +
+                            // File.separator + "message" +
+                            File.separator + message.getType() + message.getName() + "Message.java");
                     if (!file.getParentFile().exists()) {
                         file.getParentFile().mkdirs();
                     }
@@ -502,9 +504,10 @@ public class MainController implements Initializable {
                 if (messageData.getType().endsWith(ai ? "C" : "S")) {
                     Message message = (Message) messageData.getMessage();
                     if (message.isGenerate()) {
-                        File savaHandler = new File(ai ? javaAICodeRootPath.getText() : javaServerCodeRootPath.getText(), message
-                                .getPack().replace(".", File.separator)
-                                + File.separator + "handler" + File.separator + message.getType() + message.getName() + "MessageHandler.java");
+                        File savaHandler = new File(ai ? javaAICodeRootPath.getText() : javaServerCodeRootPath.getText(),
+                                messageData.getXmlMessage()
+                                        .getPack().replace(".", File.separator)
+                                        + File.separator + MessageConfig.JAVA_PACK_HANDLER + File.separator + message.getType() + message.getName() + "MessageHandler.java");
                         if (!savaHandler.getParentFile().exists()) {
                             savaHandler.getParentFile().mkdirs();
                         }
@@ -537,13 +540,13 @@ public class MainController implements Initializable {
         cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "lua"));
         cfg.setSharedVariable("rightPad", new RightPad());
         cfg.setSharedVariable("luaNameStyle", new LuaNameStyle());
-        //cfg.setSharedVariable("luaNamespace", "MSG.");
+        cfg.setSharedVariable("luaImplPrefix", MessageConfig.LUA_IMPL_SC_PREFIX);
         Iterator<Map.Entry<String, XmlMessage>> iterator = xmlMessageMap.entrySet().iterator();
+        Map<String, XmlMessage> mergeMessage = new HashMap<>();
         while (iterator.hasNext()) {
             Map.Entry<String, XmlMessage> entry = iterator.next();
-
             XmlMessage value = entry.getValue();
-          value = MessageUtil.convert2Lua(value);
+            value = MessageUtil.convert2Lua(value);
             XmlMessage xmlMessage = new XmlMessage();
             xmlMessage.setMessageNameMaxLen(value.getMessageNameMaxLen());
             xmlMessage.setNameMaxLen(value.getNameMaxLen());
@@ -551,13 +554,15 @@ public class MainController implements Initializable {
             xmlMessage.setId(value.getId());
             xmlMessage.setPack(value.getPack());
             xmlMessage.setModel(value.getModel());
-            xmlMessage.setLuaNamespace("Net_"+StringUtil.toUpperFirstLetter(value.getModel())+"_");
+            xmlMessage.setFile(value.getFile());
+            // xmlMessage.setLuaNamespace("Net_" + StringUtil.toUpperFirstLetter(value.getModel()) + "_");
             for (Bean bean : value.getBeans()) {
                 if (bean.isGenerate()) {
                     xmlMessage.getBeans().add(bean);
                 }
 
             }
+
             for (Message message : value.getMessages()) {
                 if (message.isGenerate()) {
                     boolean can = CheckMessageUtil.checkMessage(message, "MessageAndHandler");
@@ -568,6 +573,28 @@ public class MainController implements Initializable {
                 }
 
             }
+            XmlMessage haveXmlMessage = mergeMessage.get(xmlMessage.getModel());
+            if (haveXmlMessage == null) {
+
+                mergeMessage.put(xmlMessage.getModel(), xmlMessage);
+            } else {
+                //  logger.debug("{} _____ {}",haveXmlMessage.getFile().getAbsolutePath(),xmlMessage.getFile().getAbsoluteFile());
+                MessageUtil.mergeXmlMessage(haveXmlMessage, xmlMessage, true);
+            }
+        }
+       // logger.debug("before size = {}", xmlMessageMap.size());
+       // logger.debug("after size = {}", mergeMessage.size());
+        iterator = mergeMessage.entrySet().iterator();
+        while (iterator.hasNext()) {
+            XmlMessage xmlMessage = iterator.next().getValue();
+            int scCount = 0;
+            for (Message message : xmlMessage.getMessages()) {
+                if (message.getType().equals("SC")) {
+                    scCount++;
+                    break;
+                }
+            }
+
             String fileName = xmlMessage.getModel();
             int index = StringUtil.indexOf(fileName, ".", 1, true);
             if (index > -1) {
@@ -576,7 +603,7 @@ public class MainController implements Initializable {
             fileName = StringUtil.toUpperFirstLetter(fileName);
             if (luaMessageCheckBox.isSelected()) {
                 File file = new File(luaCodeRootPath.getText(),
-                       fileName + "Message.lua");
+                        fileName + "Message.lua");
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
                 }
@@ -590,21 +617,25 @@ public class MainController implements Initializable {
 
             }
             if (luaHandlerCheckBox.isSelected()) {
-                Template template = cfg.getTemplate(luaHandler.getSelectionModel().getSelectedItem().getName(), "utf-8");
+                if (scCount > 0) {
+                    Template template = cfg.getTemplate(luaHandler.getSelectionModel().getSelectedItem().getName(), "utf-8");
 //                File file = new File(luaCodeRootPath.getText(), xmlMessage
 //                        .getPack().replace(".", File.separator)
 //                        + File.separator + fileName + "MessageHandler.lua");
-                File file = new File(luaCodeRootPath.getText(),  fileName + "MessageHandler.lua");
-                if (file.exists() && !luaHandlerCoverCheckBox.isSelected()) {
+                    File file = new File(luaCodeRootPath.getText(), fileName + "MessageHandler.lua");
+                    if (file.exists() && !luaHandlerCoverCheckBox.isSelected()) {
 
-                    logger.warn("hander 文件 {} 存在，请先删除之后，再生成              \n{}", file.getName(), file.getAbsolutePath());
+                        logger.warn("hander 文件 {} 存在，请先删除之后，再生成              \n{}", file.getName(), file.getAbsolutePath());
+                    } else {
+                        logger.trace("生成 lua Handler {}\n               {}", file.getName(), file.getAbsolutePath());
+                        Generator.generate(xmlMessage, template, file);
+                    }
                 } else {
-                    logger.trace("生成 lua Handler {}\n               {}", file.getName(), file.getAbsolutePath());
-                    Generator.generate(xmlMessage, template, file);
+                    logger.debug("没有SC类型的Message不用生成[{}] MessageHandler.lua", xmlMessage.getModel());
                 }
-
             }
         }
+
 
         logger.debug("lua 代码生成完成");
     }

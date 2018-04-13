@@ -4,20 +4,20 @@ Model:${model}
 <#if bean_index==0>
 
 </#if>
-Bean    :${luaNamespace!""}${rightPad(bean.name,nameMaxLen)}  ${bean.explain}
+Bean    :${bean.luaNamespace}${rightPad(bean.name,nameMaxLen)}  ${bean.explain}
 </#list>
 <#list messages as bean>
     <#if bean_index==0>
 
     </#if>
-Message :${luaNamespace!""}${rightPad(bean.name,nameMaxLen)}   ${rightPad(bean.id?c,7)}  ${bean.explain}
+Message :${bean.luaNamespace}${rightPad(bean.name,nameMaxLen)}   ${rightPad(bean.id?c,7)}  ${bean.explain}
 </#list>
 <#list messages as bean>
     <#if bean_index==0>
 
     </#if>
 <#if bean.type="SC">
-GameNet :impl_receive_${model}.${bean.name}
+GameNet :impl_receive_${model}.${luaImplPrefix}${bean.name}
 </#if>
 </#list>
 

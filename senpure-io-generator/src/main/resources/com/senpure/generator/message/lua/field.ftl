@@ -3,7 +3,7 @@
     ${bean.explain}
 --]]
 </#if>
-${luaNamespace!""}${bean.name} = {
+${bean.luaNamespace}${bean.name} = {
 <#if bean.type !="NA">
     --[Comment]
     --message_id
@@ -15,10 +15,10 @@ ${luaNamespace!""}${bean.name} = {
 <#list bean.fields as field>
     <#if field.list >
     --[Comment]
-    --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
+    --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${field.bean.luaNamespace}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     <#else ><#--不是list-->
     --[Comment]
-    --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
+    --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${field.bean.luaNamespace}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     </#if>
     <#if field.list >
     <#assign hasNextIndent= true>
@@ -47,39 +47,39 @@ ${luaNamespace!""}${bean.name} = {
     _filedPad = ${bean.fieldMaxLen} ;
 }
 
---${luaNamespace!""}${bean.name}构造方法
-function ${luaNamespace!""}${bean.name}:new()
-    local ${luaNamespace!""}${bean.name} = setmetatable({}, {__index=self}) ;
+--${bean.luaNamespace}${bean.name}构造方法
+function ${bean.luaNamespace}${bean.name}:new()
+    local ${bean.luaNamespace}${bean.name} = setmetatable({}, {__index=self}) ;
 <#list bean.fields as field>
     <#if field.list >
     --[Comment]
-    --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
+    --list:<#if field.baseField>${rightPad(field.classType,7)}<#else>${field.bean.luaNamespace}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     <#else ><#--不是list-->
     --[Comment]
-    --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${luaNamespace!""}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
+    --类型:<#if field.baseField>${rightPad(field.classType,7)}<#else>${field.bean.luaNamespace}${field.classType}</#if><#if field.hasExplain>${field.explain}</#if>
     </#if>
     <#if field.list >
-    ${luaNamespace!""}${bean.name}.${field.name} = nil;
+    ${bean.luaNamespace}${bean.name}.${field.name} = nil;
     <#else ><#--不是list-->
         <#if field.baseField>
             <#if field.classType == "String">
-    ${luaNamespace!""}${bean.name}.${field.name} = "";
+    ${bean.luaNamespace}${bean.name}.${field.name} = "";
             <#elseif field.classType == "boolean">
-    ${luaNamespace!""}${bean.name}.${field.name} = false;
+    ${bean.luaNamespace}${bean.name}.${field.name} = false;
             <#else >
-    ${luaNamespace!""}${bean.name}.${field.name} = 0;
+    ${bean.luaNamespace}${bean.name}.${field.name} = 0;
             </#if>
         <#else>
-    ${luaNamespace!""}${bean.name}.${field.name}= nil ;<#--bean 引用-->
+    ${bean.luaNamespace}${bean.name}.${field.name}= nil ;<#--bean 引用-->
         </#if>
     </#if>
 </#list>
-    return ${luaNamespace!""}${bean.name}
+    return ${bean.luaNamespace}${bean.name}
 end
 
 <#if bean.type =="NA"|| bean.type?ends_with("S")>
 --${bean.name}写入字节缓存
-function ${luaNamespace!""}${bean.name}:write(buf)
+function ${bean.luaNamespace}${bean.name}:write(buf)
      <#if bean.type?ends_with("S")>
     --消息协议id
     buf:WriteInt(${bean.id?c})
@@ -147,8 +147,8 @@ end
 </#if>
 
 <#if bean.type =="NA"|| bean.type?ends_with("C")>
---${luaNamespace!""}${bean.name}读取字节缓存
-function ${luaNamespace!""}${bean.name}:read(buf)
+--${bean.luaNamespace}${bean.name}读取字节缓存
+function ${bean.luaNamespace}${bean.name}:read(buf)
     <#list bean.fields as field>
         <#if field.hasExplain>
     --${field.explain}
@@ -175,7 +175,7 @@ function ${luaNamespace!""}${bean.name}:read(buf)
             <#elseif field.classType="String">
             ${field.name}_list[i] = buf:ReadString()
             <#else>
-            local _${field.classType?uncap_first} =${luaNamespace!""}${field.classType}:new()
+            local _${field.classType?uncap_first} =${field.bean.luaNamespace}${field.classType}:new()
             _${field.classType?uncap_first}:read(buf)
             ${field.name}_list[i] = _${field.classType?uncap_first}
             </#if>
@@ -202,7 +202,7 @@ function ${luaNamespace!""}${bean.name}:read(buf)
             <#else>
     local _have${field.name}= buf:ReadByte()
     if _have${field.name} ==1 then
-        local ${field.name} = ${luaNamespace!""}${field.classType}:new()
+        local ${field.name} = ${field.bean.luaNamespace}${field.classType}:new()
         ${field.name}:read(buf)
         self.${field.name}=${field.name}
     end
@@ -212,11 +212,11 @@ function ${luaNamespace!""}${bean.name}:read(buf)
 end
 </#if>
 
---${luaNamespace!""}${bean.name} 格式化字符串
-function ${luaNamespace!""}${bean.name}:toString(_indent)
+--${bean.luaNamespace}${bean.name} 格式化字符串
+function ${bean.luaNamespace}${bean.name}:toString(_indent)
     _indent = _indent or ""
     local _str = ""
-    _str = _str.."${luaNamespace!""}${bean.name}" .. "{"
+    _str = _str.."${bean.luaNamespace}${bean.name}" .. "{"
 <#list bean.fields as field>
     <#if field.hasExplain>
     --${field.explain}

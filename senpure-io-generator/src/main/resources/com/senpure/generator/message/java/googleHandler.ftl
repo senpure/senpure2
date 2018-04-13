@@ -1,6 +1,6 @@
 package ${pack}.handler;
 
-import ${pack}.message.${type}${name}Message;
+import ${javaPack}.${type}${name}Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.lhxy.game.core.annotation.ReqMsgHandler;

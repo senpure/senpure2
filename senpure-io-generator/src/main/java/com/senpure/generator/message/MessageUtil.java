@@ -2,6 +2,8 @@ package com.senpure.generator.message;
 
 
 import com.senpure.base.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
  * Created by 罗中正 on 2017/8/17.
  */
 public class MessageUtil {
+    static Logger logger = LoggerFactory.getLogger(MessageUtil.class);
     public static void copyBean(Bean source, Bean target) {
         String prefix = "Bean_";
         if (source.getType().equals("CS")) {
@@ -17,22 +20,27 @@ public class MessageUtil {
         } else if (source.getType().equals("SC")) {
             prefix = "Res_";
         }
-        target.setName(prefix + source.getName());
+        // target.setName(prefix + source.getName());
+        target.setName(source.getName());
         target.setHasBean(source.isHasBean());
         target.setExplain(source.getExplain());
         target.setPack(source.getPack());
+        target.setLuaNamespace(source.getLuaNamespace());
         target.setFieldMaxLen(source.getFieldMaxLen());
+
         for (Field field : source.getFields()) {
             Field f = new Field();
             f.setOtherPart(field.isOtherPart());
             f.setOriginalClassType(field.getOriginalClassType());
             f.setBaseField(field.isBaseField());
             f.setExplain(field.getExplain());
+            f.setBean(field.getBean());
             f.setList(field.isList());
+            f.setClassType(field.getClassType());
             if (f.isBaseField()) {
-                f.setClassType(field.getClassType());
+                // f.setClassType(field.getClassType());
             } else {
-                f.setClassType("Bean_" + field.getClassType());
+                // f.setClassType("Bean_" + field.getClassType());
             }
 
             f.setCapacity(field.getCapacity());
@@ -60,13 +68,32 @@ public class MessageUtil {
 
     }
 
+    public static void mergeXmlMessage(XmlMessage xmlMessage, XmlMessage targetXmlMessage,boolean log) {
+
+        if (log) {
+            logger.debug("合并{}  {}",xmlMessage.getFile().getName(),targetXmlMessage.getFile().getName());
+        }
+        targetXmlMessage.getBeans().forEach(bean -> {
+            if (!xmlMessage.getBeans().contains(bean)) {
+                xmlMessage.getBeans().add(bean);
+            }
+        });
+
+        targetXmlMessage.getMessages().forEach(message -> {
+            if (!xmlMessage.getMessages().contains(message)) {
+                xmlMessage.getMessages().add(message);
+            }
+        });
+    }
 
     public static XmlMessage convert2Lua(XmlMessage xmlMessage) {
         XmlMessage m = new XmlMessage();
         m.setId(xmlMessage.getId());
         m.setPack(xmlMessage.getPack());
         m.setModel(xmlMessage.getModel());
-        m.setLuaNamespace(xmlMessage.getLuaNamespace());
+        m.setFile(xmlMessage.getFile());
+        //m.setLuaNamespaceSCSuffix(xmlMessage.getLuaNamespaceSCSuffix());
+        // m.setLuaNamespace(xmlMessage.getLuaNamespace());
         for (Bean bean : xmlMessage.getBeans()) {
             Bean b = new Bean();
             copyBean(bean, b);

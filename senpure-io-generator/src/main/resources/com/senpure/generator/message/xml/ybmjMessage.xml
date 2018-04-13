@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<messages package="com.lhxy.game.games.ybmj.msg" id="601" model="ybmj">
+
+
+    <bean name="RoomInfo" explain="房间信息">
+        <field type="String" name="roomType" explain="房间类型gold 金币场，self 自建房"></field>
+        <field type="int" name="pointsLimit" explain="翻数限制0表示不限制"></field>
+        <field type="int" name="roomId" explain="房间id"></field>		
+        <field type="int" name="currentIndex" explain="最后出牌的玩家索引"></field>		
+        <field type="int" name="countDown" explain="当前状态下 操作倒计时,秒"></field>
+        <field type="int" name="bankerIndex" explain="庄家下标"></field>
+        <field type="int" name="benJin" explain="本金牌"></field>
+        <list type="int" name="ting" explain="听用牌"></list>
+        <field type="int" name="status" explain="房间状态：0：准备 1:飘 2：定缺 3：游戏中 4 ：结算"></field>
+		<field type="int" name="statusValue" explain="房间状态下携带的值 比如 定缺时：表示推荐值"></field>
+        <list type="Seat" name="seats" explain="座位信息"></list>
+    </bean>
+
+    <bean name="DeskPlayer" explain="玩家信息">
+        <field type="long" name="id" explain="玩家id"></field>
+        <field type="long" name="gold" explain="金币"></field>
+        <field type="String" name="nick" explain="昵称"></field>
+        <field type="String" name="head" explain="头像"></field>
+    </bean>
+
+    <bean name="Fei" explain="飞的信息">
+        <field type="int" name="value" explain="飞的值"></field>
+        <field type="int" name="ting" explain="听牌的值"></field>
+    </bean>
+
+    <bean name="Seat" explain="座位">
+        <field type="int" name="index" explain="座位编号"></field>
+        <field type="boolean" name="online" explain="在线状态"/>
+        <field type="boolean" name="ready" explain="是否准备"/>
+        <field type="boolean" name="entrust" explain="是否托管状态"/>
+        <field type="boolean" name="win" explain="是否已经赢了"/>
+        <field type="int" name="winTile" explain="胡的牌面"></field>
+        <list type="int" name="tile" explain="当前的牌"></list>
+        <field type="int" name="current" explain="当前摸的牌"></field>
+        <list type="int" name="discard" explain="打了哪些牌"></list>
+        <list type="Eat" name="eats" explain="吃了哪些牌"></list>
+        <field type="DeskPlayer" name="player" explain="玩家信息"></field>
+        <field type="int" name="absence" explain="缺牌：0：万 1：条 2：筒 -1表示还没定缺，或者不缺"></field>
+		<field type="boolean" name="piao" explain="是否飘"></field>
+    </bean>
+	
+	<bean name="GetTile" explain="获取">
+		<field type="int" name="index" explain="位置索引"></field>
+		<field type="int" name="area" explain="位置 0：当前打的最后一张，1：最后巴杠上去的那张牌"></field>
+	</bean>
+	
+    <bean name="Operation" explain="游戏操作">
+        <field type="int" name="type"
+               explain="0:摸牌 1:出牌 2:碰 3:飞 4:暗杠 5：明杠 6：巴杠 7：提 8：点炮 9：自摸 10：抢杠胡 11：杠上花 12：杠上炮"></field>
+        <list type="int" name="values" explain="牌值"></list>
+        <list type="int" name="indexs" explain="索引值"></list>
+		<field type="GetTile" name="getTile" explain="获取操作值"></field>
+    </bean>
+
+    <bean name="Settlement" explain="结算">
+        <field type="int" name="index" explain="位置索引"></field>
+        <list type="Eat" name="eats" explain="碰和杠的牌"></list>
+        <list type="int" name="values" explain="手里的牌"></list>
+        <field type="int" name="winTile" example="胡的牌，如果没有胡牌就是0"></field>
+        <field type="int" name="multiple" explain="胡牌倍数"></field>
+        <field type="int" name="score" explain="胡牌分数"></field>
+        <list type="int" name="points"
+              explain="计分点类型：0:平胡，1:对对胡，2:清一色，3:七对，4:龙七对，5:清对，6:清七对，7:清龙七对，8:根，9:杠，10:杠上花，11:杠上炮，12:抢杠胡，13:金钩钩，14:金钩炮，15:无听用，16:本金，17:接本金，18:天胡，19:地胡"></list>
+        <list type="int" name="pointsCount" explain="计分点数量 ex:杠x3"></list>
+    </bean>
+
+    <bean name="Eat" explain="碰和杠">
+        <list type="int" name="values" explain="吃的牌 3张就是碰 4张就是刚"></list>
+        <field type="int" name="type" explain="吃牌类型：0：碰牌 1：飞牌 2：明杠 3：巴杠 4：暗杠"></field>
+    </bean>
+
+    <bean name="Tile" explain="当前牌面">
+        <list type="int" name="values" explain="玩家当前的牌"></list>
+    </bean>
+
+    <message id="101" type="CS" name="JoinRoom" explain="请求加入房间">
+        <field type="int" name="roomId" explain="房间id"></field>
+    </message>
+
+    <message id="102" type="SC" name="JoinRoom" explain="请求加入房间返回">
+        <field type="RoomInfo" name="room" explain="房间信息"></field>
+    </message>
+
+    <message id="103" type="SC" name="PlayerJoin" explain="新玩家加入房间">
+        <field type="Seat" name="seat" explain="新玩家"></field>
+    </message>
+
+    <message id="104" type="SC" name="PlayerReady" explain="玩家准备同步">
+        <field type="int" name="index" explain="座位编号"></field>
+        <field type="boolean" name="ready" explain="是否准备"></field>
+    </message>
+
+    <message id="105" type="CS" name="PlayerReady" explain="玩家准备">
+        <field type="boolean" name="ready" explain="是否准备"></field>
+    </message>
+
+    <message id="106" type="SC" name="PlayerExit" explain="玩家离开同步">
+        <field type="int" name="index" explain="座位编号"></field>
+    </message>
+
+    <message id="107" type="CS" name="PlayerExit" explain="玩家请求离开">
+    </message>
+
+    <message id="109" type="SC" name="GameStart" explain="开始游戏">
+        <field type="int" name="bankerIndex" explain="庄家座位编号"></field>
+        <field type="int" name="benJin" explain="本金牌"></field>
+        <list type="int" name="ting" explain="听用牌"></list>
+        <list type="Seat" name="seats" explain="玩家信息"></list>
+        <list type="int" name="dice" explain="骰子数 2个骰子数字"></list>
+    </message>
+
+
+    <message id="110" type="CS" name="ConfirmAbsence" explain="定缺">
+        <field type="int" name="value" explain="缺牌：0：万 1：条 2：筒"></field>
+    </message>
+
+    <message id="111" type="SC" name="ConfirmAbsence" explain="定缺">
+        <list type="int" name="values" explain="玩家缺的牌，从编号开始"></list>
+    </message>
+
+
+    <message id="112" type="SC" name="PlayerOperation" explain="玩家操作">
+        <field type="int" name="index" explain="座位编号"></field>
+        <field type="Operation" name="operation" explain="玩家操作"></field>
+    </message>
+
+    <message id="116" type="SC" name="PlayerOperationList" explain="玩家可选操作列表">
+        <list type="Operation" name="operations" explain="玩家操作"></list>
+    </message>
+
+
+    <message id="114" type="CS" name="PlayerOperation" explain="玩家自己确认当前操作">
+        <field type="int" name="type" explain="玩家操作"></field>
+        <field type="int" name="index" explain="玩家选择的牌 -1 表示当前摸的牌"></field>
+        <field type="int" name="value" explain="玩家选择的牌的值"></field>
+    </message>
+
+
+    <message id="115" type="SC" name="OnlineChange" explain="玩家在线状态改变">
+        <field type="int" name="index" explain="座位编号"></field>
+        <field type="boolean" name="online" explain="是否在线"></field>
+    </message>
+
+    <message id="117" type="SC" name="ClearTile" explain="游戏结算 明牌">
+        <list type="Tile" name="players" explain="玩家当前牌面"></list>
+    </message>
+
+    <message id="118" type="SC" name="GameSettlement" explain="麻将结算">
+        <list type="Settlement" name="players" explain="玩家的结算"></list>
+    </message>
+
+    <message id="119" type="CS" name="ExitRoom" explain="退出房间">
+    </message>
+
+    <message id="122" type="SC" name="ExitRoom" explain="自己退出房间">
+    </message>
+	<message id="162" type="SC" name="OtherExitRoom" explain="其他玩家退出房间">
+	 <field type="int" name="index" explain="座位编号"></field>
+    </message>
+
+    <message id="120" type="CS" name="SwitchRoom" explain="切换房间：新进入房间">
+    </message>
+
+    <message id="123" type="SC" name="Countdown" explain="游戏开始倒计时，倒计时到，则被强退">
+        <field type="int" name="time" explain="倒计时时间"></field>
+    </message>
+
+    <message id="124" type="SC" name="PlayerScore" explain="玩家得分">
+        <list type="int" name="scores" explain="玩家即时分数"></list>
+    </message>
+
+    <message id="125" type="SC" name="TurnTo" explain="当前操作角色">
+        <field type="int" name="index" explain="玩家索引"></field>
+    </message>
+
+    <message id="126" type="SC" name="EntrustAI" explain="被电脑托管">
+        <field type="int" name="index" explain="座位编号"></field>
+        <field type="boolean" name="entrust" explain="托管状态"></field>
+    </message>
+
+    <message id="127" type="CS" name="CancelAI" explain="取消电脑托管">
+    </message>
+	
+	<message id="128" type="SC" name="EnterAbsence" explain="进入定缺">
+		<field type="int" name="countdown" explain="倒计时"></field>
+		<field type="int" name="recommend" explain="推荐值0 1 2 万条筒"></field>
+    </message>
+	
+    <message id="129" type="CS" name="CreateRoom" explain="请求创建房间">
+        <field class="int" name="base" explain="底注"></field>
+        <field class="int" name="enterlower" explain="进入下限"></field>
+        <field class="int" name="leavelower" explain="离开下限"></field>
+        <field class="int" name="piaoType" explain="0不飘 1 随飘 2 定飘"></field>
+        <field class="boolean" name="absence" explain="必须打缺一门"></field>
+        <field class="int" name="huType" explain="0点炮胡 1 自摸胡"></field>
+        <field class="boolean" name="ziMoAddMultiple" explain="自摸加翻"></field>
+        <field class="boolean" name="tianHuMaxMultiple" explain="天胡满贯"></field>
+        <field class="boolean" name="feiPaiLeastTwoMultiple" explain="飞牌两翻起胡"></field>
+        <field class="int" name="multipleLimit" explain="翻数封顶"></field>
+        <field class="int" name="isOpen" explain="是否公开房间0表示否"></field>
+
+    </message>
+    <message id="130" type="SC" name="CreateRoom" explain="请求创建房间返回">
+        <field class="int" name="roomId" explain="返回房间ID"></field>
+    </message>
+	
+	<message id="131" type="SC" name="EnterPiao" explain="进入飘的选择">
+		<field type="int" name="countdown" explain="倒计时"></field>		
+    </message>
+	
+	<message id="132" type="CS" name="ConfirmPiao" explain="确认飘不飘">
+        <field type="boolean" name="value" explain="是否飘"></field>
+    </message>
+
+    <message id="150" type="CS" name="GmCmd" explain="GM命令请求">
+        <field type="String" name="value" explain="GM命令值"></field>
+    </message>
+
+    <message id="151" type="SC" name="GmCmd" explain="GM命令返回">
+        <field type="String" name="value" explain="GM命令值"></field>
+    </message>
+
+    <message id="200" type="SC" name="Error" explain="错误信息">
+        <field type="String" name="value" explain="错误信息"></field>
+    </message>
+</messages>
