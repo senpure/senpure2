@@ -16,7 +16,13 @@ import org.slf4j.LoggerFactory;
  */
 public class UdpSender {
     private static Logger logger = LoggerFactory.getLogger(UdpSender.class);
-    public static Channel getInstance() {
+
+    private Channel channel = null;
+
+    public Channel getChannel() {
+        if (channel != null) {
+            return channel;
+        }
         EventLoopGroup group = new NioEventLoopGroup();
         try {
             Bootstrap b = new Bootstrap();
@@ -25,9 +31,9 @@ public class UdpSender {
                     .option(ChannelOption.SO_BROADCAST, true)
                     .handler(new LoggingHandler(LogLevel.DEBUG));
 
-            Channel ch = b.bind(0).sync().channel();
+            channel = b.bind(0).sync().channel();
             logger.debug("发送方初始化完毕");
-            return ch;
+            return channel;
         } catch (Exception e) {
             e.printStackTrace();
             logger.info("Search, An Error Occur ==>", e);
@@ -37,7 +43,5 @@ public class UdpSender {
         return null;
     }
 
-    public static void main(String[] args) {
-        getInstance();
-    }
+
 }
