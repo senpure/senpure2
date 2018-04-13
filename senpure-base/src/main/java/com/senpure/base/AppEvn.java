@@ -22,6 +22,10 @@ public class AppEvn {
         return os.contains("windows");
     }
 
+    public static boolean isLinuxOS() {
+        String os = System.getProperty("os.name").toLowerCase();
+        return os.contains("linux");
+    }
     /**
      * 获取class\jar的根路径 如<br>
      * E:\projects\com.senpure.base\target\classes\com\senpure\AppEvn.class ->
@@ -86,14 +90,14 @@ public class AppEvn {
         }
         StackTraceElement[] statcks = Thread.currentThread()
                 .getStackTrace();
-        int count = 0;
+        int count = 1;
         Class clazz = null;
         try {
             do {
                 count++;
                 StackTraceElement statck = statcks[count];
                    clazz = Class.forName(statck.getClassName());
-                //System.out.println("count = "+count+ "---"+statck.getClassName()+"----"+getClassRootPath(clazz));
+               // System.out.println("count = "+count+ "---"+statck.getClassName()+"----"+getClassRootPath(clazz));
             }
             while (classInJar(clazz) && count <statcks.length-1 );
 
