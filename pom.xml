@@ -18,6 +18,7 @@
         <module>senpure-io-generator</module>
         <module>senpure-jre</module>
         <module>senpure-del</module>
+        <module>senpure-log</module>
     </modules>
     <packaging>pom</packaging>
 
