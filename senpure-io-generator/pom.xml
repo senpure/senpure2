@@ -76,6 +76,15 @@
                     <exclude>**/*.java</exclude>
                 </excludes>
             </resource>
+            <resource>
+                <directory>src/main/resources</directory>
+                <targetPath>${project.build.directory}</targetPath>
+                <includes>
+                    <include>readme.txt</include>
+                    <include>*.bat</include>
+                </includes>
+
+            </resource>
         </resources>
         <testResources>
             <testResource>
