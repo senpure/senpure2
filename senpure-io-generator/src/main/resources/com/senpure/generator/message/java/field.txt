@@ -1,0 +1,14 @@
+  <#if field.classType="boolean">
+  <#elseif field.classType="byte">
+  <#elseif field.classType="short">
+  <#elseif field.classType="int">
+  <#elseif field.classType="long">
+  <#elseif field.classType="sint">
+  <#elseif field.classType="slong">
+  <#elseif field.classType="float">
+  <#elseif field.classType="double">
+  <#elseif field.classType="sfixed32">
+  <#elseif field.classType="sfixed64">
+  <#elseif field.classType="String">
+  <#else>
+  </#if>

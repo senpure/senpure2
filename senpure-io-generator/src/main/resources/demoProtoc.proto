@@ -1,0 +1,47 @@
+syntax = "proto3";
+option java_package = "com.senpure.generator.message.demo";
+option java_outer_classname = "DemoMessage";
+message Author {
+    string name = 1;
+    int32 phone = 2;
+}
+message Book {
+    string name = 1;
+    int32 price = 2;
+    Author author = 3;
+
+}
+message Student {
+    string name = 1;
+    int32 age = 2;
+    int32 num = 3;
+    repeated int32 luckNums = 4;
+    repeated string provide = 5;
+    Book readBook = 6;
+    repeated Book likeBooks = 7;
+}
+
+message AllFieldBean {
+    int32 intField = 1;
+    repeated int32 intFields = 2;
+    int64 longField = 3;
+    repeated int64 longFields = 4;
+    sint32 sintField = 5;
+    repeated sint32 sintFields = 6;
+    sint64 slongField = 7;
+    repeated sint64 slongFields = 8;
+    sfixed32 sfixed32Field = 9;
+    repeated sfixed32 sfixed32Fields = 10;
+    sfixed64 sfixed64Field = 11;
+    repeated sfixed64 sfixed64Fields = 12;
+    float floatField = 13;
+    repeated float floatFields = 14;
+    double doubleField = 15;
+    repeated double doubleFields = 16;
+    bool booleanField = 17;
+    repeated bool booleanFields = 18;
+    string stringField = 19;
+    repeated string stringFields = 20;
+    Author author = 21;
+    repeated Book books = 22;
+}
