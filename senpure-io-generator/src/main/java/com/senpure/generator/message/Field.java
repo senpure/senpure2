@@ -7,20 +7,24 @@ public class Field {
 
     private boolean hasExplain;
     private String explain;
-    private String originalClassType;
+   // private String originalClassType;
     private String classType;
 
     private String name;
     private boolean baseField;
     private boolean list;
-    private int capacity;
+    private int capacity=16;
     private boolean otherPart;
-    private int index;
+
     //lua 中的实体对象名
     private String luaClassType;
     //自定义对象时的信息
     private Bean bean;
 
+    private String languageType;
+    private int index;
+    private int writeType;
+    private int tag;
 
     public String getExplain() {
         return explain;
@@ -77,13 +81,13 @@ public class Field {
         this.capacity = capacity;
     }
 
-    public String getOriginalClassType() {
-        return originalClassType;
-    }
-
-    public void setOriginalClassType(String originalClassType) {
-        this.originalClassType = originalClassType;
-    }
+//    public String getOriginalClassType() {
+//        return originalClassType;
+//    }
+//
+//    public void setOriginalClassType(String originalClassType) {
+//        this.originalClassType = originalClassType;
+//    }
 
     public boolean isOtherPart() {
         return otherPart;
@@ -117,12 +121,36 @@ public class Field {
         this.bean = bean;
     }
 
+
+    public int getTag() {
+        return tag;
+    }
+
+    public void setTag(int tag) {
+        this.tag = tag;
+    }
+
+    public String getLanguageType() {
+        return languageType;
+    }
+
+    public void setLanguageType(String languageType) {
+        this.languageType = languageType;
+    }
+
+    public int getWriteType() {
+        return writeType;
+    }
+
+    public void setWriteType(int writeType) {
+        this.writeType = writeType;
+    }
+
     @Override
     public String toString() {
         return "Field{" +
                 "hasExplain=" + hasExplain +
                 ", explain='" + explain + '\'' +
-                ", originalClassType='" + originalClassType + '\'' +
                 ", classType='" + classType + '\'' +
                 ", name='" + name + '\'' +
                 ", baseField=" + baseField +

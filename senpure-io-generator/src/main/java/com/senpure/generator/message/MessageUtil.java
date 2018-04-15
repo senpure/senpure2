@@ -31,7 +31,7 @@ public class MessageUtil {
         for (Field field : source.getFields()) {
             Field f = new Field();
             f.setOtherPart(field.isOtherPart());
-            f.setOriginalClassType(field.getOriginalClassType());
+           // f.setOriginalClassType(field.getOriginalClassType());
             f.setBaseField(field.isBaseField());
             f.setExplain(field.getExplain());
             f.setBean(field.getBean());

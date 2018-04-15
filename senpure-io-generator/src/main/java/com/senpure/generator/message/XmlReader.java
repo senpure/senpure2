@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by 罗中正 on 2017/6/2.
@@ -73,7 +70,7 @@ public class XmlReader {
             }
             XmlMessage importXml = innerReadXml(readFile, xmlMessageMap);
             if (importXml.getPack().equals(xmlMessage.getPack()) && importXml.getModel().equals(xmlMessage.getModel())) {
-              //  MessageUtil.mergeXmlMessage(xmlMessage, importXml,false);
+                //  MessageUtil.mergeXmlMessage(xmlMessage, importXml,false);
             }
         }
 
@@ -153,24 +150,47 @@ public class XmlReader {
     private static void attr(Element element, Bean bean) {
 
         int fieldIndex = 0;
+        Set<Integer> indexs = new HashSet<>();
         List<Element> elements = element.elements();
         for (Element e : elements) {
+            fieldIndex++;
             Field field = new Field();
-            field.setIndex(fieldIndex++);
+
             field.setName(e.attributeValue("name"));
+            String tempIndex = e.attributeValue("index");
+            Integer index = 0;
+            if (tempIndex == null) {
+                index = fieldIndex;
+            } else {
+                index = Integer.valueOf(tempIndex);
+            }
+            indexs.add(index);
+            if (indexs.size() != fieldIndex) {
+                Assert.error("field index 重复 " + index);
+            }
+            field.setIndex(index);
             String type = e.attributeValue("type");
             if (type == null) {
                 type = e.attributeValue("class");
             }
-            field.setOriginalClassType(type);
+            // field.setOriginalClassType(type);
             bean.getSingleField().put(type, field);
-            field.setBaseField(baseField(type));
-            int index = StringUtil.indexOf(type, ".", 1, true);
-            if (index > -1) {
-                type = type.substring(index + 1);
-                field.setOtherPart(true);
-            }
+            field.setBaseField(ProtocolUtil.isBaseField(type));
+
             field.setClassType(type);
+            if (field.isBaseField()) {
+                field.setLanguageType(ProtocolUtil.getLanguageType(type));
+
+                field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
+                field.setTag(index << 3 | ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
+
+
+            } else {
+                field.setLanguageType(type);
+                field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
+                field.setTag(index << 3 | ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
+            }
+
             field.setList("list".equals(e.getName()));
             field.setExplain(e.attributeValue("explain"));
             if (!field.isBaseField()) {
@@ -180,6 +200,10 @@ public class XmlReader {
             if (fieldLen > bean.getFieldMaxLen()) {
                 bean.setFieldMaxLen(fieldLen);
             }
+            String str = field.isList()?"repeated ":"";
+
+            str += field.getClassType() + " " + field.getName() + " = " + field.getIndex() + " ;";
+            System.out.println(str);
             bean.getFields().add(field);
         }
     }
