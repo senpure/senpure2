@@ -136,7 +136,7 @@ public class MainController implements Initializable {
     private void initChooser() {
         messageChooser = new FileChooser();
         messageChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("message", "*message.xml","*bean.xml"),
+                new FileChooser.ExtensionFilter("message", "*message.xml", "*bean.xml"),
                 new FileChooser.ExtensionFilter("xml", "*.xml")
         );
 
@@ -452,6 +452,7 @@ public class MainController implements Initializable {
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
 
         cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "java"));
+        share(cfg);
         if (javaBeanCheckBox.isSelected()) {
             Template template = cfg.getTemplate(javaBean.getSelectionModel().getSelectedItem().getName(), "utf-8");
             for (MessageData messageData : messageCodeView.getItems()) {
@@ -534,13 +535,12 @@ public class MainController implements Initializable {
 
     }
 
+
     public void luaCodeGenerate() throws IOException, TemplateModelException {
         prepCodeGenerate(luaCodeRootPath.getText());
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "lua"));
-        cfg.setSharedVariable("rightPad", new RightPad());
-        cfg.setSharedVariable("luaNameStyle", new LuaNameStyle());
-        cfg.setSharedVariable("luaImplPrefix", MessageConfig.LUA_IMPL_SC_PREFIX);
+        share(cfg);
         Iterator<Map.Entry<String, XmlMessage>> iterator = xmlMessageMap.entrySet().iterator();
         Map<String, XmlMessage> mergeMessage = new HashMap<>();
         while (iterator.hasNext()) {
@@ -582,8 +582,8 @@ public class MainController implements Initializable {
                 MessageUtil.mergeXmlMessage(haveXmlMessage, xmlMessage, true);
             }
         }
-       // logger.debug("before size = {}", xmlMessageMap.size());
-       // logger.debug("after size = {}", mergeMessage.size());
+        // logger.debug("before size = {}", xmlMessageMap.size());
+        // logger.debug("after size = {}", mergeMessage.size());
         iterator = mergeMessage.entrySet().iterator();
         while (iterator.hasNext()) {
             XmlMessage xmlMessage = iterator.next().getValue();
@@ -638,5 +638,16 @@ public class MainController implements Initializable {
 
 
         logger.debug("lua 代码生成完成");
+    }
+
+    private void share(Configuration cfg) {
+        cfg.setSharedVariable("rightPad", new RightPad());
+        cfg.setSharedVariable("var32Size", new Var32Size());
+        cfg.setSharedVariable("luaNameStyle", new LuaNameStyle());
+        try {
+            cfg.setSharedVariable("luaImplPrefix", MessageConfig.LUA_IMPL_SC_PREFIX);
+        } catch (TemplateModelException e) {
+            e.printStackTrace();
+        }
     }
 }
