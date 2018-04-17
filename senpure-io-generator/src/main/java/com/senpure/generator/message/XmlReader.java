@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class XmlReader {
 
-    private static String[] baseFields = {"int", "boolean", "byte", "short", "String", "long", "float", "double"};
+    // private static String[] baseFields = {"int", "boolean", "byte", "short", "String", "long", "float", "double"};
     private static Logger logger = LoggerFactory.getLogger(XmlReader.class);
 
     public static XmlMessage innerReadXml(File file, Map<String, XmlMessage> xmlMessageMap) {
@@ -148,14 +148,12 @@ public class XmlReader {
     }
 
     private static void attr(Element element, Bean bean) {
-
         int fieldIndex = 0;
         Set<Integer> indexs = new HashSet<>();
         List<Element> elements = element.elements();
         for (Element e : elements) {
             fieldIndex++;
             Field field = new Field();
-
             field.setName(e.attributeValue("name"));
             String tempIndex = e.attributeValue("index");
             Integer index = 0;
@@ -176,34 +174,31 @@ public class XmlReader {
             // field.setOriginalClassType(type);
             bean.getSingleField().put(type, field);
             field.setBaseField(ProtocolUtil.isBaseField(type));
-
             field.setClassType(type);
+            field.setList("list".equals(e.getName()));
+            field.setExplain(e.attributeValue("explain"));
+            if (!field.isBaseField()) {
+                bean.setHasBean(true);
+            }
             if (field.isBaseField()) {
                 field.setLanguageType(ProtocolUtil.getLanguageType(type));
-
-                field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
-                field.setTag(index << 3 | ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
-
-
+                if (field.isList() && !field.getClassType().equals("String")) {
+                    field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
+                }
+                field.setTag(index << 3 | field.getWriteType());
             } else {
                 field.setLanguageType(type);
                 field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
                 field.setTag(index << 3 | ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
             }
 
-            field.setList("list".equals(e.getName()));
-            field.setExplain(e.attributeValue("explain"));
-            if (!field.isBaseField()) {
-                bean.setHasBean(true);
-            }
             int fieldLen = field.getName().length();
             if (fieldLen > bean.getFieldMaxLen()) {
                 bean.setFieldMaxLen(fieldLen);
             }
-            String str = field.isList()?"repeated ":"";
-
-            str += field.getClassType() + " " + field.getName() + " = " + field.getIndex() + " ;";
-            System.out.println(str);
+          //  String str = field.isList() ? "repeated " : "";
+           // str += field.getClassType() + " " + field.getName() + " = " + field.getIndex() + " ;";
+           // System.out.println(str);
             bean.getFields().add(field);
         }
     }
@@ -239,15 +234,6 @@ public class XmlReader {
             }
         }
         return null;
-    }
-
-    private static boolean baseField(String type) {
-        for (String str : baseFields) {
-            if (str.equals(type)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private static class ReadResult {
