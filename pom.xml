@@ -19,6 +19,7 @@
         <module>senpure-jre</module>
         <module>senpure-del</module>
         <module>senpure-log</module>
+        <module>senpure-config</module>
     </modules>
     <packaging>pom</packaging>
 
