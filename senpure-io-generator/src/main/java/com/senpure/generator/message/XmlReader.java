@@ -181,13 +181,13 @@ public class XmlReader {
                 bean.setHasBean(true);
             }
             if (field.isBaseField()) {
-                field.setLanguageType(ProtocolUtil.getLanguageType(type));
+                field.setJavaType(ProtocolUtil.getJavaType(type));
                 if (field.isList() && !field.getClassType().equals("String")) {
                     field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
                 }
                 field.setTag(index << 3 | field.getWriteType());
             } else {
-                field.setLanguageType(type);
+                field.setJavaType(type);
                 field.setWriteType(ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
                 field.setTag(index << 3 | ProtocolUtil.WIRETYPE_LENGTH_DELIMITED);
             }

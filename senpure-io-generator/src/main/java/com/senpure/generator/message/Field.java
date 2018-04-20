@@ -21,7 +21,7 @@ public class Field {
     //自定义对象时的信息
     private Bean bean;
 
-    private String languageType;
+    private String javaType;
     private int index;
     private int writeType;
     private int tag;
@@ -130,12 +130,13 @@ public class Field {
         this.tag = tag;
     }
 
-    public String getLanguageType() {
-        return languageType;
+
+    public String getJavaType() {
+        return javaType;
     }
 
-    public void setLanguageType(String languageType) {
-        this.languageType = languageType;
+    public void setJavaType(String javaType) {
+        this.javaType = javaType;
     }
 
     public int getWriteType() {

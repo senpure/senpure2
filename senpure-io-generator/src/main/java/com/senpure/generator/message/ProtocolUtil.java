@@ -17,7 +17,7 @@ public class ProtocolUtil {
 
 
     public static Map<String, Integer> writeType = new HashMap<>();
-    public static Map<String, String> languageType = new HashMap<>();
+    public static Map<String, String> javaType = new HashMap<>();
 
     static {
         writeType.put("int",WIRETYPE_VARINT);
@@ -38,22 +38,22 @@ public class ProtocolUtil {
         writeType.put("String",WIRETYPE_LENGTH_DELIMITED);
 
 
-        languageType.put("int", "int");
-        languageType.put("long", "long");
-        languageType.put("sint", "int");
-        languageType.put("slong", "long");
-        languageType.put("byte", "int");
-        languageType.put("sort", "int");
+        javaType.put("int", "int");
+        javaType.put("long", "long");
+        javaType.put("sint", "int");
+        javaType.put("slong", "long");
+        javaType.put("byte", "int");
+        javaType.put("sort", "int");
 
-        languageType.put("sfixed32", "int");
-        languageType.put("sfixed64", "long");
+        javaType.put("sfixed32", "int");
+        javaType.put("sfixed64", "long");
 
 
-        languageType.put("boolean", "boolean");
-        languageType.put("String", "String");
+        javaType.put("boolean", "boolean");
+        javaType.put("String", "String");
 
-        languageType.put("float", "float");
-        languageType.put("double", "double");
+        javaType.put("float", "float");
+        javaType.put("double", "double");
 
     }
 
@@ -63,10 +63,10 @@ public class ProtocolUtil {
 
         return writeType.get(type);
     }
-    public static  String getLanguageType(String type)
+    public static  String getJavaType(String type)
     {
 
-        return languageType.get(type);
+        return javaType.get(type);
     }
     public static boolean isBaseField(String type) {
         for (String str : baseFields) {
