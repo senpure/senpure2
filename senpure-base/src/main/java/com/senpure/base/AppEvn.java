@@ -90,7 +90,7 @@ public class AppEvn {
         }
         StackTraceElement[] statcks = Thread.currentThread()
                 .getStackTrace();
-        int count = 1;
+        int count = 2;
         Class clazz = null;
         try {
             do {
