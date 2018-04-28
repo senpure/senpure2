@@ -1,5 +1,6 @@
 package com.senpure.base;
 
+import com.senpure.base.util.Assert;
 import com.senpure.base.util.StringUtil;
 
 import java.io.File;
@@ -26,6 +27,7 @@ public class AppEvn {
         String os = System.getProperty("os.name").toLowerCase();
         return os.contains("linux");
     }
+
     /**
      * 获取class\jar的根路径 如<br>
      * E:\projects\com.senpure.base\target\classes\com\senpure\AppEvn.class ->
@@ -82,32 +84,44 @@ public class AppEvn {
 
     /**
      * 存在多个classpath 时该值不准确,推荐使用带参数的getClassRootPath(Class clazz)
+     *
      * @return
      */
     public static String getClassRootPath() {
-        if (classRootPath != null) {
-            return classRootPath;
-        }
+
+        Assert.notNull(classRootPath, "请先标记classRootPath");
+
+        return classRootPath;
+    }
+
+    public static void markClassRootPath() {
+
+
         StackTraceElement[] statcks = Thread.currentThread()
                 .getStackTrace();
-        int count = 2;
-        Class clazz = null;
+
+        StackTraceElement statck = statcks[2];
         try {
-            do {
-                count++;
-                StackTraceElement statck = statcks[count];
-                   clazz = Class.forName(statck.getClassName());
-               // System.out.println("count = "+count+ "---"+statck.getClassName()+"----"+getClassRootPath(clazz));
-            }
-            while (classInJar(clazz) && count <statcks.length-1 );
-
-
+            Class clazz = Class.forName(statck.getClassName());
+            markClassRootPath(clazz);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        classRootPath = getClassRootPath(clazz);
-        return classRootPath;
     }
+
+    public static void markClassRootPath(Class clazz) {
+
+        String oldClassRootPath = classRootPath;
+        classRootPath = getClassRootPath(clazz);
+        if (oldClassRootPath != null && classRootPath.equals(oldClassRootPath)) {
+
+            String nowClassRootPath = classRootPath;
+            classRootPath = oldClassRootPath;
+
+            Assert.error("两个不相同的标识" + classRootPath + "," + nowClassRootPath);
+        }
+    }
+
 
     public static String getCallerRootPath() {
         return getClassRootPath(getCallerClass());
