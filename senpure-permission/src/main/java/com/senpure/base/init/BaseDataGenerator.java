@@ -52,7 +52,7 @@ public class BaseDataGenerator extends SpringContextRefreshEvent {
     public void onApplicationEvent(ContextRefreshedEvent event) {
         containerIdCheck();
         AccountCriteria accountCriteria = new AccountCriteria();
-        accountCriteria.setAccount("senpure");
+        accountCriteria.setAccount(account);
         Account account = accountService.findOne(accountCriteria);
         if (account == null) {
             Date now = new Date();
