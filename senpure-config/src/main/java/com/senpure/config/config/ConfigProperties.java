@@ -1,0 +1,59 @@
+package com.senpure.config.config;
+
+import com.senpure.base.AppEvn;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
+/**
+ * Created by 罗中正 on 2018/4/28 0028.
+ */
+@Configuration
+@ConfigurationProperties(prefix = "config")
+public class ConfigProperties {
+    private String excelPath = AppEvn.getCallerRootPath();
+    private String javaFolder = AppEvn.getClassRootPath();
+    private String javaManagerSuffix = "Manager";
+    private String luaFolder = AppEvn.getClassRootPath();
+
+    public String getJavaFolder() {
+        return javaFolder;
+    }
+
+    public void setJavaFolder(String javaFolder) {
+        this.javaFolder = javaFolder;
+    }
+
+    public String getJavaManagerSuffix() {
+        return javaManagerSuffix;
+    }
+
+    public void setJavaManagerSuffix(String javaManagerSuffix) {
+        this.javaManagerSuffix = javaManagerSuffix;
+    }
+
+    public String getLuaFolder() {
+        return luaFolder;
+    }
+
+    public void setLuaFolder(String luaFolder) {
+        this.luaFolder = luaFolder;
+    }
+
+    public String getExcelPath() {
+        return excelPath;
+    }
+
+    public void setExcelPath(String excelPath) {
+        this.excelPath = excelPath;
+    }
+
+    @Override
+    public String toString() {
+        return "ConfigProperties{" +
+                "excelPath='" + excelPath + '\'' +
+                ", javaFolder='" + javaFolder + '\'' +
+                ", javaManagerSuffix='" + javaManagerSuffix + '\'' +
+                ", luaFolder='" + luaFolder + '\'' +
+                '}';
+    }
+}

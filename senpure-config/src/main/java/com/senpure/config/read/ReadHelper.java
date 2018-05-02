@@ -14,6 +14,9 @@ public class ReadHelper {
 
     private static Map<String, String> JAVA_DEFAULT_VALUE_MAP = new HashMap<>();
 
+    private static String[] BOOLEAN_TRUE = {"true", "1"};
+    private static String[] BOOLEAN_FALSE = {"false", "0"};
+
     static {
         BASE_FIELDS = new String[]{"int", "integer", "long", "double", "boolean", "String"};
         JAVA_TYPE_MAP.put("int", "int");
@@ -81,6 +84,27 @@ public class ReadHelper {
         return false;
     }
 
+    public boolean isBoolean(String value) {
+        return isBooleanTrue(value) || isBooleanFalse(value);
+    }
 
+    public boolean isBooleanTrue(String value) {
+        for (String str : BOOLEAN_TRUE) {
+            if (value.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isBooleanFalse(String value) {
+        for (String str : BOOLEAN_FALSE) {
+            if (value.equalsIgnoreCase(str)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

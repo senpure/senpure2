@@ -2,7 +2,6 @@ package com.senpure.config.read;
 
 import com.senpure.base.util.Assert;
 import com.senpure.base.util.Pinyin;
-
 import com.senpure.config.metadata.Bean;
 import com.senpure.config.metadata.Field;
 import com.senpure.config.metadata.Record;
@@ -89,12 +88,19 @@ public class ExcelReader {
             for (int j = 0; j < column; j++) {
                 Field field = new Field();
                 field.setExplain(explainRow.getCell(j).getStringCellValue().trim());
-                String nameTemp = nameRow.getCell(j).getStringCellValue();
+                String nameTemp = null;
+                if (nameRow != null) {
+                    nameTemp = getCellStringValue(nameRow.getCell(j));
+
+                }
                 if (nameTemp == null) {
                     nameTemp = Pinyin.toAccount(field.getExplain())[0];
                 }
                 field.setName(nameTemp.trim());
-                String type = classRow.getCell(j).getStringCellValue();
+                String type = null;
+                if (classRow != null) {
+                    type = getCellStringValue(classRow.getCell(j));
+                }
                 if (type == null) {
                     type = "String";
                 } else {
@@ -120,7 +126,11 @@ public class ExcelReader {
                         Record record = new Record();
                         for (int k = 0; k <= column; k++) {
                             Value value = new Value();
+                            if (bean.getFields().size() == k) {
+                                break;
+                            }
                             Field field = bean.getFields().get(k);
+
                             String str = getCellStringValue(row.getCell(k));
                             value.setField(field);
                             value.setValue(str);
@@ -128,7 +138,7 @@ public class ExcelReader {
                             record.getValues().add(value);
                         }
                         bean.getRecords().add(record);
-                        logger.debug("{}",record);
+                        logger.debug("{}", record);
                     } else {
                         for (int k = 0; k <= column; k++) {
                             String value = getCellStringValue(row.getCell(k));
@@ -176,30 +186,36 @@ public class ExcelReader {
                     Double.parseDouble(value.getValue());
                     break;
                 case "boolean":
-                    Boolean.valueOf(value.getValue());
+                    Assert.isTrue(readHelper.isBoolean(value.getValue()));
                 default:
             }
         } catch (Exception e) {
             Assert.error(field.getClassType() + ",[" + value.getValue() + "],不合法!");
         }
-        if (field.getClassType().equals("String")) {
-
+        if (field.getJavaType().equals("String")) {
             String s = "\"";
             if (field.getClassType().startsWith("\"") && field.getClassType().endsWith("\"")) {
                 s = "\'";
             }
             value.setInJavaCodeValue(s + value.getValue() + s);
-        }
-        else {
+        } else if (field.getJavaType().equalsIgnoreCase("boolean")) {
+            if (readHelper.isBooleanTrue(value.getValue())) {
+                value.setInJavaCodeValue("true");
+            } else {
+                value.setInJavaCodeValue("false");
+            }
+        } else {
             value.setInJavaCodeValue(value.getValue());
-
         }
+
     }
+
 
     public static void main(String[] args) {
 
         File file = new File("F:\\沈阳麻将系统房配置表.xlsx");
         read(file);
+
 
     }
 }

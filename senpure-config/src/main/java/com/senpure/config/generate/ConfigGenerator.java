@@ -1,6 +1,7 @@
 package com.senpure.config.generate;
 
-import com.senpure.config.Config;
+
+import com.senpure.config.config.ConfigProperties;
 import com.senpure.config.metadata.Bean;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -18,12 +19,9 @@ public class ConfigGenerator {
     private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
 
     public static void generateJava(Bean bean) throws IOException {
-        Config config= bean.getConfig();
+        ConfigProperties config= bean.getConfig();
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-
-
             cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "java"));
-
             Template template = cfg.getTemplate("bean.ftl");
             File file = new File(config.getJavaFolder(), bean.getJavaPack().replace(".", File.separator)
                     //  + File.separator + "bean"
@@ -31,10 +29,9 @@ public class ConfigGenerator {
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            logger.debug("file path {}", file.getAbsoluteFile());
+
             Generator.generate(bean, template, file);
             template = cfg.getTemplate("beanManager.ftl");
-
             file = new File(config.getJavaFolder(), bean.getJavaPack().replace(".", File.separator)
                     //  + File.separator + "bean"
                     + File.separator + bean.getName() + config.getJavaManagerSuffix() + ".java");
@@ -43,11 +40,11 @@ public class ConfigGenerator {
             }
             Generator.generate(bean, template, file);
 
-        // Generator.generate(bean);
+
     }
 
     public static void generateLua(Bean bean) throws IOException {
-        Config config=bean.getConfig();
+        ConfigProperties config=bean.getConfig();
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "lua"));
         Template template = cfg.getTemplate("bean.ftl");

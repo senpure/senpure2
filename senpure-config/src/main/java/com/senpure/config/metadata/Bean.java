@@ -1,6 +1,6 @@
 package com.senpure.config.metadata;
 
-import com.senpure.config.Config;
+import com.senpure.config.config.ConfigProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public class Bean {
     private Field id;
     private List<Record> records = new ArrayList<>();
 
-    private Config config;
+    private ConfigProperties config;
 
     public boolean isHasExplain() {
         return explain != null && explain.length() > 0;
@@ -73,11 +73,12 @@ public class Bean {
         this.records = records;
     }
 
-    public Config getConfig() {
+
+    public ConfigProperties getConfig() {
         return config;
     }
 
-    public void setConfig(Config config) {
+    public void setConfig(ConfigProperties config) {
         this.config = config;
     }
 }
