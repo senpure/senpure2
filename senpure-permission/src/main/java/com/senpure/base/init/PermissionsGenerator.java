@@ -1,6 +1,7 @@
 package com.senpure.base.init;
 
 
+import com.senpure.base.HTTPPermission;
 import com.senpure.base.PermissionConstant;
 import com.senpure.base.annotation.ExtPermission;
 import com.senpure.base.annotation.PermissionVerify;
@@ -11,10 +12,8 @@ import com.senpure.base.model.Permission;
 import com.senpure.base.model.PermissionMenu;
 import com.senpure.base.model.URIPermission;
 import com.senpure.base.service.AuthorizeService;
-import com.senpure.base.service.PermissionService;
 import com.senpure.base.service.ResourcesVerifyService;
 import com.senpure.base.spring.SpringContextRefreshEvent;
-import com.senpure.base.spring.VerifyInterceptor;
 import com.senpure.base.util.Assert;
 import com.senpure.base.util.Pinyin;
 import com.senpure.base.util.StringUtil;
@@ -22,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -30,15 +31,14 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 import java.lang.reflect.Method;
 import java.util.*;
 
+@Component
 @Order(value = 1)
 public class PermissionsGenerator extends SpringContextRefreshEvent {
 
-    @Autowired
-    private PermissionService permissionService;
+
     @Autowired
     private AuthorizeService authorizeService;
-    @Autowired
-    private VerifyInterceptor verifyInterceptor;
+
 
     private static Map<Integer, Menu> menuMap = new HashMap<>();
     @Autowired
@@ -94,122 +94,127 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void onApplicationEvent(ContextRefreshedEvent event) {
-        logger.debug("准备检查代码中的权限，生成数据");
+        logger.info("检查权限");
         RequestMappingHandlerMapping rm = event.getApplicationContext().getBean(RequestMappingHandlerMapping.class);
-        verifyInterceptor.setHandlerMapping(rm);
         Map<RequestMappingInfo, HandlerMethod> map = rm.getHandlerMethods();
         Iterator<Map.Entry<RequestMappingInfo, HandlerMethod>> iterator = map.entrySet().iterator();
         List<Permission> createPermissions = new ArrayList<>(16);
         Map<String, Permission> permissionMap = new HashMap<>(128);
-        Map<String, List<URIPermission>> uriPermissionMap = new HashMap<>(256);
+        Map<String, List<URIPermission>> uriPermissionMap = new TreeMap();
         List<PermissionMenu> permissionMenus = new ArrayList<>(16);
         while (iterator.hasNext()) {
             Map.Entry<RequestMappingInfo, HandlerMethod> entry = iterator.next();
             RequestMappingInfo info = entry.getKey();
-
             HandlerMethod handlerMethod = entry.getValue();
-
             PermissionVerify permissionVerify = handlerMethod.getMethod().getAnnotation(PermissionVerify.class);
-            String pname = null;
+            String permissionName = null;
             if (permissionVerify != null) {
-                String suffix = mapping2Suffix(info, handlerMethod);
-                StringBuilder sname = new StringBuilder();
-                Iterator<String> it = info.getPatternsCondition().getPatterns().iterator();
-                List<String> uriAndMethod = new ArrayList<>();
+                List<String> methods;
+                if (info.getMethodsCondition().isEmpty()) {
+                    methods = HTTPPermission.allMethod();
+                } else {
+                    methods = new ArrayList<>();
+                    info.getMethodsCondition().getMethods().forEach(requestMethod -> methods.add(requestMethod.toString().toUpperCase()));
+                }
+                List<URIPermission> uriPermissions = new ArrayList<>();
+                StringBuilder permissionNameBuilder = new StringBuilder();
+                Iterator<String> patternsIterator = info.getPatternsCondition().getPatterns().iterator();
                 while (true) {
-                    String uri = it.next();
-                    uriAndMethod.add(uri + "->" + handlerMethod.getMethod().getName());
-                    logger.info(info.getMethodsCondition().getMethods().toString());
-                    sname.append(uri);
-                    if (it.hasNext()) {
-                        sname.append("||");
+                    String uri = patternsIterator.next();
+                    for (String method : methods) {
+                        URIPermission uriPermission = new URIPermission();
+                        uriPermission.setUriAndMethod(uri + "[" + method + "]");
+                        uriPermission.setPermissionId(1L);
+                        uriPermission.setDatabaseUpdate(false);
+                        uriPermissions.add(uriPermission);
+                        permissionNameBuilder.append(uri);
+                    }
+                    if (patternsIterator.hasNext()) {
+                        permissionNameBuilder.append("||");
                     } else {
                         break;
                     }
                 }
-
-                sname.append("_").append(suffix);
-                // logger.debug(sname);
+                String suffix = mapping2Suffix(info, handlerMethod);
+                permissionNameBuilder.append("_").append(suffix);
                 Permission permission = new Permission();
-
-
                 permission.setDatabaseUpdate(false);
                 if (StringUtil.isExist(permissionVerify.value())) {
                     permission.setReadableName(permissionVerify.value());
                 } else {
-                    permission.setReadableName(sname.toString());
+                    permission.setReadableName(permissionNameBuilder.toString());
                 }
                 String name = permissionVerify.name();
                 if (StringUtil.isExist(name)) {
                     permission.setName(name);
                 } else {
-                    permission.setName(sname.toString());
+                    permission.setName(permissionNameBuilder.toString());
                 }
-                pname = permission.getName();
+                permissionName = permission.getName();
                 permission.setType(PermissionConstant.PERMISSION_TYPE_NORMAL);
                 if (permission.getName().endsWith("_owner")) {
+                    permission.setDescription(permissionNameBuilder.toString() + "_owner" + "->" + handlerMethod.getMethod().getName());
                     permission.setType(PermissionConstant.PERMISSION_TYPE_OWNER);
                 } else {
-                    permission.setDescription(sname.toString() + "->" + handlerMethod.getMethod().getName());
+                    permission.setDescription(permissionNameBuilder.toString() + "->" + handlerMethod.getMethod().getName());
                 }
                 sort(handlerMethod.getBeanType().getName(), permission);
-                List<URIPermission> uriPermissions = new ArrayList<>();
-                for (String um : uriAndMethod) {
-                    URIPermission uriPermission = new URIPermission();
-                    //uriPermission.setUriAndMethod(um);
-                    uriPermission.setPermissionId(1L);
-                    uriPermissions.add(uriPermission);
-
-                }
-                // authorizeService.checkPermission(permission, uriPermissions);
                 checkPermission(permissionMap, permission, uriPermissionMap, uriPermissions);
+
+                //认证资源权限
                 ResourceVerify[] resourceVerifies = handlerMethod.getMethod().getAnnotationsByType(ResourceVerify.class);
+                String offset = "";
+                String verifyName = "";
                 if (resourceVerifies != null && resourceVerifies.length > 0) {
                     for (int i = 0; i < resourceVerifies.length; i++) {
+                        if (i > 0) {
+                            offset += ",";
+                            verifyName += ",";
+                        }
+                        offset += resourceVerifies[i].offset() + "";
+                        verifyName += resourceVerifies[i].value();
                         if (!resourcesVerifyService.hasVerifyService(resourceVerifies[i].value())) {
                             Assert.error(info.getPatternsCondition() + ",资源验证器[" + resourceVerifies[i].value() + "]没有注册");
                         }
                     }
-                    Permission resourcePermission = new Permission();
                     if (permission.getName().endsWith("_owner")) {
-                        resourcePermission.setName(permission.getName());
+                        permission.setOffset(offset);
+                        permission.setVerifyName(verifyName);
                     } else {
+                        Permission resourcePermission = new Permission();
+                        resourcePermission.setOffset(offset);
+                        resourcePermission.setVerifyName(verifyName);
                         resourcePermission.setName(permission.getName() + "_owner");
-                    }
-
-                    resourcePermission.setDatabaseUpdate(false);
-                    String ownerPname = resourceVerifies[0].permissionName();
-                    if (ownerPname.length() > 0) {
-                        resourcePermission.setReadableName(ownerPname);
-                    } else {
-                        StringBuilder sb = new StringBuilder();
-                        sb.append(permission.getReadableName())
-                                .insert(2, "我的");
-                        resourcePermission.setReadableName(sb.toString());
-                    }
-                    resourcePermission.setType(PermissionConstant.PERMISSION_TYPE_OWNER);
-                    resourcePermission.setDescription(sname.toString() + "_owner" + "->" + handlerMethod.getMethod().getName());
-                    List<URIPermission> resourceURIPermissions = new ArrayList<>();
-                    for (String um : uriAndMethod) {
-                        URIPermission uriPermission = new URIPermission();
-                        uriPermission.setPermissionId(2L);
-                        //uriPermission.setUriAndMethod(um);
-                        if (!permission.getName().endsWith("_owner")) {
-                            resourceURIPermissions.add(uriPermission);
+                        resourcePermission.setDatabaseUpdate(false);
+                        String ownerPermissionName = resourceVerifies[0].permissionName();
+                        if (ownerPermissionName.length() > 0) {
+                            resourcePermission.setReadableName(ownerPermissionName);
+                        } else {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(permission.getReadableName())
+                                    .insert(2, "我的");
+                            resourcePermission.setReadableName(sb.toString());
                         }
-
+                        resourcePermission.setType(PermissionConstant.PERMISSION_TYPE_OWNER);
+                        resourcePermission.setDescription(permissionNameBuilder.toString() + "_owner" + "->" + handlerMethod.getMethod().getName());
+                        List<URIPermission> resourceURIPermissions = new ArrayList<>();
+                        patternsIterator = info.getPatternsCondition().getPatterns().iterator();
+                        while (patternsIterator.hasNext()) {
+                            String uri = patternsIterator.next();
+                            for (String method : methods) {
+                                URIPermission uriPermission = new URIPermission();
+                                uriPermission.setUriAndMethod(uri + "[" + method + "]");
+                                uriPermission.setDatabaseUpdate(false);
+                                uriPermission.setPermissionId(1L);
+                                resourceURIPermissions.add(uriPermission);
+                            }
+                        }
+                        sort(handlerMethod.getBeanType().getName(), resourcePermission);
+                        checkPermission(permissionMap, resourcePermission, uriPermissionMap, resourceURIPermissions);
                     }
-                    sort(handlerMethod.getBeanType().getName(), resourcePermission);
-                    checkPermission(permissionMap, resourcePermission, uriPermissionMap, resourceURIPermissions);
-                }
-
-                //owner结尾但是没有配置资源验证注解
-                else if (permission.getName().endsWith("_owner")) {
-                    permission.setDescription(sname.toString() + "_owner" + "->" + handlerMethod.getMethod().getName());
                 }
 
             }
-            //
             //生成菜单
             MenuGenerator menuGenerator = handlerMethod.getMethod().getAnnotation(MenuGenerator.class);
             if (menuGenerator != null) {
@@ -222,11 +227,11 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 } else {
                     menuMap.put(menu.getId(), menu);
                 }
-                if (pname != null) {
+                if (permissionName != null) {
                     PermissionMenu permissionMenu = new PermissionMenu();
                     permissionMenu.setDataBaseUpdate(false);
                     permissionMenu.setMenuId(menu.getId());
-                    permissionMenu.setPermissionName(pname);
+                    permissionMenu.setPermissionName(permissionName);
                     permissionMenus.add(permissionMenu);
                 } else {
                     menu.setDirectView(true);
@@ -257,9 +262,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
             }
         }
 
-        //extPermission
         extPermission(event, permissionMap, uriPermissionMap);
-
         createPermissions.addAll(permissionMap.values());
         if (!createPermissions.isEmpty()) {
             authorizeService.syncPermission(permissionMap.values(), uriPermissionMap);
@@ -269,7 +272,6 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
             authorizeService.syncMenuPermission(permissionMenus);
         }
         authorizeService.loadStatic();
-
 
     }
 
@@ -286,7 +288,6 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 if (permission.getDescription() != null) {
                     beforePermission.setDescription(beforePermission.getDescription() + "||" + permission.getDescription());
                 }
-
             }
             return beforePermission;
         } else {
@@ -296,26 +297,8 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
         }
     }
 
-    public static StringBuilder mapping2permissionName(RequestMappingInfo info, HandlerMethod handlerMethod) {
-        Iterator<String> it = info.getPatternsCondition().getPatterns().iterator();
-        StringBuilder sname = new StringBuilder();
-
-        List<String> uriAndMethod = new ArrayList<>();
-        while (true) {
-            String uri = it.next();
-            sname.append(uri);
-            uriAndMethod.add(uri + "->" + handlerMethod.getMethod().getName());
-            if (it.hasNext()) {
-                sname.append("||");
-            } else {
-                break;
-            }
-        }
-        return sname;
-    }
 
     private static String mapping2Suffix(RequestMappingInfo info, HandlerMethod handlerMethod) {
-
         String suffix = "read";
         if (info.getMethodsCondition().isEmpty()) {
             suffix = method2Suffix(handlerMethod, false);
@@ -378,39 +361,76 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
 
     }
 
-
     private void extPermission(ContextRefreshedEvent event, Map<String, Permission> permissionMap,
                                Map<String, List<URIPermission>> uriPermissionMap) {
         ApplicationContext context = event.getApplicationContext();
 
         String beans[] = context.getBeanNamesForAnnotation(ExtPermission.class);
+
         for (String bean : beans) {
-
             Object obj = context.getBean(bean);
+            ExtPermission parent = obj.getClass().getAnnotation(ExtPermission.class);
+            if (parent.value().length > 1) {
+                Assert.error("ExtPermission 在类上value 只能有一个");
+            }
+            String parentURI = "";
+            if (parent.value().length>0&&parent.value()[0] != null) {
+                parentURI = parent.value()[0];
+            }
             Method[] methods = obj.getClass().getDeclaredMethods();
-
             for (Method method : methods) {
                 ExtPermission extPermission = method.getAnnotation(ExtPermission.class);
                 if (extPermission != null) {
                     Permission permission = new Permission();
+                    if (extPermission.value().length == 0) {
+                        Assert.error("ExtPermission 在参数的方法上value 不为空");
+                    }
+                    List<String> httpMethods;
+                    if (extPermission.method().length == 0) {
+                        httpMethods = HTTPPermission.allMethod();
+                    } else {
+                        httpMethods = new ArrayList<>();
+                        for (RequestMethod requestMethod : extPermission.method()) {
+                            httpMethods.add(requestMethod.toString().toUpperCase());
+                        }
+                    }
+                    String description = "";
+                    List<URIPermission> uriPermissionList = new ArrayList<>();
+                    for (int i = 0; i < extPermission.value().length; i++) {
 
+                        String thisURI = parentURI + extPermission.value()[i];
+                        if (thisURI.length() == 0) {
+                            Assert.error("ExtPermission 在参数的方法上 有效值 value 不为空");
+                        }
+                        if (i > 0) {
+                            description += "||";
+                        }
+                        description += thisURI;
+                        for (String httpMethod : httpMethods) {
+                            URIPermission uriPermission = new URIPermission();
+                            uriPermission.setPermissionId(0L);
+                            uriPermission.setDatabaseUpdate(false);
+                            uriPermission.setUriAndMethod(thisURI + "[" + httpMethod + "]");
+                            uriPermissionList.add(uriPermission);
+                        }
+                    }
                     permission.setDatabaseUpdate(false);
-                   // permission.setName(extPermission.uri());
-                    permission.setReadableName(permission.getName());
+                    String permissionName = extPermission.name();
+                    if (permissionName.length() == 0) {
+                        permissionName = extPermission.value()[0] + "_read";
+                    }
+                    permission.setName(permissionName);
+                    String readableName = extPermission.readableName();
+                    if (readableName.length() == 0) {
+                        readableName = permissionName;
+                    }
+                    permission.setReadableName(readableName);
                     permission.setType(PermissionConstant.PERMISSION_TYPE_NORMAL);
                     if (permission.getName().endsWith("_owner")) {
                         permission.setType(PermissionConstant.PERMISSION_TYPE_OWNER);
                     }
-                    String methodStr = "";
-
-                   // permission.setDescription(extPermission.uri() + "->" + methodStr);
-
+                    permission.setDescription(httpMethods+" " + description);
                     sort(obj.getClass().getName(), permission);
-                    List<URIPermission> uriPermissionList = new ArrayList<>();
-                    URIPermission uriPermission = new URIPermission();
-                    uriPermission.setPermissionId(0L);
-                   // uriPermission.setUriAndMethod(extPermission.uri() + "->" + methodStr);
-                    uriPermissionList.add(uriPermission);
                     checkPermission(permissionMap, permission, uriPermissionMap, uriPermissionList);
                 }
             }
