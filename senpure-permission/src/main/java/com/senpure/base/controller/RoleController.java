@@ -54,7 +54,7 @@ public class RoleController extends BaseController {
 
 
     @PermissionVerify(value = "查看组织角色", name = "/authorize/container/{containerId}/roles_read_owner")
-    @RequestMapping(value = {"container/{containerId}/roles", "container/{containerId}/roles/{page}"})
+    @RequestMapping(value = {"container/{containerId}/roles", "container/{containerId}/roles/{page}"},method = RequestMethod.GET)
     @ResourceVerify(ResourceVerifyContainerService.VERIFY_NAME)
     public ModelAndView readRoles(HttpServletRequest request,
                              @Valid @ModelAttribute("criteria") RoleCriteria criteria, BindingResult validReslut) {
@@ -68,7 +68,7 @@ public class RoleController extends BaseController {
 
 
     @PermissionVerify(value = "查看角色权限", name = "/authorize/role/{roleId}/permissions_read_owner")
-    @RequestMapping(value = {"/role/{roleId}/permissions"})
+    @RequestMapping(value = {"/role/{roleId}/permissions"},method = RequestMethod.GET)
     @ResourceVerify(ResourceVerifyRoleService.VERIFY_NAME)
     public ModelAndView readRoleHasPermission(HttpServletRequest request,
                                               @ModelAttribute("criteria") RolePermissionCriteria criteria) {
@@ -77,7 +77,7 @@ public class RoleController extends BaseController {
     }
 
     @PermissionVerify(value = "修改角色权限", name = "/authorize/role/{roleId}/permission/{permissionId}_update_owner")
-    @RequestMapping(value = "/role/{roleId}/permission/{permissionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/role/{roleId}/permission/{permissionId}", method = RequestMethod.PUT)
     @ResourceVerify(ResourceVerifyRoleService.VERIFY_NAME)
     @ResourceVerify(value = ResourceVerifyPermissionService.VERIFY_NAME,offset = 2)
     public ModelAndView updateRolePermission(HttpServletRequest request, @PathVariable long roleId, @PathVariable long permissionId, boolean award) {

@@ -4,6 +4,7 @@ import com.senpure.base.spring.BaseController;
 import com.senpure.base.util.Assert;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * Created by 罗中正 on 2018/1/13 0013.
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/authorize")
 public class AuthorizeController extends BaseController {
 
-    @RequestMapping(value = "/forbidden")
+    @RequestMapping(value = "/forbidden",method = RequestMethod.GET)
     public void notPermission() {
 
         Assert.error("权限不足。");

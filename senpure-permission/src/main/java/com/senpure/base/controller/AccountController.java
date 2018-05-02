@@ -49,7 +49,7 @@ public class AccountController extends BaseController {
     String key = "default.account.container.id";
 
     @MenuGenerator(id = 2, text = "人员管理", icon = "glyphicon glyphicon-user faa-float ")
-    @RequestMapping(value = {"/accounts", "accounts/{page}"})
+    @RequestMapping(value = {"/accounts", "accounts/{page}"},method = {RequestMethod.GET,RequestMethod.POST})
     @PermissionVerify(name = "/authorize/accounts_read_owner", value = "查看组织人员")
     public ModelAndView readAccounts(HttpServletRequest request, @ModelAttribute("criteria") AccountCriteria criteria) {
         // criteria.setContainerId(PermissionConstant.ALL_OPOTION_INT);
@@ -77,7 +77,7 @@ public class AccountController extends BaseController {
         return view(request, view, resultMap);
     }
 
-    @RequestMapping(value = {"/container/{containerId}/accounts", "/container/{containerId}/accounts/{page}"})
+    @RequestMapping(value = {"/container/{containerId}/accounts", "/container/{containerId}/accounts/{page}"},method = {RequestMethod.GET,RequestMethod.POST})
     @PermissionVerify(name = "/authorize/account_read_owner", value = "查看组织人员")
     @ResourceVerify(value = ResourceVerifyContainerService.VERIFY_NAME)
     public ModelAndView readAccounts(HttpServletRequest request, @Valid @ModelAttribute("criteria") AccountCriteria criteria, BindingResult validResult) {
@@ -134,7 +134,7 @@ public class AccountController extends BaseController {
 
 
     @PermissionVerify(value = "查看账号角色", name = "/authorize/account/{accountId}/roles_read_owner")
-    @RequestMapping(value = {"/account/{accountId}/roles"})
+    @RequestMapping(value = {"/account/{accountId}/roles"},method = {RequestMethod.GET})
     @ResourceVerify(ResourceVerifyAccountService.VERIFY_NAME)
     public ModelAndView accountHasRole(HttpServletRequest request,
                                        @PathVariable long accountId) {
@@ -142,7 +142,7 @@ public class AccountController extends BaseController {
     }
 
     @PermissionVerify(value = "修改账号角色", name = "/authorize/account/{accountId}/role/{roleId}_update_owner")
-    @RequestMapping(value = "/account/{accountId}/role/{roleId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/{accountId}/role/{roleId}", method = RequestMethod.PUT)
     @ResourceVerify(ResourceVerifyAccountService.VERIFY_NAME)
     @ResourceVerify(value = ResourceVerifyRoleService.VERIFY_NAME, offset = 2)
     public ModelAndView updateAccountRole(HttpServletRequest request,

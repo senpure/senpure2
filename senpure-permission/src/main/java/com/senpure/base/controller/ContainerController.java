@@ -41,7 +41,7 @@ public class ContainerController extends BaseController {
 
     @MenuGenerator(text = "组织管理", id = 10, parentId = 1)
     @PermissionVerify(value = "查看组织", name = "/authorize/container_read_owner")
-    @RequestMapping(value = {"/containers", "/containers/{page}"})
+    @RequestMapping(value = {"/containers", "/containers/{page}"},method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView readContainers(HttpServletRequest request,
                                   @Valid @ModelAttribute("criteria") ContainerCriteria criteria, BindingResult validResult) {
         if (validResult.hasErrors()) {
@@ -85,7 +85,7 @@ public class ContainerController extends BaseController {
 
 
     @PermissionVerify(name = "/container/{containerId}/permission/{permissionId}_update_owner",value = "修改组织权限")
-    @RequestMapping(value = "/container/{containerId}/permission/{permissionId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/container/{containerId}/permission/{permissionId}", method = RequestMethod.PUT)
     @ResourceVerify(value = ResourceVerifyContainerService.VERIFY_NAME,permissionName = "修改组织权限")
     @ResourceVerify(value = ResourceVerifyPermissionService.VERIFY_NAME,offset = 2)
     public ModelAndView updateContainerPermission(HttpServletRequest request, @PathVariable int containerId,  @PathVariable long permissionId, boolean award) {

@@ -57,7 +57,7 @@ public class SystemController extends BaseController {
         return success(request, "authorize/updatePassword");
 
     }
-    @RequestMapping(value = {"/help"})
+    @RequestMapping(value = {"/help"},method = RequestMethod.GET)
     @PermissionVerify(value = "使用帮助", verify = false)
     @MenuGenerator(id = 2000000002, text = "使用帮助",icon = "glyphicon glyphicon-thumbs-up faa-float")
     public ModelAndView help(HttpServletRequest request, Model model, @PathVariable(required = false) Long accountId) {

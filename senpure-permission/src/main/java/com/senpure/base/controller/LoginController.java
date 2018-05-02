@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.Cookie;
@@ -34,7 +35,7 @@ public class LoginController extends BaseController {
     //String view="helloWorld";
     String view = "/authorize/login";
 
-    @RequestMapping(value = {"authorize/login", ""})
+    @RequestMapping(value = {"authorize/login", ""},method = {RequestMethod.GET,RequestMethod.POST})
     public ModelAndView login(HttpServletRequest request, HttpServletResponse response, @Valid @ModelAttribute("criteria") LoginCriteria criteria, BindingResult result) {
         logger.debug("login method");
         if (result.hasErrors()) {
@@ -99,7 +100,7 @@ public class LoginController extends BaseController {
         return toURI;
     }
 
-    @RequestMapping(value = {"authorize/loginView"})
+    @RequestMapping(value = {"authorize/loginView"},method = RequestMethod.GET)
     public ModelAndView login(HttpServletRequest request, @ModelAttribute("criteria") LoginCriteria criteria) {
         criteria.setRemember(true);
         ResultMap r = (ResultMap) request.getAttribute("args");
