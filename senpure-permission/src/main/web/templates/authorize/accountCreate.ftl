@@ -108,7 +108,7 @@
                     $("input[name='account']").val(resp);
                     $("input[name='password']").val(resp);
                 }
-                ,"method":"post"
+                ,"method":"get"
             });}
         });
     });

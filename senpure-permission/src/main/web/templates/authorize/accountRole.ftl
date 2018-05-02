@@ -49,7 +49,8 @@
                 {
                    // "roleId": $(event.target).attr("roleId"),
                    // "accountId":accountId ,
-                    "award": checked
+                    "award": checked,
+                    "_method":"put"
                 }
         );
 

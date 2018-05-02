@@ -43,6 +43,8 @@
         $.post("/authorize/role/"+roleId+"/permission/"+$(event.target).attr("permissionId"),
                 {
                     "award": checked
+                    ,
+                    "_method":"put"
                 }
         );
 
