@@ -27,6 +27,7 @@ import org.springframework.web.servlet.mvc.condition.PatternsRequestCondition;
 import javax.servlet.*;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.*;
@@ -105,7 +106,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                 logger.debug(result.toString());
                 afterLogin(request, result, false);
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
-                dispatcher.forward(request, response);
+                dispatcher.forward(new HttpMethodRequestWrapper(request, "GET"), response);
                 return;
             }
         }
@@ -135,8 +136,10 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                         ResultMap result = ResultMap.result(Result.ACCOUNT_NOT_LOGIN_OR_SESSION_TIMEOUT);
                         RequestDispatcher dispatcher = request.getRequestDispatcher(loginURI);
                         ResultHelper.wrapMessage(result, localeResolver.resolveLocale(request));
+
                         afterLogin(request, result, false);
-                        dispatcher.forward(request, response);
+
+                        dispatcher.forward(new HttpMethodRequestWrapper(request, "GET"), response);
                         return;
                     } else {
                         logger.debug("auto 登陆成功");
@@ -207,7 +210,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                 if (!pass) {
                     logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI());
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/authorize/forbidden");
-                    dispatcher.forward(request, response);
+                    dispatcher.forward(new HttpMethodRequestWrapper(request, "GET"), response);
                     return;
                 }
             }
@@ -261,5 +264,19 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
+    }
+
+    private static class HttpMethodRequestWrapper extends HttpServletRequestWrapper {
+        private final String method;
+
+        public HttpMethodRequestWrapper(HttpServletRequest request, String method) {
+            super(request);
+            this.method = method.toUpperCase(Locale.ENGLISH);
+        }
+
+        @Override
+        public String getMethod() {
+            return this.method;
+        }
     }
 }
