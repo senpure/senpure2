@@ -94,8 +94,8 @@ public class DataSourceAutoConfiguration extends BaseConfiguration {
                 if (charSet == null) {
                     sb.append(" default character set utf8 collate utf8_general_ci");
                 } else {
-                    sb.append(" default character set");
-                    sb.append(charSet.replace("_", ""));
+                    sb.append(" default character set ");
+                    sb.append(charSet.replace("_", "").replace("-",""));
                 }
                 String createSql = sb.toString();
                 logger.debug("创建数据库sql:{}", createSql);
