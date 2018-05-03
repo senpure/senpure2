@@ -4,9 +4,9 @@
     //${field.explain}
 </#if>
 <#if field.list >
-    private List<${.globals[field.languageType]!field.languageType?cap_first}> ${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
+    private List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name} = new ArrayList(<#if field.capacity gt 0>${field.capacity}</#if>);
 <#else>
-    private ${field.languageType} ${field.name};
+    private ${field.javaType} ${field.name};
 </#if>
 </#list>
     /**
@@ -159,7 +159,7 @@
                         ${field.name}.add(readString(buf));
                     </#if><#--String-->
                 <#else ><#--bean-->
-                        ${field.languageType} temp${field.name?cap_first}Bean = new ${field.languageType}();
+                        ${field.javaType} temp${field.name?cap_first}Bean = new ${field.javaType}();
                         readBean(buf,temp${field.name?cap_first}Bean);
                         ${field.name}.add(temp${field.name?cap_first}Bean);
                 </#if><#--bean-->
@@ -189,7 +189,7 @@
                 <#elseif field.classType="String">
                         ${field.name} = readString(buf);
                 <#else>
-                ${field.name} = new ${field.languageType}();
+                ${field.name} = new ${field.javaType}();
                         readBean(buf,${field.name});
                 </#if>
         </#if>
@@ -312,7 +312,7 @@
       * @return
       */
         </#if>
-    public List<${.globals[field.languageType]!field.languageType?cap_first}> get${field.name?cap_first}(){
+    public List<${.globals[field.javaType]!field.javaType?cap_first}> get${field.name?cap_first}(){
         return ${field.name};
     }
         <#if field.hasExplain&&field.explain?length gt 2>
@@ -320,7 +320,7 @@
       * set ${field.explain}
       */
         </#if>
-    public ${name} set${field.name?cap_first} (List<${.globals[field.languageType]!field.languageType?cap_first}> ${field.name}){
+    public ${name} set${field.name?cap_first} (List<${.globals[field.javaType]!field.javaType?cap_first}> ${field.name}){
         this.${field.name}=${field.name};
         return this;
     }
@@ -328,11 +328,11 @@
     <#else>
         <#if field.hasExplain&&field.explain?length gt 2>
     /**
-     * <#if field.languageType="boolean"> is<#else>get</#if> ${field.explain}
+     * <#if field.javaType="boolean"> is<#else>get</#if> ${field.explain}
      * @return
      */
         </#if>
-    public  ${field.languageType} <#if field.languageType="boolean"> is<#else>get</#if>${field.name?cap_first}() {
+    public  ${field.javaType} <#if field.javaType="boolean"> is<#else>get</#if>${field.name?cap_first}() {
         return ${field.name};
     }
 
@@ -341,7 +341,7 @@
      * set ${field.explain}
      */
         </#if>
-    public ${name} set${field.name?cap_first}(${field.languageType} ${field.name}) {
+    public ${name} set${field.name?cap_first}(${field.javaType} ${field.name}) {
         this.${field.name}=${field.name};
         return this;
     }
