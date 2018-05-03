@@ -78,7 +78,7 @@ public class AccountController extends BaseController {
     }
 
     @RequestMapping(value = {"/container/{containerId}/accounts", "/container/{containerId}/accounts/{page}"},method = {RequestMethod.GET,RequestMethod.POST})
-    @PermissionVerify(name = "/authorize/account_read_owner", value = "查看组织人员")
+    @PermissionVerify(name = "/authorize/accounts_read_owner", value = "查看组织人员")
     @ResourceVerify(value = ResourceVerifyContainerService.VERIFY_NAME)
     public ModelAndView readAccounts(HttpServletRequest request, @Valid @ModelAttribute("criteria") AccountCriteria criteria, BindingResult validResult) {
         if (validResult.hasErrors()) {
