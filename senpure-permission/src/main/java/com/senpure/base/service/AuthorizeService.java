@@ -76,6 +76,7 @@ public class AuthorizeService extends BaseService {
         account.setLoginDate(new Date(now));
         account.setLoginTime(now);
 
+        account.setIp(criteria.getLoginIP());
         account.setOnline(true);
         accountService.update(account);
         LoginedAccount loginedAccount = new LoginedAccount();
