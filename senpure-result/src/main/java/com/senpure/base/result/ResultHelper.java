@@ -53,6 +53,7 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
         }
 
     }
+
     public static String getMessage(String key, Locale locale) {
         try {
             return ResourceBundle.getBundle(BASE_NAME, locale).getString(key);
@@ -81,10 +82,11 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
         return
                 resultMap.put(ResultMap.MESSAGE_KEY, ResultHelper.getMessage(resultMap.getCode(), locale, args));
     }
-    public static  void refreshProperties()
-    {
+
+    public static void refreshProperties() {
         ResourceBundle.clearCache();
     }
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         try {
@@ -131,13 +133,10 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
             }
 
         }
-        refreshProperties();
-        keyMap.clear();
-        codeMap.clear();
-        StringBuilder updateBuilder = new StringBuilder();
+
+        List<CodeAndInstance> codeAndInstanceList = new ArrayList<>();
         for (FieldAndInstance fieldAndInstance : fieldAndInstances) {
             for (Field field : fieldAndInstance.fields) {
-                String name = field.getName().replace("_", ".").toLowerCase();
                 int code = 0;
                 try {
                     code = field.getInt(fieldAndInstance.instance);
@@ -149,35 +148,52 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
                     e.printStackTrace();
                     continue;
                 }
+                CodeAndInstance codeAndInstance = new CodeAndInstance();
+                codeAndInstance.code = code;
+                codeAndInstance.field = field;
+                codeAndInstance.instance = fieldAndInstance.instance;
+                codeAndInstanceList.add(codeAndInstance);
+            }
+        }
+        Collections.sort(codeAndInstanceList, Comparator.comparingInt(o -> o.code));
 
-                String tempName = fieldAndInstance.instance.getClass().getName() + "_" + field.getName();
-                Assert.isNull(keyMap.get(name), "key不能重复 [" + name + "]\n" + keyMap.get(name) + "\n" + tempName);
-                Assert.isNull(codeMap.get(code), "错误码不能重复 [" + code + "]\n" + codeName.get(code) + "\n" + tempName);
-                codeName.put(code, tempName);
-                keyMap.put(name, tempName);
-                codeMap.put(code, name);
-                Message m = field.getAnnotation(Message.class);
-                String thisValue = null;
-                if (m != null && m.message().trim().length() != 0) {
-                    thisValue = m.message();
-                } else {
-                    thisValue = "RESULT-CODE[" + code + "]";
+        refreshProperties();
+        keyMap.clear();
+        codeMap.clear();
+        StringBuilder updateBuilder = new StringBuilder();
+        for (CodeAndInstance codeAndInstance : codeAndInstanceList) {
 
-                }
-                logger.trace(code + " >> " + name + " >> " + "RESULT-CODE[" + code + "]");
-                save.put(name, thisValue);
-                String value = props.getProperty(name);
-                if (value == null) {
+            Field field = codeAndInstance.field;
+            Object instance = codeAndInstance.instance;
+            int code = codeAndInstance.code;
+            String name = field.getName().replace("_", ".").toLowerCase();
+            String tempName = instance.getClass().getName() + "_" + field.getName();
+            Assert.isNull(keyMap.get(name), "key不能重复 [" + name + "]\n" + keyMap.get(name) + "\n" + tempName);
+            Assert.isNull(codeMap.get(code), "错误码不能重复 [" + code + "]\n" + codeName.get(code) + "\n" + tempName);
+            codeName.put(code, tempName);
+            keyMap.put(name, tempName);
+            codeMap.put(code, name);
+            Message m = field.getAnnotation(Message.class);
+            String thisValue = null;
+            if (m != null && m.message().trim().length() != 0) {
+                thisValue = m.message();
+            } else {
+                thisValue = "RESULT-CODE[" + code + "]";
+
+            }
+            logger.trace(code + " >> " + name + " >> " + "RESULT-CODE[" + code + "]");
+            save.put(name, thisValue);
+            String value = props.getProperty(name);
+            if (value == null) {
+                update = true;
+                updateBuilder.append(name).append("\n");
+
+            } else if (force) {
+                if (!value.equals(thisValue)) {
                     update = true;
                     updateBuilder.append(name).append("\n");
-
-                } else if (force) {
-                    if (!value.equals(thisValue)) {
-                        update = true;
-                        updateBuilder.append(name).append("\n");
-                    }
-
                 }
+
             }
         }
         if (update) {
@@ -202,8 +218,24 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
                 e.printStackTrace();
             }
 
-
         }
+        StringBuilder info = new StringBuilder();
+        int maxLen = 0;
+        for (Map.Entry<Integer, String> entry : codeMap.entrySet()) {
+
+            int len = (entry.getKey() + "").length();
+            maxLen = maxLen > len ? maxLen : len;
+        }
+        for (CodeAndInstance codeAndInstance : codeAndInstanceList) {
+            int len = (codeAndInstance.code + "").length();
+            info.append(codeAndInstance.code);
+            for (int i = len; i < maxLen; i++) {
+                info.append(" ");
+            }
+            info.append(":").append(getMessage(codeAndInstance.code, Locale.CHINA)).append("\n");
+        }
+
+        logger.debug("结果集对照表\n{}", info.toString());
     }
 
     private AbstractApplicationContext act;
@@ -235,12 +267,13 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
     }
 
     public static void main(String[] args) throws IllegalAccessException, InstantiationException {
-       devSyncResult(results);
-       // ResultMap result = ResultMap.result(Result.ACCOUNT_OTHER_LOGIN);
+        AppEvn.markClassRootPath();
+        devSyncResult(results);
+        // ResultMap result = ResultMap.result(Result.ACCOUNT_OTHER_LOGIN);
 
-       // ResultHelper.wrapMessage(result, Locale.CANADA,"77");
+        // ResultHelper.wrapMessage(result, Locale.CANADA,"77");
 
-       // System.out.println(result);
+        // System.out.println(result);
     }
 
 
