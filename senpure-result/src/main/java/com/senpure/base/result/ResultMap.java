@@ -87,6 +87,17 @@ public class ResultMap extends HashMap<String, Object> {
         return this;
     }
 
+    public ResultMap addArgs(List<Object> value) {
+        if (args == null) {
+            args = new ArrayList();
+        }
+        args.addAll(value);
+        if (clientFormat) {
+            super.put(ARGS_KEY, args);
+        }
+        return this;
+    }
+
     public ResultMap addArgs(Object value) {
         if (args == null) {
             args = new ArrayList();
