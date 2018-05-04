@@ -73,6 +73,9 @@ public class ResultHelper implements ApplicationListener<ContextRefreshedEvent>,
 
     public static ResultMap wrapMessage(ResultMap resultMap, Locale locale) {
 
+        if (resultMap.getArgs() != null && !resultMap.isClientFormat()) {
+            return wrapMessage(resultMap, locale, resultMap.getArgs().toArray());
+        }
         return
                 resultMap.put(ResultMap.MESSAGE_KEY, ResultHelper.getMessage(resultMap.getCode(), locale));
     }
