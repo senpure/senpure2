@@ -203,10 +203,8 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                                     pass = resourcesVerifyService.verify(verifyNames[i], account.getId(), resourceId);
                                 }
                                 if (!pass) {
-
                                     resourceVerifyName = verifyNames[i];
                                     resourceTarget = resourceId;
-
                                     break;
                                 }
                             }
