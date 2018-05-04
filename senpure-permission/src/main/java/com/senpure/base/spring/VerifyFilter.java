@@ -161,8 +161,9 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                 String resourceTarget = null;
                 String permssionName = null;
                 for (Permission permission : needPermissions) {
-                    logger.debug("{} 需要 [ {} ] 权限[{},{}] ", sb.toString(), permission.getName(), permission.getReadableName(), permission.getType());
-
+                    logger.debug("{} 需要 [ {} ] 权限[{},{}] ", sb.toString(), permission.getName(),
+                            permission.getReadableName(), permission.getType());
+                    permssionName = permission.getName();
                     if (permission.getType().equals(PermissionConstant.PERMISSION_TYPE_NORMAL)) {
                         pass = hasPermission(account, permission.getName());
                     } else if (permission.getType().equals(PermissionConstant.PERMISSION_TYPE_OWNER)) {
@@ -202,7 +203,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                                     pass = resourcesVerifyService.verify(verifyNames[i], account.getId(), resourceId);
                                 }
                                 if (!pass) {
-                                    permssionName = permission.getName();
+
                                     resourceVerifyName = verifyNames[i];
                                     resourceTarget = resourceId;
 
@@ -216,17 +217,20 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                     }
                 }
                 if (!pass) {
+                    List<Object> args = new ArrayList<>();
+                    args.add(permssionName);
                     if (resourceVerifyName != null) {
-                        logger.warn("{}[{}]  {}:{} 资源验证失败{} >{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI(), resourceTarget, resourceTarget);
-                        List<Object> args = new ArrayList<>();
-                        args.add(permssionName);
+                        logger.warn("{}[{}]  {}:{} 资源验证失败{} >{}", account.getAccount(), account.getName(),
+                                request.getMethod(), request.getRequestURI(), resourceTarget, resourceTarget);
+
                         args.add(resourceVerifyName);
                         args.add(resourceTarget);
-                        request.setAttribute("lackArgs", args);
-                    } else {
-                        logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI());
-                    }
 
+                    } else {
+                        logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(),
+                                request.getMethod(), request.getRequestURI());
+                    }
+                    request.setAttribute("lackArgs", args);
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/authorize/forbidden");
                     dispatcher.forward(new HttpMethodRequestWrapper(request, "GET"), response);
                     return;
