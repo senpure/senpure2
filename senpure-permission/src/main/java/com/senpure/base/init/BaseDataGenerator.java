@@ -48,7 +48,7 @@ public class BaseDataGenerator extends SpringContextRefreshEvent {
     @Value("${permission.password:senpure}")
     private String password;
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void onApplicationEvent(ContextRefreshedEvent event) {
         containerIdCheck();
         AccountCriteria accountCriteria = new AccountCriteria();
