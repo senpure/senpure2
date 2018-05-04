@@ -159,7 +159,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                 }
                 String resourceVerifyName = null;
                 String resourceTarget = null;
-                ;
+                String permssionName = null;
                 for (Permission permission : needPermissions) {
                     logger.debug("{} 需要 [ {} ] 权限[{},{}] ", sb.toString(), permission.getName(), permission.getReadableName(), permission.getType());
 
@@ -202,8 +202,10 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                                     pass = resourcesVerifyService.verify(verifyNames[i], account.getId(), resourceId);
                                 }
                                 if (!pass) {
+                                    permssionName = permission.getName();
                                     resourceVerifyName = verifyNames[i];
                                     resourceTarget = resourceId;
+
                                     break;
                                 }
                             }
@@ -217,6 +219,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                     if (resourceVerifyName != null) {
                         logger.warn("{}[{}]  {}:{} 资源验证失败{} >{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI(), resourceTarget, resourceTarget);
                         List<Object> args = new ArrayList<>();
+                        args.add(permssionName);
                         args.add(resourceVerifyName);
                         args.add(resourceTarget);
                         request.setAttribute("lackArgs", args);
