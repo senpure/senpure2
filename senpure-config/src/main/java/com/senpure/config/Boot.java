@@ -30,15 +30,13 @@ public class Boot implements CommandLineRunner {
 
     public static void main(String[] args) {
 
-       // AppEvn.getClassRootPath();
+        // AppEvn.getClassRootPath();
         SpringApplication.run(Boot.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
 
-        logger.debug(config.toString());
-        logger.debug(defaultConfig.toString());
         if (config.getExcelPath() == null || config.getExcelPath().trim().length() == 0) {
             config.setExcelPath(defaultConfig.getExcelPath());
         }
@@ -46,7 +44,7 @@ public class Boot implements CommandLineRunner {
             config.setJavaFolder(defaultConfig.getJavaFolder());
         }
         if (config.getJavaManagerSuffix() == null || config.getJavaManagerSuffix().trim().length() == 0) {
-            config.setJavaManagerSuffix(config.getJavaManagerSuffix());
+            config.setJavaManagerSuffix(defaultConfig.getJavaManagerSuffix());
         }
         if (config.getLuaFolder() == null || config.getJavaFolder().trim().length() == 0) {
             config.setLuaFolder(defaultConfig.getLuaFolder());
@@ -67,12 +65,19 @@ public class Boot implements CommandLineRunner {
         for (Bean bean : beans) {
             bean.setConfig(config);
             //  logger.debug(bean.toString());
-            ConfigGenerator.generateJava(bean);
-            ConfigGenerator.generateLua(bean);
+            if (config.isGenerateJava()) {
+                ConfigGenerator.generateJava(bean);
+            }
+
+            if (config.isGenerateLua()) {
+                ConfigGenerator.generateLua(bean);
+            }
+
+
         }
     }
-    public  static  void markClass()
-    {
+
+    public static void markClass() {
         AppEvn.markClassRootPath();
     }
 }

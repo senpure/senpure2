@@ -1,5 +1,8 @@
 package com.senpure.config.metadata;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by 罗中正 on 2018/4/19 0019.
  */
@@ -8,6 +11,8 @@ public class Value {
     private String value;
     private String inJavaCodeValue;
     private Field field;
+
+    private List<String> inJavaCodeValues = new ArrayList<>();
 
     public String getValue() {
         return value;
@@ -31,5 +36,13 @@ public class Value {
 
     public void setField(Field field) {
         this.field = field;
+    }
+
+    public List<String> getInJavaCodeValues() {
+        return inJavaCodeValues;
+    }
+
+    public void setInJavaCodeValues(List<String> inJavaCodeValues) {
+        this.inJavaCodeValues = inJavaCodeValues;
     }
 }

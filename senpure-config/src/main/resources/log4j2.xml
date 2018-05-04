@@ -12,10 +12,6 @@
             <PatternLayout pattern="%d{HH:mm:ss} [%-5level] - %msg%n"/>
 
         </Console>
-        <TextArea name="TextArea" >
-            <PatternLayout pattern="%d{HH:mm:ss} [%-5level] - %msg%n"/>
-              <ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
-        </TextArea>
         <RollingFile name="ROLLING" fileName="generator.log"
                      filePattern="generator.%d{yyyy-MM-dd}_%i.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>

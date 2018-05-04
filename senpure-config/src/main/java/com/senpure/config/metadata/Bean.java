@@ -15,6 +15,7 @@ public class Bean {
     private List<Field> fields = new ArrayList<>();
     private String explain;
 
+    private boolean hasList;
     private Field id;
     private List<Record> records = new ArrayList<>();
 
@@ -80,5 +81,13 @@ public class Bean {
 
     public void setConfig(ConfigProperties config) {
         this.config = config;
+    }
+
+    public boolean isHasList() {
+        return hasList;
+    }
+
+    public void setHasList(boolean hasList) {
+        this.hasList = hasList;
     }
 }

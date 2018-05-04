@@ -19,39 +19,42 @@ public class ConfigGenerator {
     private static Logger logger = LoggerFactory.getLogger(ConfigGenerator.class);
 
     public static void generateJava(Bean bean) throws IOException {
-        ConfigProperties config= bean.getConfig();
+        ConfigProperties config = bean.getConfig();
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-            cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "java"));
-            Template template = cfg.getTemplate("bean.ftl");
-            File file = new File(config.getJavaFolder(), bean.getJavaPack().replace(".", File.separator)
-                    //  + File.separator + "bean"
-                    + File.separator + bean.getName() + ".java");
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
+        cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "java"));
+        Template template = cfg.getTemplate("bean.ftl");
+        File file = new File(config.getJavaFolder(), bean.getJavaPack().replace(".", File.separator)
+                //  + File.separator + "bean"
+                + File.separator + bean.getName() + ".java");
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
 
-            Generator.generate(bean, template, file);
-            template = cfg.getTemplate("beanManager.ftl");
-            file = new File(config.getJavaFolder(), bean.getJavaPack().replace(".", File.separator)
-                    //  + File.separator + "bean"
-                    + File.separator + bean.getName() + config.getJavaManagerSuffix() + ".java");
-            if (!file.getParentFile().exists()) {
-                file.getParentFile().mkdirs();
-            }
-            Generator.generate(bean, template, file);
+        logger.debug("生成 {}", file.getAbsoluteFile());
+        Generator.generate(bean, template, file);
+        template = cfg.getTemplate("beanManager.ftl");
+        file = new File(config.getJavaFolder(), bean.getJavaPack().replace(".", File.separator)
+                //  + File.separator + "bean"
+                + File.separator + bean.getName() + config.getJavaManagerSuffix() + ".java");
+        if (!file.getParentFile().exists()) {
+            file.getParentFile().mkdirs();
+        }
+        logger.debug("生成 {}", file.getAbsoluteFile());
+        Generator.generate(bean, template, file);
 
 
     }
 
     public static void generateLua(Bean bean) throws IOException {
-        ConfigProperties config=bean.getConfig();
+        ConfigProperties config = bean.getConfig();
         Configuration cfg = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         cfg.setDirectoryForTemplateLoading(new File(TemplateUtil.templateDir(), "lua"));
         Template template = cfg.getTemplate("bean.ftl");
-        File file = new File(config.getLuaFolder(),  File.separator + bean.getName() + ".lua");
+        File file = new File(config.getLuaFolder(), File.separator + bean.getName() + ".lua");
         if (!file.getParentFile().exists()) {
             file.getParentFile().mkdirs();
         }
+        logger.debug("生成 {}", file.getAbsoluteFile());
         Generator.generate(bean, template, file);
     }
 }

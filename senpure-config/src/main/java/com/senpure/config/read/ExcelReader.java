@@ -41,9 +41,12 @@ public class ExcelReader {
                 read(f, beans);
             }
         } else {
-            if (file.getName().endsWith(".xls") || file.getName().endsWith(".xlsx")) {
-                beans.addAll(readFile(file));
+            if (!file.getName().startsWith("~$")) {
+                if (file.getName().endsWith(".xls") || file.getName().endsWith(".xlsx")) {
+                    beans.addAll(readFile(file));
+                }
             }
+
 
         }
     }
@@ -100,12 +103,30 @@ public class ExcelReader {
                 String type = null;
                 if (classRow != null) {
                     type = getCellStringValue(classRow.getCell(j));
+
                 }
                 if (type == null) {
                     type = "String";
                 } else {
                     type = type.trim();
                 }
+                int index = type.indexOf("[");
+                if (index > 0) {
+                    String list = type.substring(index + 1);
+                    if (list.startsWith("list") && list.endsWith("]")) {
+                        field.setList(true);
+                        bean.setHasList(true);
+                        list = list.replace("list", "").replace("]", "");
+                        if (list.length() > 0) {
+                            field.setListSeparator(list);
+
+                        }
+                    } else {
+                        Assert.error("list 拼写错误 [" + type + "] 正常格式为 $type[list{$Separator}]");
+                    }
+                    type = type.substring(0, index);
+                }
+
                 field.setClassType(type);
                 Assert.isTrue(readHelper.isBaseField(type), "不支持的数据类型 [" + type + "]");
                 field.setJavaType(readHelper.getJavaType(type));
@@ -130,11 +151,22 @@ public class ExcelReader {
                                 break;
                             }
                             Field field = bean.getFields().get(k);
-
-                            String str = getCellStringValue(row.getCell(k));
                             value.setField(field);
+                            String str = getCellStringValue(row.getCell(k));
+
+                            if (str == null) {
+                                str = readHelper.getJavaDefaultValue(field.getJavaType());
+                            }
                             value.setValue(str);
-                            checkValue(field, value);
+                            if (field.isList()) {
+                                String strs[] = str.split(field.getListSeparator());
+                                for (String s : strs) {
+                                    checkValue(field, value, s);
+                                }
+                            } else {
+                                checkValue(field, value, value.getValue());
+                            }
+
                             record.getValues().add(value);
                         }
                         bean.getRecords().add(record);
@@ -170,17 +202,14 @@ public class ExcelReader {
         return cell.toString();
     }
 
-    private static void checkValue(Field field, Value value) {
-        if (value.getValue() == null) {
+    private static void checkValue(Field field, Value value, String str) {
 
-            value.setValue(readHelper.getJavaDefaultValue(field.getJavaType()));
-
-        }
         try {
             switch (field.getJavaType()) {
                 case "int":
                 case "long":
-                    Long.parseLong(value.getValue());
+                    Long.parseLong(str);
+
                     break;
                 case "double":
                     Double.parseDouble(value.getValue());
@@ -192,21 +221,26 @@ public class ExcelReader {
         } catch (Exception e) {
             Assert.error(field.getClassType() + ",[" + value.getValue() + "],不合法!");
         }
+
         if (field.getJavaType().equals("String")) {
             String s = "\"";
             if (field.getClassType().startsWith("\"") && field.getClassType().endsWith("\"")) {
                 s = "\'";
             }
-            value.setInJavaCodeValue(s + value.getValue() + s);
+            value.getInJavaCodeValues().add(s + str + s);
         } else if (field.getJavaType().equalsIgnoreCase("boolean")) {
-            if (readHelper.isBooleanTrue(value.getValue())) {
-                value.setInJavaCodeValue("true");
+            if (readHelper.isBooleanTrue(str)) {
+                value.getInJavaCodeValues().add("true");
             } else {
-                value.setInJavaCodeValue("false");
+                value.getInJavaCodeValues().add("false");
             }
         } else {
-            value.setInJavaCodeValue(value.getValue());
+            value.getInJavaCodeValues().add(str);
         }
+
+    }
+
+    private static void value(Field field, Value value, String str) {
 
     }
 

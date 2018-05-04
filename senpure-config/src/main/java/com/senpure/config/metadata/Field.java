@@ -14,6 +14,7 @@ public class Field {
     private String javaListType;
     //字段名
     private String name;
+    private String listSeparator = ",";
     private boolean list;
 
 
@@ -67,6 +68,14 @@ public class Field {
 
     public void setJavaListType(String javaListType) {
         this.javaListType = javaListType;
+    }
+
+    public String getListSeparator() {
+        return listSeparator;
+    }
+
+    public void setListSeparator(String listSeparator) {
+        this.listSeparator = listSeparator;
     }
 
     @Override
