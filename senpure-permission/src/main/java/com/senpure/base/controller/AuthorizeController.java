@@ -3,6 +3,8 @@ package com.senpure.base.controller;
 import com.senpure.base.result.Result;
 import com.senpure.base.result.ResultMap;
 import com.senpure.base.spring.BaseController;
+import com.senpure.base.util.Assert;
+import com.senpure.base.util.Http;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,12 +25,21 @@ public class AuthorizeController extends BaseController {
     public ResultMap notPermission(HttpServletRequest request) {
 
         List<Object> args = (List<Object>) request.getAttribute("lackArgs");
-        if (args != null) {
-            return wrapMessage(request, ResultMap.result(Result.LACK_OF_PERMISSION_RESOURCE_INCORRECT).addArgs(args));
-        } else {
 
-            return wrapMessage(request, ResultMap.result(Result.LACK_OF_PERMISSION));
+        ResultMap resultMap;
+        if (args.size() == 3) {
+            resultMap =wrapMessage(request, ResultMap.result(Result.LACK_OF_PERMISSION_RESOURCE_INCORRECT).addArgs(args));
         }
+        else {
+            resultMap =wrapMessage(request, ResultMap.result(Result.LACK_OF_PERMISSION).addArgs(args));
+        }
+
+
+        if (!Http.isAjaxRequest(request)) {
+            Assert.error(resultMap.getMessage());
+
+        }
+        return  resultMap;
     }
 
 }
