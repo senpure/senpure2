@@ -36,22 +36,19 @@ public class Result {
     public static final int ACCOUNT_OTHER_LOGIN = 105;
     @Message(message = "账号未登陆")
     public static final int ACCOUNT_NOT_LOGIN = 106;
-
     @Message(message = "账号未登陆或登陆超时")
     public static final int ACCOUNT_NOT_LOGIN_OR_SESSION_TIMEOUT = 107;
-
     @Message(message = "令牌过期请重新获取")
     public static final int TOKEN_TIMEOUT = 108;
-
 
     @Message(message = "请输入数字")
     public static final int INPUT_NUMBER = 200;
 
-    @Message(message = "权限不足[{0}] [{1}] 验证[{2}]失败")
+    @Message(message = "权限不足[{0}] [{1}] 验证 [{2}] 失败")
     public static  final int LACK_OF_PERMISSION_RESOURCE_INCORRECT=402;
-    @Message(message = "权限不足{0}")
+    @Message(message = "权限不足[{0}]")
     public static  final int LACK_OF_PERMISSION=403;
-    @Message(message = "[{0}]:目标不存在")
+    @Message(message = "目标不存在[{0}]")
     public static  final int  TARGET_NOT_EXIST=404;
 
 
