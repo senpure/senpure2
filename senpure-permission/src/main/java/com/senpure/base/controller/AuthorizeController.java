@@ -23,9 +23,7 @@ public class AuthorizeController extends BaseController {
     @RequestMapping(value = "/forbidden", method = RequestMethod.GET)
     @ResponseBody
     public ResultMap notPermission(HttpServletRequest request) {
-
         List<Object> args = (List<Object>) request.getAttribute("lackArgs");
-
         ResultMap resultMap;
         if (args.size() == 3) {
             resultMap =wrapMessage(request, ResultMap.result(Result.LACK_OF_PERMISSION_RESOURCE_INCORRECT).addArgs(args));
@@ -33,11 +31,8 @@ public class AuthorizeController extends BaseController {
         else {
             resultMap =wrapMessage(request, ResultMap.result(Result.LACK_OF_PERMISSION).addArgs(args));
         }
-
-
         if (!Http.isAjaxRequest(request)) {
             Assert.error(resultMap.getMessage());
-
         }
         return  resultMap;
     }
