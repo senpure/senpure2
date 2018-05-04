@@ -98,11 +98,11 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
             Account lastAccount = authorizeService.findAccount(account.getId());
             boolean login = account.getLoginTime() < lastAccount.getLoginTime();
             //  && !account.getLoginIP().equals(accountVo.getIp());
-            if (login&&!request.getRequestURI().equals(loginAction)) {
+            if (login && !request.getRequestURI().equals(loginAction)) {
                 RequestDispatcher dispatcher = request.getRequestDispatcher(loginURI);
                 ResultMap result = ResultMap.result(Result.ACCOUNT_OTHER_LOGIN);
                 ResultHelper.wrapMessage(result, localeResolver.resolveLocale(request), lastAccount.getIp() == null ? "UNKNOWN" : lastAccount.getIp());
-                logger.info("由于在其他地方登陆，该次请求中断,跳转登陆界面{}",request.getRequestURI());
+                logger.info("由于在其他地方登陆，该次请求中断,跳转登陆界面{}", request.getRequestURI());
                 logger.debug(result.toString());
                 afterLogin(request, result, false);
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -116,7 +116,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
         for (PatternsRequestCondition patterns : patternsRequestConditions) {
             matches = patterns.getMatchingPatterns(request.getRequestURI());
             if (matches.size() > 0) {
-                logger.trace("{}  {}",  matches, request.getRequestURI());
+                logger.trace("{}  {}", matches, request.getRequestURI());
                 break;
             }
         }
@@ -125,7 +125,7 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
             String bestMatch = matches.get(0);
             List<URIPermission> uriPermissions = uriPermissionService.findByUriAndMethodOnlyCache(bestMatch + "[" + request.getMethod() + "]");
             if (uriPermissions.size() == 0) {
-                logger.debug("{}:{} > {} {}",request.getMethod(), request.getRequestURI(), "不需要任何权限检查", bestMatch);
+                logger.debug("{}:{} > {} {}", request.getMethod(), request.getRequestURI(), "不需要任何权限检查", bestMatch);
             } else {
                 HttpServletResponse response = (HttpServletResponse) servletResponse;
 
@@ -157,8 +157,12 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                 for (URIPermission uriPermission : uriPermissions) {
                     needPermissions.add(permissionService.find(uriPermission.getPermissionId()));
                 }
+                String resourceVerifyName = null;
+                String resourceTarget = null;
+                ;
                 for (Permission permission : needPermissions) {
                     logger.debug("{} 需要 [ {} ] 权限[{},{}] ", sb.toString(), permission.getName(), permission.getReadableName(), permission.getType());
+
                     if (permission.getType().equals(PermissionConstant.PERMISSION_TYPE_NORMAL)) {
                         pass = hasPermission(account, permission.getName());
                     } else if (permission.getType().equals(PermissionConstant.PERMISSION_TYPE_OWNER)) {
@@ -198,6 +202,8 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                                     pass = resourcesVerifyService.verify(verifyNames[i], account.getId(), resourceId);
                                 }
                                 if (!pass) {
+                                    resourceVerifyName = verifyNames[i];
+                                    resourceTarget = resourceId;
                                     break;
                                 }
                             }
@@ -208,7 +214,16 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                     }
                 }
                 if (!pass) {
-                    logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI());
+                    if (resourceVerifyName != null) {
+                        logger.warn("{}[{}]  {}:{} 资源验证失败{} >{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI(), resourceTarget, resourceTarget);
+                        List<Object> args = new ArrayList<>();
+                        args.add(resourceVerifyName);
+                        args.add(resourceTarget);
+                        request.setAttribute("lackArgs", args);
+                    } else {
+                        logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(), request.getMethod(), request.getRequestURI());
+                    }
+
                     RequestDispatcher dispatcher = request.getRequestDispatcher("/authorize/forbidden");
                     dispatcher.forward(new HttpMethodRequestWrapper(request, "GET"), response);
                     return;
