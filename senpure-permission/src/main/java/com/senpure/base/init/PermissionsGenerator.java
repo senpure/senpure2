@@ -310,7 +310,7 @@ public class PermissionsGenerator extends SpringContextRefreshEvent {
                 suffix = "delete";
             } else if (
                     methods.contains("PUT")) {
-                suffix = "create";
+                suffix = "update";
             } else if (
                     methods.contains("POST")) {
                 if (methods.contains("GET")) {
