@@ -220,10 +220,8 @@ public class VerifyFilter extends SpringContextRefreshEvent implements Filter {
                     if (resourceVerifyName != null) {
                         logger.warn("{}[{}]  {}:{} 资源验证失败{} >{}", account.getAccount(), account.getName(),
                                 request.getMethod(), request.getRequestURI(), resourceTarget, resourceTarget);
-
                         args.add(resourceVerifyName);
                         args.add(resourceTarget);
-
                     } else {
                         logger.warn("{}[{}] 没有权限 {}:{}", account.getAccount(), account.getName(),
                                 request.getMethod(), request.getRequestURI());
