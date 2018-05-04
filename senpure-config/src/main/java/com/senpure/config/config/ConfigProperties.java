@@ -17,7 +17,6 @@ public class ConfigProperties {
     private boolean generateJava = true;
     private boolean generateLua = true;
 
-
     public String getJavaFolder() {
         return javaFolder;
     }
