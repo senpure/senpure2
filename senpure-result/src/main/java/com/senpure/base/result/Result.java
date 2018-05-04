@@ -47,7 +47,7 @@ public class Result {
     @Message(message = "请输入数字")
     public static final int INPUT_NUMBER = 200;
 
-    @Message(message = "权限不足{0}{1}验证{2}失败")
+    @Message(message = "权限不足[{0}] [{1}] 验证[{2}]失败")
     public static  final int LACK_OF_PERMISSION_RESOURCE_INCORRECT=402;
     @Message(message = "权限不足{0}")
     public static  final int LACK_OF_PERMISSION=403;
