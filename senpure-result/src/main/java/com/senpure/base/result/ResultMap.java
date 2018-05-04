@@ -4,6 +4,7 @@ package com.senpure.base.result;
 import com.senpure.base.util.Assert;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -16,12 +17,13 @@ public class ResultMap extends HashMap<String, Object> {
     public static final String MESSAGE_KEY = "message";
     public static final String FILE_KEY = "file";
     public static final String FILE_NAME_KEY = "fileName";
-    public static final String DELETE_FILE_KEY = "deletefile";
+    public static final String DELETE_FILE_KEY = "deleteFile";
     public static final String VALIDATOR_KEY = "validator";
     public static final String TOTAL_KEY = "total";
     public static final String ITEMS_KEY = "items";
     public static final String ITEM_KEY = "item";
     public static final String PAGE_KEY = "page";
+    public static final String ARGS_KEY = "args";
 
     public static ResultMap success() {
         return new ResultMap(Result.SUCCESS);
@@ -30,6 +32,7 @@ public class ResultMap extends HashMap<String, Object> {
     public static ResultMap dim() {
         return new ResultMap(Result.ERROR_DIM);
     }
+
     public static ResultMap failure() {
         return new ResultMap(Result.FAILURE);
     }
@@ -37,10 +40,14 @@ public class ResultMap extends HashMap<String, Object> {
     public static ResultMap notExist() {
         return new ResultMap(Result.TARGET_NOT_EXIST);
     }
+
     public static ResultMap result(int code) {
         return new ResultMap(code);
     }
 
+
+    private boolean clientFormat;
+    private List<Object> args;
 
     private ResultMap() {
         super();
@@ -69,8 +76,25 @@ public class ResultMap extends HashMap<String, Object> {
         super.put(ITEMS_KEY, value);
         return this;
     }
+
     public ResultMap putItem(Object value) {
         super.put(ITEM_KEY, value);
+        return this;
+    }
+
+    public ResultMap putMessage(String value) {
+        super.put(MESSAGE_KEY, value);
+        return this;
+    }
+
+    public ResultMap addArgs(Object value) {
+        if (args == null) {
+            args = new ArrayList();
+        }
+        args.add(value);
+        if (clientFormat) {
+            super.put(ARGS_KEY, args);
+        }
         return this;
     }
 
@@ -134,5 +158,18 @@ public class ResultMap extends HashMap<String, Object> {
         return item.size();
     }
 
+
+    public boolean isClientFormat() {
+        return clientFormat;
+    }
+
+    public void setClientFormat(boolean clientFormat) {
+        this.clientFormat = clientFormat;
+    }
+
+
+    public List<Object> getArgs() {
+        return args;
+    }
 
 }
